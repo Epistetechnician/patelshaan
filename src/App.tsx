@@ -591,10 +591,10 @@ function App() {
             </div>
 
             <div className="hero-copy__bottom">
-              <p className="hero-summary">
+              <h3 className="hero-summary">
                 AI researcher, operator, and systems builder working across
                 crypto, public goods, and technical storytelling.
-              </p>
+              </h3>
 
               <div className="hero-actions">
                 <a href="#install" className="button button--solid">

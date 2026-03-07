@@ -207,9 +207,11 @@ export default function LocalVideo2Ascii({
     }
 
     const cols = numColumns ?? Math.max(80, Math.floor(width / 8))
-    const fontSize = width / (cols * CHAR_WIDTH_RATIO)
-    const charWidth = fontSize * CHAR_WIDTH_RATIO
-    const rows = Math.max(1, Math.floor(height / fontSize))
+    const estimatedFontSize = width / (cols * CHAR_WIDTH_RATIO)
+    const rows = Math.max(1, Math.ceil(height / estimatedFontSize))
+    const charWidth = width / cols
+    const cellHeight = height / rows
+    const fontSize = cellHeight
 
     if (!sampleCanvasRef.current) {
       sampleCanvasRef.current = document.createElement('canvas')
@@ -265,11 +267,11 @@ export default function LocalVideo2Ascii({
         const charIndex = Math.min(chars.length - 1, Math.floor(luminance * (chars.length - 1)))
         const char = chars[charIndex] || ' '
         const drawX = x * charWidth
-        const drawY = y * fontSize
+        const drawY = y * cellHeight
 
         if (highlightStrength > 0) {
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${highlightStrength * 0.45})`
-          ctx.fillRect(drawX, drawY, charWidth + 0.4, fontSize + 0.4)
+          ctx.fillRect(drawX, drawY, charWidth + 0.4, cellHeight + 0.4)
         }
 
         ctx.fillStyle = colored ? `rgb(${r}, ${g}, ${b})` : 'rgb(163, 255, 163)'

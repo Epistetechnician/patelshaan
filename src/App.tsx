@@ -227,7 +227,8 @@ const socialLinks: SocialLink[] = [
   },
 ]
 
-const writingModules = import.meta.glob('../../writings/*.html', {
+// Keep writing source inside the app so Railway builds do not depend on parent folders.
+const writingModules = import.meta.glob('./content/writings/*.html', {
   eager: true,
   import: 'default',
   query: '?raw',

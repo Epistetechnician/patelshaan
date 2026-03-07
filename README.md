@@ -27,6 +27,11 @@ This project includes `railway.json` so Railway can:
 - build with `npm run build`
 - serve with `npm run start`
 
+Railway deploy note:
+
+- keep the writing source files inside `src/content/writings`
+- do not rely on parent-directory content imports for deploy-critical assets, because Railway may build the app from the `site` directory only
+
 Repository target:
 
 - GitHub: `https://github.com/Epistetechnician/patelshaan`

@@ -18,7 +18,7 @@ npm run build
 npm run start
 ```
 
-The production start command serves the built Vite app on `0.0.0.0:$PORT`, which is suitable for Railway deployment.
+The production start command serves the built `dist/` output with `serve` on `0.0.0.0:$PORT`, which is a better fit for Railway than `vite preview`.
 
 ## Deploy
 
@@ -26,6 +26,12 @@ This project includes `railway.json` so Railway can:
 
 - build with `npm run build`
 - serve with `npm run start`
+
+Node runtime note:
+
+- the app requires Node `22.12+`
+- `package.json` declares the engine version
+- `nixpacks.toml` pins Railway builds to Node 22
 
 Railway deploy note:
 

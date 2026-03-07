@@ -581,6 +581,7 @@ function App() {
               charset="detailed"
               isPlaying={true}
               autoPlay={true}
+              priority={true}
               className="hero-panel__ascii-surface"
             />
           </div>

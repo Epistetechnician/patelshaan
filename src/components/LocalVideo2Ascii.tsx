@@ -47,6 +47,8 @@ export type VideoToAsciiProps = {
   enableSpacebarToggle?: boolean
   showStats?: boolean
   className?: string
+  priority?: boolean
+  playOnlyWhenVisible?: boolean
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -66,6 +68,8 @@ export default function LocalVideo2Ascii({
   enableSpacebarToggle = false,
   showStats = false,
   className = '',
+  priority = false,
+  playOnlyWhenVisible = true,
 }: VideoToAsciiProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -78,8 +82,11 @@ export default function LocalVideo2Ascii({
   const [isReady, setIsReady] = useState(false)
   const [fps, setFps] = useState(0)
   const [localPlaying, setLocalPlaying] = useState(isPlaying)
+  const [isVisible, setIsVisible] = useState(priority)
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(priority)
 
   const chars = useMemo(() => [...ASCII_CHARSETS[charset].chars], [charset])
+  const shouldPlay = localPlaying && (!playOnlyWhenVisible || isVisible)
 
   useEffect(() => {
     setLocalPlaying(isPlaying)
@@ -88,14 +95,69 @@ export default function LocalVideo2Ascii({
   useEffect(() => {
     setIsReady(false)
     setFps(0)
+    setIsVisible(priority)
+    setShouldLoadVideo(priority)
     lastVideoTimeRef.current = -1
     fpsWindowRef.current = { lastTimestamp: 0, frames: 0 }
 
     const video = videoRef.current
     if (!video) return
     video.pause()
+    if (priority) {
+      video.load()
+    }
+  }, [priority, src])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) {
+      return
+    }
+
+    if (!playOnlyWhenVisible) {
+      setShouldLoadVideo(true)
+      setIsVisible(true)
+      return
+    }
+
+    const loadObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadVideo(true)
+        }
+      },
+      {
+        rootMargin: '30% 0px',
+        threshold: 0.01,
+      },
+    )
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.intersectionRatio >= 0.18)
+      },
+      {
+        threshold: [0, 0.18, 0.35, 0.6],
+      },
+    )
+
+    loadObserver.observe(container)
+    visibilityObserver.observe(container)
+
+    return () => {
+      loadObserver.disconnect()
+      visibilityObserver.disconnect()
+    }
+  }, [playOnlyWhenVisible, priority])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !shouldLoadVideo) {
+      return
+    }
+
     video.load()
-  }, [src])
+  }, [shouldLoadVideo, src])
 
   const drawFrame = useCallback(() => {
     const container = containerRef.current
@@ -218,7 +280,7 @@ export default function LocalVideo2Ascii({
 
   useEffect(() => {
     const video = videoRef.current as VideoWithFrameCallback | null
-    if (!video || !localPlaying) return
+    if (!video || !shouldPlay) return
 
     const updateFps = (timestamp: number) => {
       const state = fpsWindowRef.current
@@ -264,7 +326,7 @@ export default function LocalVideo2Ascii({
         videoFrameCallbackRef.current = null
       }
     }
-  }, [drawFrame, localPlaying])
+  }, [drawFrame, shouldPlay])
 
   useEffect(() => {
     const video = videoRef.current
@@ -272,7 +334,7 @@ export default function LocalVideo2Ascii({
 
     const handleReady = () => {
       setIsReady(true)
-      if (autoPlay || localPlaying) {
+      if (autoPlay || shouldPlay) {
         void video.play().catch(() => undefined)
       }
     }
@@ -294,17 +356,23 @@ export default function LocalVideo2Ascii({
       video.removeEventListener('canplaythrough', handleReady)
       video.removeEventListener('waiting', handleWaiting)
     }
-  }, [autoPlay, localPlaying])
+  }, [autoPlay, shouldPlay, shouldLoadVideo])
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
-    if (localPlaying) {
+
+    if (!shouldLoadVideo) {
+      video.pause()
+      return
+    }
+
+    if (shouldPlay) {
       void video.play().catch(() => undefined)
     } else {
       video.pause()
     }
-  }, [localPlaying])
+  }, [shouldLoadVideo, shouldPlay])
 
   useEffect(() => {
     const container = containerRef.current
@@ -330,10 +398,10 @@ export default function LocalVideo2Ascii({
     <div className={`video-to-ascii ${className}`.trim()}>
       <video
         ref={videoRef}
-        src={src}
+        src={shouldLoadVideo ? src : undefined}
         muted
         loop
-        preload="auto"
+        preload={priority ? 'auto' : shouldPlay ? 'auto' : shouldLoadVideo ? 'metadata' : 'none'}
         playsInline
         crossOrigin="anonymous"
         disablePictureInPicture

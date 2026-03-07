@@ -395,7 +395,7 @@ export default function LocalVideo2Ascii({
   )
 
   return (
-    <div className={`video-to-ascii ${className}`.trim()}>
+    <div className={`video-to-ascii h-full w-full ${className}`.trim()}>
       <video
         ref={videoRef}
         src={shouldLoadVideo ? src : undefined}
@@ -409,11 +409,14 @@ export default function LocalVideo2Ascii({
       />
       <div
         ref={containerRef}
-        className="relative cursor-pointer select-none overflow-hidden rounded bg-black"
+        className="relative h-full w-full cursor-pointer select-none overflow-hidden rounded bg-black"
         tabIndex={enableSpacebarToggle ? 0 : -1}
         onKeyDown={handleKeyDown}
       >
-        <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
+        <canvas
+          ref={canvasRef}
+          style={{ width: '100%', height: '100%', display: 'block' }}
+        />
         {showStats ? (
           <div
             style={{

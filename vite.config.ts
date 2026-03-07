@@ -6,8 +6,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: ['.up.railway.app'],
     fs: {
       allow: [fileURLToPath(new URL('..', import.meta.url))],
     },
+  },
+  preview: {
+    allowedHosts: ['.up.railway.app'],
   },
 })

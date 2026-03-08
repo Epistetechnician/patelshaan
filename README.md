@@ -31,7 +31,7 @@ Node runtime note:
 
 - the app requires Node `22.12+`
 - `package.json` declares the engine version
-- `nixpacks.toml` pins Railway builds to Node 22
+- if Railway still picks the wrong version, set `NIXPACKS_NODE_VERSION=22` in the project variables
 
 Railway deploy note:
 

@@ -401,13 +401,23 @@ export default function LocalVideo2Ascii({
       <video
         ref={videoRef}
         src={shouldLoadVideo ? src : undefined}
+        autoPlay={autoPlay || shouldPlay}
         muted
         loop
         preload={priority ? 'auto' : shouldPlay ? 'auto' : shouldLoadVideo ? 'metadata' : 'none'}
         playsInline
         crossOrigin="anonymous"
         disablePictureInPicture
-        style={{ display: 'none' }}
+        aria-hidden="true"
+        tabIndex={-1}
+        style={{
+          position: 'absolute',
+          width: 1,
+          height: 1,
+          opacity: 0,
+          pointerEvents: 'none',
+          inset: 0,
+        }}
       />
       <div
         ref={containerRef}

@@ -582,6 +582,10 @@ function App() {
               isPlaying={true}
               autoPlay={true}
               priority={true}
+              playSegments={[
+                { start: 0, end: 6 },
+                { start: 12, end: 20 },
+              ]}
               className="hero-panel__ascii-surface"
             />
           </div>

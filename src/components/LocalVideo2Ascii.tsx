@@ -49,10 +49,34 @@ export type VideoToAsciiProps = {
   className?: string
   priority?: boolean
   playOnlyWhenVisible?: boolean
+  loopStart?: number
+  loopEnd?: number
+  playSegments?: Array<{
+    start: number
+    end: number
+  }>
 }
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
+}
+
+function normalizeSegments(
+  playSegments: VideoToAsciiProps['playSegments'],
+  loopStart: number,
+  loopEnd?: number,
+) {
+  if (playSegments && playSegments.length > 0) {
+    return playSegments
+      .filter((segment) => segment.end > segment.start)
+      .sort((left, right) => left.start - right.start)
+  }
+
+  if (loopEnd !== undefined && loopEnd > loopStart) {
+    return [{ start: loopStart, end: loopEnd }]
+  }
+
+  return []
 }
 
 export default function LocalVideo2Ascii({
@@ -70,6 +94,9 @@ export default function LocalVideo2Ascii({
   className = '',
   priority = false,
   playOnlyWhenVisible = true,
+  loopStart = 0,
+  loopEnd,
+  playSegments,
 }: VideoToAsciiProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -78,15 +105,22 @@ export default function LocalVideo2Ascii({
   const animationFrameRef = useRef<number | null>(null)
   const videoFrameCallbackRef = useRef<number | null>(null)
   const lastVideoTimeRef = useRef(-1)
+  const hasRenderedFrameRef = useRef(false)
   const fpsWindowRef = useRef({ lastTimestamp: 0, frames: 0 })
   const [isReady, setIsReady] = useState(false)
   const [fps, setFps] = useState(0)
   const [localPlaying, setLocalPlaying] = useState(isPlaying)
   const [isVisible, setIsVisible] = useState(priority)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(priority)
+  const [hasRenderedFrame, setHasRenderedFrame] = useState(false)
 
   const chars = useMemo(() => [...ASCII_CHARSETS[charset].chars], [charset])
   const shouldPlay = localPlaying && (!playOnlyWhenVisible || isVisible)
+  const segments = useMemo(
+    () => normalizeSegments(playSegments, loopStart, loopEnd),
+    [loopEnd, loopStart, playSegments],
+  )
+  const usesLoopWindow = segments.length > 0
 
   useEffect(() => {
     setLocalPlaying(isPlaying)
@@ -97,7 +131,9 @@ export default function LocalVideo2Ascii({
     setFps(0)
     setIsVisible(priority)
     setShouldLoadVideo(priority)
+    setHasRenderedFrame(false)
     lastVideoTimeRef.current = -1
+    hasRenderedFrameRef.current = false
     fpsWindowRef.current = { lastTimestamp: 0, frames: 0 }
 
     const video = videoRef.current
@@ -156,8 +192,73 @@ export default function LocalVideo2Ascii({
       return
     }
 
+    video.muted = true
+    video.defaultMuted = true
+    video.playsInline = true
+    video.setAttribute('muted', '')
+    video.setAttribute('playsinline', '')
+    video.setAttribute('webkit-playsinline', 'true')
     video.load()
   }, [shouldLoadVideo, src])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !usesLoopWindow) {
+      return
+    }
+
+    const firstSegment = segments[0]
+    if (!firstSegment) {
+      return
+    }
+
+    const syncToAllowedSegment = () => {
+      const currentTime = video.currentTime
+
+      for (let index = 0; index < segments.length; index += 1) {
+        const segment = segments[index]
+        if (!segment) {
+          continue
+        }
+
+        if (currentTime < segment.start) {
+          video.currentTime = segment.start
+          return
+        }
+
+        if (currentTime >= segment.start && currentTime < segment.end) {
+          return
+        }
+
+        const nextSegment = segments[index + 1]
+        if (currentTime >= segment.end && currentTime < (nextSegment?.start ?? Infinity)) {
+          video.currentTime = nextSegment?.start ?? firstSegment.start
+          return
+        }
+      }
+
+      video.currentTime = firstSegment.start
+    }
+
+    const handleLoadedMetadata = () => {
+      syncToAllowedSegment()
+    }
+
+    const handleTimeUpdate = () => {
+      syncToAllowedSegment()
+      if (shouldPlay) {
+        void video.play().catch(() => undefined)
+      }
+    }
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata)
+    video.addEventListener('timeupdate', handleTimeUpdate)
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      video.removeEventListener('timeupdate', handleTimeUpdate)
+    }
+  }, [segments, shouldPlay, usesLoopWindow])
 
   const drawFrame = useCallback(() => {
     const container = containerRef.current
@@ -178,7 +279,11 @@ export default function LocalVideo2Ascii({
 
     const width = Math.max(1, container.clientWidth)
     const height = Math.max(1, container.clientHeight)
-    const dpr = Math.min(window.devicePixelRatio || 1, OUTPUT_DPR_LIMIT)
+    const isCompactViewport = width <= 768
+    const dpr = Math.min(
+      window.devicePixelRatio || 1,
+      isCompactViewport ? 1.5 : OUTPUT_DPR_LIMIT,
+    )
 
     if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
       canvas.width = Math.floor(width * dpr)
@@ -206,7 +311,9 @@ export default function LocalVideo2Ascii({
       ctx.fillRect(0, 0, width, height)
     }
 
-    const cols = numColumns ?? Math.max(80, Math.floor(width / 8))
+    const minCharacterWidth = isCompactViewport ? 6 : 4.8
+    const maxColumnsForViewport = Math.max(24, Math.floor(width / minCharacterWidth))
+    const cols = clamp(numColumns ?? maxColumnsForViewport, 24, maxColumnsForViewport)
     const estimatedFontSize = width / (cols * CHAR_WIDTH_RATIO)
     const rows = Math.max(1, Math.ceil(height / estimatedFontSize))
     const charWidth = width / cols
@@ -217,8 +324,9 @@ export default function LocalVideo2Ascii({
       sampleCanvasRef.current = document.createElement('canvas')
     }
     const sampleCanvas = sampleCanvasRef.current
-    const sampleCols = cols * SAMPLE_SCALE
-    const sampleRows = rows * SAMPLE_SCALE
+    const sampleScale = isCompactViewport ? 1 : SAMPLE_SCALE
+    const sampleCols = cols * sampleScale
+    const sampleRows = rows * sampleScale
     sampleCanvas.width = sampleCols
     sampleCanvas.height = sampleRows
 
@@ -244,10 +352,10 @@ export default function LocalVideo2Ascii({
         let gTotal = 0
         let bTotal = 0
 
-        for (let sy = 0; sy < SAMPLE_SCALE; sy += 1) {
-          for (let sx = 0; sx < SAMPLE_SCALE; sx += 1) {
-            const sampleX = x * SAMPLE_SCALE + sx
-            const sampleY = y * SAMPLE_SCALE + sy
+        for (let sy = 0; sy < sampleScale; sy += 1) {
+          for (let sx = 0; sx < sampleScale; sx += 1) {
+            const sampleX = x * sampleScale + sx
+            const sampleY = y * sampleScale + sy
             const index = (sampleY * sampleCols + sampleX) * 4
             rTotal += imageData[index] ?? 0
             gTotal += imageData[index + 1] ?? 0
@@ -255,7 +363,7 @@ export default function LocalVideo2Ascii({
           }
         }
 
-        const sampleCount = SAMPLE_SCALE * SAMPLE_SCALE
+        const sampleCount = sampleScale * sampleScale
         const r = Math.round(rTotal / sampleCount)
         const g = Math.round(gTotal / sampleCount)
         const b = Math.round(bTotal / sampleCount)
@@ -277,6 +385,11 @@ export default function LocalVideo2Ascii({
         ctx.fillStyle = colored ? `rgb(${r}, ${g}, ${b})` : 'rgb(163, 255, 163)'
         ctx.fillText(char, drawX, drawY)
       }
+    }
+
+    if (!hasRenderedFrameRef.current) {
+      hasRenderedFrameRef.current = true
+      setHasRenderedFrame(true)
     }
   }, [blend, brightness, chars, colored, highlight, isReady, numColumns])
 
@@ -398,36 +511,44 @@ export default function LocalVideo2Ascii({
 
   return (
     <div className={`video-to-ascii h-full w-full ${className}`.trim()}>
-      <video
-        ref={videoRef}
-        src={shouldLoadVideo ? src : undefined}
-        autoPlay={autoPlay || shouldPlay}
-        muted
-        loop
-        preload={priority ? 'auto' : shouldPlay ? 'auto' : shouldLoadVideo ? 'metadata' : 'none'}
-        playsInline
-        crossOrigin="anonymous"
-        disablePictureInPicture
-        aria-hidden="true"
-        tabIndex={-1}
-        style={{
-          position: 'absolute',
-          width: 1,
-          height: 1,
-          opacity: 0,
-          pointerEvents: 'none',
-          inset: 0,
-        }}
-      />
       <div
         ref={containerRef}
         className="relative h-full w-full cursor-pointer select-none overflow-hidden rounded bg-black"
         tabIndex={enableSpacebarToggle ? 0 : -1}
         onKeyDown={handleKeyDown}
       >
+        <video
+          ref={videoRef}
+          src={shouldLoadVideo ? src : undefined}
+          autoPlay={autoPlay || shouldPlay}
+          muted
+          loop={!usesLoopWindow}
+          preload={priority ? 'auto' : shouldPlay ? 'auto' : shouldLoadVideo ? 'metadata' : 'none'}
+          playsInline
+          crossOrigin="anonymous"
+          disablePictureInPicture
+          aria-hidden="true"
+          tabIndex={-1}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: hasRenderedFrame ? 0 : 1,
+            pointerEvents: 'none',
+            transition: 'opacity 160ms ease',
+          }}
+        />
         <canvas
           ref={canvasRef}
-          style={{ width: '100%', height: '100%', display: 'block' }}
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            width: '100%',
+            height: '100%',
+            display: 'block',
+          }}
         />
         {showStats ? (
           <div

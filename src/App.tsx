@@ -653,108 +653,16 @@ function App() {
               </h3>
 
               <div className="hero-actions">
-                <a href="#model" className="button button--solid">
-                  ask the model
+                <a href="#install" className="button button--solid">
+                  install me
                 </a>
-                <a href="#install" className="button button--ghost">
-                  install path
+                <a href="#about" className="button button--ghost">
+                  about me
                 </a>
               </div>
             </div>
           </div>
 
-        </section>
-
-        <section className="install-section" id="install">
-          <div className="section-heading">
-            <p className="eyebrow">01 / terminal path</p>
-            <h2>Install the terminal version of me.</h2>
-          </div>
-
-          <div className="install-grid">
-            <div className="terminal-card">
-              <div className="terminal-card__bar">
-                <span />
-                <span />
-                <span />
-              </div>
-              <pre>{`$ spatel --build-pico-model
-built shaanpatel-cv-pico........... ok
-
-$ spatel --ask "What are you working on right now?"
-focused on confidential stablecoins,
-verifiable AI, TEEs, docs, and
-developer onboarding.
-
-press [/] inside the TUI to ask live
-press [tab] to toggle answer history
-press [q] to quit`}</pre>
-            </div>
-
-            <div className="install-options">
-              {installOptions.map((option) => (
-                <article key={option.label} className="install-option">
-                  <p className="install-option__label">{option.label}</p>
-                  <h3>{option.title}</h3>
-                  <code>{option.command}</code>
-                  <p>{option.note}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="model-section" id="model">
-          <div className="section-heading">
-            <p className="eyebrow">02 / personal model</p>
-            <h2>Ask the terminal version of me.</h2>
-            <p className="model-section__intro">
-              `spatel` is no longer only a browser for my CV. It now ships as a
-              grounded personal Q&amp;A surface with a local corpus, a tiny Ollama
-              model path, a chat shell, and a TUI question prompt.
-            </p>
-          </div>
-
-          <div className="model-grid">
-            <article className="model-terminal">
-              <div className="model-terminal__bar">
-                <span />
-                <span />
-                <span />
-              </div>
-              <pre>{`$ spatel --ask "How do you think about public goods?"
-Gitcoin matters to me because it turned
-caring about public goods into allocative
-power. My view now is that public-goods
-funding needs a stack: quadratic funding,
-retroactive rewards, delegated judgment,
-and long-lived support for maintenance.
-
-sources: Gitcoin and Public Goods Funding
-mode: persona model`}</pre>
-            </article>
-
-            <div className="model-stack">
-              {modelHighlights.map((item) => (
-                <article key={item.title} className="model-card">
-                  <p className="model-card__eyebrow">{item.eyebrow}</p>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="model-command-grid">
-            {modelCommands.map((item) => (
-              <article key={item.title} className="model-command">
-                <p className="model-command__label">{item.label}</p>
-                <h3>{item.title}</h3>
-                <code>{item.command}</code>
-                <p>{item.note}</p>
-              </article>
-            ))}
-          </div>
         </section>
 
         <section className="about-section" id="about">
@@ -968,6 +876,98 @@ mode: persona model`}</pre>
                 </button>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="install-section" id="install">
+          <div className="section-heading">
+            <p className="eyebrow">01 / terminal path</p>
+            <h2>Install the terminal version of me.</h2>
+          </div>
+
+          <div className="install-grid">
+            <div className="terminal-card">
+              <div className="terminal-card__bar">
+                <span />
+                <span />
+                <span />
+              </div>
+              <pre>{`$ spatel --build-pico-model
+built shaanpatel-cv-pico........... ok
+
+$ spatel --ask "What are you working on right now?"
+focused on confidential stablecoins,
+verifiable AI, TEEs, docs, and
+developer onboarding.
+
+press [/] inside the TUI to ask live
+press [tab] to toggle answer history
+press [q] to quit`}</pre>
+            </div>
+
+            <div className="install-options">
+              {installOptions.map((option) => (
+                <article key={option.label} className="install-option">
+                  <p className="install-option__label">{option.label}</p>
+                  <h3>{option.title}</h3>
+                  <code>{option.command}</code>
+                  <p>{option.note}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="model-section" id="model">
+          <div className="section-heading">
+            <p className="eyebrow">02 / personal model</p>
+            <h2>Ask the terminal version of me.</h2>
+            <p className="model-section__intro">
+              `spatel` is no longer only a browser for my CV. It now ships as a
+              grounded personal Q&amp;A surface with a local corpus, a tiny Ollama
+              model path, a chat shell, and a TUI question prompt.
+            </p>
+          </div>
+
+          <div className="model-grid">
+            <article className="model-terminal">
+              <div className="model-terminal__bar">
+                <span />
+                <span />
+                <span />
+              </div>
+              <pre>{`$ spatel --ask "How do you think about public goods?"
+Gitcoin matters to me because it turned
+caring about public goods into allocative
+power. My view now is that public-goods
+funding needs a stack: quadratic funding,
+retroactive rewards, delegated judgment,
+and long-lived support for maintenance.
+
+sources: Gitcoin and Public Goods Funding
+mode: persona model`}</pre>
+            </article>
+
+            <div className="model-stack">
+              {modelHighlights.map((item) => (
+                <article key={item.title} className="model-card">
+                  <p className="model-card__eyebrow">{item.eyebrow}</p>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="model-command-grid">
+            {modelCommands.map((item) => (
+              <article key={item.title} className="model-command">
+                <p className="model-command__label">{item.label}</p>
+                <h3>{item.title}</h3>
+                <code>{item.command}</code>
+                <p>{item.note}</p>
+              </article>
+            ))}
           </div>
         </section>
       </main>

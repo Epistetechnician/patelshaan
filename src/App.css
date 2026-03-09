@@ -294,6 +294,7 @@
 }
 
 .install-section,
+.model-section,
 .archive-section,
 .about-section,
 .writings-section {
@@ -377,6 +378,126 @@
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 1.25rem;
+}
+
+.model-section__intro {
+  max-width: 46rem;
+  margin: 0;
+  color: rgba(226, 235, 232, 0.8);
+  line-height: 1.6;
+}
+
+.model-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.model-terminal,
+.model-command,
+.model-card {
+  border: 1px solid rgba(231, 239, 236, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.model-terminal {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(110, 225, 255, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(6, 9, 14, 0.92), rgba(4, 6, 10, 0.96));
+}
+
+.model-terminal__bar {
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(231, 239, 236, 0.12);
+}
+
+.model-terminal__bar span {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  background: rgba(238, 241, 239, 0.3);
+}
+
+.model-terminal pre {
+  margin: 0;
+  min-height: 100%;
+  overflow: auto;
+  padding: 1.25rem 1rem 1.45rem;
+  color: #d7ffd6;
+  font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+  font-size: 0.96rem;
+  line-height: 1.8;
+  white-space: pre;
+}
+
+.model-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.model-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  color: rgba(235, 240, 237, 0.82);
+  background:
+    radial-gradient(circle at top right, rgba(120, 240, 255, 0.08), transparent 30%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.model-card__eyebrow,
+.model-command__label {
+  margin: 0;
+  color: #a8bab5;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.model-card h3,
+.model-command h3 {
+  margin: 0;
+  color: rgba(244, 248, 246, 0.96);
+  font-size: 1.38rem;
+  font-weight: 500;
+  line-height: 1.02;
+}
+
+.model-card p:last-child,
+.model-command p:last-child {
+  margin: 0;
+  color: rgba(226, 235, 232, 0.78);
+  line-height: 1.55;
+}
+
+.model-command-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-bottom: 4rem;
+}
+
+.model-command {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.2rem;
+  background:
+    radial-gradient(circle at top right, rgba(116, 215, 255, 0.1), transparent 32%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.model-command code {
+  display: block;
+  overflow: auto;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(231, 239, 236, 0.14);
+  background: rgba(0, 0, 0, 0.28);
+  color: #d2ffd2;
 }
 
 .terminal-card {
@@ -1097,8 +1218,10 @@
   .hero-panel,
   .about-showcase,
   .install-grid,
+  .model-grid,
   .experience-card,
-  .foundation-grid {
+  .foundation-grid,
+  .model-command-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1145,6 +1268,7 @@
   }
 
   .install-section,
+  .model-section,
   .archive-section,
   .about-section,
   .writings-section {

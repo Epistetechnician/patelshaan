@@ -7,7 +7,7 @@ const installOptions = [
     label: 'cargo',
     title: 'Install from the repo',
     command: 'cargo install --git https://github.com/Epistetechnician/spatel-cv.git --bin spatel',
-    note: 'Best developer-friendly path and the fastest way to install from source.',
+    note: 'Best developer-friendly path and the fastest way to install the TUI plus personal Q&A stack from source.',
   },
   {
     label: 'curl',
@@ -20,6 +20,56 @@ const installOptions = [
     title: 'Download latest release',
     command: 'gh release download --repo Epistetechnician/spatel-cv --pattern "spatel-*"',
     note: 'Useful for power users who want the latest binary directly.',
+  },
+]
+
+const modelCommands = [
+  {
+    label: 'build',
+    title: 'Create the local persona model',
+    command: 'spatel --build-pico-model',
+    note: 'Builds `shaanpatel-cv-pico` on top of a small local `qwen2.5:0.5b` base through Ollama.',
+  },
+  {
+    label: 'ask',
+    title: 'Ask one grounded question',
+    command: 'spatel --ask "What are you working on right now?"',
+    note: 'Answers with retrieved context, then uses the local model when it exists.',
+  },
+  {
+    label: 'chat',
+    title: 'Open the interactive shell',
+    command: 'spatel --chat',
+    note: 'Runs a conversational CLI for experience, worldview, and current focus questions.',
+  },
+  {
+    label: 'fallback',
+    title: 'Force the offline corpus path',
+    command: 'spatel --ask "How do you think about public goods?" --offline-only',
+    note: 'Skips Ollama entirely and synthesizes from the embedded Shaan corpus.',
+  },
+]
+
+const modelHighlights = [
+  {
+    eyebrow: 'Grounded corpus',
+    title: 'CV plus worldview, not vibes',
+    body: 'The answer engine is fed by resume entries, personal notes, and essay-grounded worldview summaries so the output stays tied to actual experience.',
+  },
+  {
+    eyebrow: 'Tiny runtime',
+    title: 'Built around a small local base',
+    body: 'The production path uses a tiny `qwen2.5:0.5b` Ollama base and creates a personalized `shaanpatel-cv-pico` derivative.',
+  },
+  {
+    eyebrow: 'Two interfaces',
+    title: 'CLI and TUI both ask back',
+    body: 'You can use `--ask` and `--chat` in the CLI or press `/` inside the TUI to open a live question prompt.',
+  },
+  {
+    eyebrow: 'Failure mode',
+    title: 'Still works when the model is absent',
+    body: 'If Ollama is unavailable, `spatel` falls back to a retrieval-first offline answer instead of failing blankly.',
   },
 ]
 
@@ -603,11 +653,11 @@ function App() {
               </h3>
 
               <div className="hero-actions">
-                <a href="#install" className="button button--solid">
-                  install me
+                <a href="#model" className="button button--solid">
+                  ask the model
                 </a>
-                <a href="#about" className="button button--ghost">
-                  about me
+                <a href="#install" className="button button--ghost">
+                  install path
                 </a>
               </div>
             </div>
@@ -618,7 +668,7 @@ function App() {
         <section className="install-section" id="install">
           <div className="section-heading">
             <p className="eyebrow">01 / terminal path</p>
-            <h2>Learn more by installing my digital CV.</h2>
+            <h2>Install the terminal version of me.</h2>
           </div>
 
           <div className="install-grid">
@@ -628,16 +678,16 @@ function App() {
                 <span />
                 <span />
               </div>
-              <pre>{`$ spatel --about
+              <pre>{`$ spatel --build-pico-model
+built shaanpatel-cv-pico........... ok
 
-booting archive.................... ok
-loading experience timeline........ ok
-mounting section navigator......... ok
-mounting links + install paths..... ok
+$ spatel --ask "What are you working on right now?"
+focused on confidential stablecoins,
+verifiable AI, TEEs, docs, and
+developer onboarding.
 
-press [h/l] to move sections
-press [j/k] to move entries
-press [enter] to open a link
+press [/] inside the TUI to ask live
+press [tab] to toggle answer history
 press [q] to quit`}</pre>
             </div>
 
@@ -654,9 +704,62 @@ press [q] to quit`}</pre>
           </div>
         </section>
 
+        <section className="model-section" id="model">
+          <div className="section-heading">
+            <p className="eyebrow">02 / personal model</p>
+            <h2>Ask the terminal version of me.</h2>
+            <p className="model-section__intro">
+              `spatel` is no longer only a browser for my CV. It now ships as a
+              grounded personal Q&amp;A surface with a local corpus, a tiny Ollama
+              model path, a chat shell, and a TUI question prompt.
+            </p>
+          </div>
+
+          <div className="model-grid">
+            <article className="model-terminal">
+              <div className="model-terminal__bar">
+                <span />
+                <span />
+                <span />
+              </div>
+              <pre>{`$ spatel --ask "How do you think about public goods?"
+Gitcoin matters to me because it turned
+caring about public goods into allocative
+power. My view now is that public-goods
+funding needs a stack: quadratic funding,
+retroactive rewards, delegated judgment,
+and long-lived support for maintenance.
+
+sources: Gitcoin and Public Goods Funding
+mode: persona model`}</pre>
+            </article>
+
+            <div className="model-stack">
+              {modelHighlights.map((item) => (
+                <article key={item.title} className="model-card">
+                  <p className="model-card__eyebrow">{item.eyebrow}</p>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="model-command-grid">
+            {modelCommands.map((item) => (
+              <article key={item.title} className="model-command">
+                <p className="model-command__label">{item.label}</p>
+                <h3>{item.title}</h3>
+                <code>{item.command}</code>
+                <p>{item.note}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="about-section" id="about">
           <div className="section-heading">
-            <p className="eyebrow">02 / foundations</p>
+            <p className="eyebrow">03 / foundations</p>
             <h2>A fuller picture of myself.</h2>
           </div>
 
@@ -767,7 +870,7 @@ press [q] to quit`}</pre>
 
         <section className="archive-section" id="archive">
           <div className="section-heading">
-            <p className="eyebrow">03 / Proof of work</p>
+            <p className="eyebrow">04 / Proof of work</p>
             <h2>Experiences that I'm proud of</h2>
           </div>
 
@@ -840,7 +943,7 @@ press [q] to quit`}</pre>
 
         <section className="writings-section" id="writings">
           <div className="section-heading">
-            <p className="eyebrow">04 / writings</p>
+            <p className="eyebrow">05 / writings</p>
             <h2>Public-goods essays and open-systems notes.</h2>
             <p className="writings-section__intro">
               These writings sit closest to how I think about public goods,

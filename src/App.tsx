@@ -667,7 +667,7 @@ function App() {
 
         <section className="about-section" id="about">
           <div className="section-heading">
-            <p className="eyebrow">03 / foundations</p>
+            <p className="eyebrow">01 / foundations</p>
             <h2>A fuller picture of myself.</h2>
           </div>
 
@@ -778,7 +778,7 @@ function App() {
 
         <section className="archive-section" id="archive">
           <div className="section-heading">
-            <p className="eyebrow">04 / Proof of work</p>
+            <p className="eyebrow">02 / Proof of work</p>
             <h2>Experiences that I'm proud of</h2>
           </div>
 
@@ -851,7 +851,7 @@ function App() {
 
         <section className="writings-section" id="writings">
           <div className="section-heading">
-            <p className="eyebrow">05 / writings</p>
+            <p className="eyebrow">03 / writings</p>
             <h2>Public-goods essays and open-systems notes.</h2>
             <p className="writings-section__intro">
               These writings sit closest to how I think about public goods,
@@ -881,7 +881,7 @@ function App() {
 
         <section className="install-section" id="install">
           <div className="section-heading">
-            <p className="eyebrow">01 / terminal path</p>
+            <p className="eyebrow">04 / terminal path</p>
             <h2>Install the terminal version of me.</h2>
           </div>
 
@@ -920,7 +920,7 @@ press [q] to quit`}</pre>
 
         <section className="model-section" id="model">
           <div className="section-heading">
-            <p className="eyebrow">02 / personal model</p>
+            <p className="eyebrow">05 / personal model</p>
             <h2>Ask the terminal version of me.</h2>
             <p className="model-section__intro">
               `spatel` is no longer only a browser for my CV. It now ships as a

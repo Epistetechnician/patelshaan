@@ -510,10 +510,26 @@ export default function LocalVideo2Ascii({
   )
 
   return (
-    <div className={`video-to-ascii h-full w-full ${className}`.trim()}>
+    <div
+      className={`video-to-ascii ${className}`.trim()}
+      style={{
+        width: '100%',
+        height: '100%',
+        minHeight: 0,
+      }}
+    >
       <div
         ref={containerRef}
-        className="relative h-full w-full cursor-pointer select-none overflow-hidden rounded bg-black"
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          minHeight: 0,
+          overflow: 'hidden',
+          background: '#000',
+          userSelect: 'none',
+          cursor: enableSpacebarToggle ? 'pointer' : 'default',
+        }}
         tabIndex={enableSpacebarToggle ? 0 : -1}
         onKeyDown={handleKeyDown}
       >

@@ -61,36 +61,6 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
 
-function getContainRect(
-  containerWidth: number,
-  containerHeight: number,
-  sourceWidth: number,
-  sourceHeight: number,
-) {
-  const containerAspect = containerWidth / containerHeight
-  const sourceAspect = sourceWidth / sourceHeight
-
-  if (sourceAspect > containerAspect) {
-    const width = containerWidth
-    const height = width / sourceAspect
-    return {
-      width,
-      height,
-      offsetX: 0,
-      offsetY: (containerHeight - height) / 2,
-    }
-  }
-
-  const height = containerHeight
-  const width = height * sourceAspect
-  return {
-    width,
-    height,
-    offsetX: (containerWidth - width) / 2,
-    offsetY: 0,
-  }
-}
-
 function normalizeSegments(
   playSegments: VideoToAsciiProps['playSegments'],
   loopStart: number,
@@ -310,9 +280,6 @@ export default function LocalVideo2Ascii({
     const width = Math.max(1, container.clientWidth)
     const height = Math.max(1, container.clientHeight)
     const isCompactViewport = width <= 768
-    const renderRect = getContainRect(width, height, video.videoWidth, video.videoHeight)
-    const renderWidth = Math.max(1, renderRect.width)
-    const renderHeight = Math.max(1, renderRect.height)
     const dpr = Math.min(
       window.devicePixelRatio || 1,
       isCompactViewport ? 1.5 : OUTPUT_DPR_LIMIT,
@@ -333,23 +300,24 @@ export default function LocalVideo2Ascii({
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, width, height)
     ctx.imageSmoothingEnabled = true
-    ctx.fillStyle = '#000'
-    ctx.fillRect(0, 0, width, height)
 
     if (blend > 0) {
       ctx.save()
       ctx.globalAlpha = clamp(blend / 100, 0, 1)
-      ctx.drawImage(video, renderRect.offsetX, renderRect.offsetY, renderWidth, renderHeight)
+      ctx.drawImage(video, 0, 0, width, height)
       ctx.restore()
+    } else {
+      ctx.fillStyle = '#000'
+      ctx.fillRect(0, 0, width, height)
     }
 
-    const minCharacterWidth = isCompactViewport ? 6.8 : 4.8
-    const maxColumnsForViewport = Math.max(24, Math.floor(renderWidth / minCharacterWidth))
+    const minCharacterWidth = isCompactViewport ? 6 : 4.8
+    const maxColumnsForViewport = Math.max(24, Math.floor(width / minCharacterWidth))
     const cols = clamp(numColumns ?? maxColumnsForViewport, 24, maxColumnsForViewport)
-    const estimatedFontSize = renderWidth / (cols * CHAR_WIDTH_RATIO)
-    const rows = Math.max(1, Math.ceil(renderHeight / estimatedFontSize))
-    const charWidth = renderWidth / cols
-    const cellHeight = renderHeight / rows
+    const estimatedFontSize = width / (cols * CHAR_WIDTH_RATIO)
+    const rows = Math.max(1, Math.ceil(height / estimatedFontSize))
+    const charWidth = width / cols
+    const cellHeight = height / rows
     const fontSize = cellHeight
 
     if (!sampleCanvasRef.current) {
@@ -406,8 +374,8 @@ export default function LocalVideo2Ascii({
 
         const charIndex = Math.min(chars.length - 1, Math.floor(luminance * (chars.length - 1)))
         const char = chars[charIndex] || ' '
-        const drawX = renderRect.offsetX + x * charWidth
-        const drawY = renderRect.offsetY + y * cellHeight
+        const drawX = x * charWidth
+        const drawY = y * cellHeight
 
         if (highlightStrength > 0) {
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${highlightStrength * 0.45})`
@@ -479,24 +447,10 @@ export default function LocalVideo2Ascii({
     const video = videoRef.current
     if (!video) return
 
-    const attemptPlay = () => {
-      if (!shouldLoadVideo || !shouldPlay) {
-        return
-      }
-
-      video.muted = true
-      video.defaultMuted = true
-      video.playsInline = true
-      video.setAttribute('muted', '')
-      video.setAttribute('playsinline', '')
-      video.setAttribute('webkit-playsinline', 'true')
-      void video.play().catch(() => undefined)
-    }
-
     const handleReady = () => {
       setIsReady(true)
       if (autoPlay || shouldPlay) {
-        attemptPlay()
+        void video.play().catch(() => undefined)
       }
     }
 
@@ -504,19 +458,11 @@ export default function LocalVideo2Ascii({
       setIsReady(false)
     }
 
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        attemptPlay()
-      }
-    }
-
     video.addEventListener('loadeddata', handleReady)
     video.addEventListener('loadedmetadata', handleReady)
     video.addEventListener('canplay', handleReady)
     video.addEventListener('canplaythrough', handleReady)
     video.addEventListener('waiting', handleWaiting)
-    document.addEventListener('visibilitychange', handleVisibility)
-    window.addEventListener('pageshow', attemptPlay)
 
     return () => {
       video.removeEventListener('loadeddata', handleReady)
@@ -524,8 +470,6 @@ export default function LocalVideo2Ascii({
       video.removeEventListener('canplay', handleReady)
       video.removeEventListener('canplaythrough', handleReady)
       video.removeEventListener('waiting', handleWaiting)
-      document.removeEventListener('visibilitychange', handleVisibility)
-      window.removeEventListener('pageshow', attemptPlay)
     }
   }, [autoPlay, shouldPlay, shouldLoadVideo])
 
@@ -606,7 +550,7 @@ export default function LocalVideo2Ascii({
             inset: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'contain',
+            objectFit: 'cover',
             opacity: hasRenderedFrame ? 0 : 1,
             pointerEvents: 'none',
             transition: 'opacity 160ms ease',

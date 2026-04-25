@@ -436,21 +436,23 @@ function StoryDetails({
 function ExperienceMedia({
   title,
   video,
-  isMobileMedia,
 }: {
   title: string
   video: ExperienceVideo
-  isMobileMedia: boolean
 }) {
   if (video.renderMode === 'video') {
     return (
       <div className="experience-media">
         <div className="experience-media__video-stack" aria-label={`${title} related video`}>
           <div className="experience-media__video-shell">
-            <InlineAutoplayVideo
-              key={`${title}-${video.src}-${isMobileMedia ? 'mobile' : 'desktop'}`}
+            <video
+              key={`${title}-${video.src}`}
               className="experience-media__video"
               src={video.src}
+              autoPlay
+              muted
+              loop
+              playsInline
               preload="auto"
             />
           </div>
@@ -469,31 +471,22 @@ function ExperienceMedia({
         </div>
 
         <div className="experience-media__body">
-          {isMobileMedia ? (
-            <InlineAutoplayVideo
-              key={`${title}-${video.src}-mobile-native`}
-              src={video.src}
-              className="experience-media__video experience-media__video--ascii-fallback"
-              preload="auto"
-            />
-          ) : (
-            <Video2Ascii
-              key={`${title}-${video.src}`}
-              src={video.src}
-              numColumns={video.numColumns}
-              colored={true}
-              blend={video.blend}
-              highlight={video.highlight}
-              brightness={video.brightness}
-              audioEffect={0}
-              enableMouse={false}
-              enableRipple={false}
-              charset="detailed"
-              isPlaying={true}
-              autoPlay={true}
-              className="experience-media__ascii"
-            />
-          )}
+          <Video2Ascii
+            key={`${title}-${video.src}`}
+            src={video.src}
+            numColumns={video.numColumns}
+            colored={true}
+            blend={video.blend}
+            highlight={video.highlight}
+            brightness={video.brightness}
+            audioEffect={0}
+            enableMouse={false}
+            enableRipple={false}
+            charset="detailed"
+            isPlaying={true}
+            autoPlay={true}
+            className="experience-media__ascii"
+          />
           <div className="experience-media__overlay">
             <p>{title}</p>
             <p>{video.caption}</p>
@@ -612,114 +605,10 @@ function SocialIcon({ id }: { id: SocialLink['id'] }) {
   }
 }
 
-function useIsMobileMedia() {
-  const [isMobileMedia, setIsMobileMedia] = useState(false)
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-      return
-    }
-
-    const mediaQuery = window.matchMedia('(max-width: 820px), (hover: none) and (pointer: coarse)')
-    const update = () => setIsMobileMedia(mediaQuery.matches)
-
-    update()
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', update)
-      return () => mediaQuery.removeEventListener('change', update)
-    }
-
-    mediaQuery.addListener(update)
-    return () => mediaQuery.removeListener(update)
-  }, [])
-
-  return isMobileMedia
-}
-
-function InlineAutoplayVideo({
-  src,
-  className,
-  loop = true,
-  preload = 'metadata',
-}: {
-  src: string
-  className: string
-  loop?: boolean
-  preload?: 'none' | 'metadata' | 'auto'
-}) {
-  const videoRef = useRef<HTMLVideoElement | null>(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) {
-      return
-    }
-
-    let cancelled = false
-
-    const tryPlay = () => {
-      if (cancelled) {
-        return
-      }
-
-      video.muted = true
-      video.defaultMuted = true
-      video.playsInline = true
-      video.setAttribute('muted', '')
-      video.setAttribute('playsinline', '')
-      video.setAttribute('webkit-playsinline', 'true')
-
-      const playAttempt = video.play()
-      if (playAttempt && typeof playAttempt.catch === 'function') {
-        void playAttempt.catch(() => undefined)
-      }
-    }
-
-    const handleCanPlay = () => {
-      tryPlay()
-    }
-
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        tryPlay()
-      }
-    }
-
-    tryPlay()
-    video.addEventListener('loadedmetadata', handleCanPlay)
-    video.addEventListener('canplay', handleCanPlay)
-    document.addEventListener('visibilitychange', handleVisibility)
-
-    return () => {
-      cancelled = true
-      video.removeEventListener('loadedmetadata', handleCanPlay)
-      video.removeEventListener('canplay', handleCanPlay)
-      document.removeEventListener('visibilitychange', handleVisibility)
-    }
-  }, [src])
-
-  return (
-    <video
-      ref={videoRef}
-      className={className}
-      src={src}
-      autoPlay
-      muted
-      loop={loop}
-      playsInline
-      preload={preload}
-      disablePictureInPicture
-      aria-hidden="true"
-    />
-  )
-}
-
 function App() {
   const heroVideoSrc = '/hero-blackhole-20s.mp4'
   const aboutVideoSrc = '/about-flower.mp4'
   const [activeWriting, setActiveWriting] = useState<WritingEntry | null>(null)
-  const isMobileMedia = useIsMobileMedia()
 
   return (
     <div className="page-shell">
@@ -728,35 +617,27 @@ function App() {
       <main className="page-main">
         <section className="hero-panel">
           <div className="hero-panel__ascii-background" aria-hidden="true">
-            {isMobileMedia ? (
-              <InlineAutoplayVideo
-                src={heroVideoSrc}
-                className="hero-panel__native-video"
-                preload="auto"
-              />
-            ) : (
-              <Video2Ascii
-                key={`hero-${heroVideoSrc}`}
-                src={heroVideoSrc}
-                numColumns={176}
-                colored={true}
-                blend={14}
-                highlight={0}
-                brightness={1.08}
-                audioEffect={0}
-                enableMouse={false}
-                enableRipple={false}
-                charset="detailed"
-                isPlaying={true}
-                autoPlay={true}
-                priority={true}
-                playSegments={[
-                  { start: 0, end: 6 },
-                  { start: 12, end: 20 },
-                ]}
-                className="hero-panel__ascii-surface"
-              />
-            )}
+            <Video2Ascii
+              key={`hero-${heroVideoSrc}`}
+              src={heroVideoSrc}
+              numColumns={176}
+              colored={true}
+              blend={14}
+              highlight={0}
+              brightness={1.08}
+              audioEffect={0}
+              enableMouse={false}
+              enableRipple={false}
+              charset="detailed"
+              isPlaying={true}
+              autoPlay={true}
+              priority={true}
+              playSegments={[
+                { start: 0, end: 6 },
+                { start: 12, end: 20 },
+              ]}
+              className="hero-panel__ascii-surface"
+            />
           </div>
           <div className="hero-panel__background-tint" />
 
@@ -793,33 +674,25 @@ function App() {
           <div className="about-showcase">
             <div className="media-frame">
               <div className="media-frame__body">
-                {isMobileMedia ? (
-                  <InlineAutoplayVideo
-                    src={aboutVideoSrc}
-                    className="video-ascii video-ascii--native"
-                    preload="auto"
-                  />
-                ) : (
-                  <Video2Ascii
-                    key={`about-${aboutVideoSrc}`}
-                    src={aboutVideoSrc}
-                    numColumns={100}
-                    colored={true}
-                    blend={8}
-                    highlight={18}
-                    brightness={1.15}
-                    audioEffect={0}
-                    enableMouse={true}
-                    enableRipple={true}
-                    charset="detailed"
-                    isPlaying={true}
-                    autoPlay={true}
-                    enableSpacebarToggle={true}
-                    priority={true}
-                    playOnlyWhenVisible={false}
-                    className="video-ascii"
-                  />
-                )}
+                <Video2Ascii
+                  key={`about-${aboutVideoSrc}`}
+                  src={aboutVideoSrc}
+                  numColumns={100}
+                  colored={true}
+                  blend={8}
+                  highlight={18}
+                  brightness={1.15}
+                  audioEffect={0}
+                  enableMouse={true}
+                  enableRipple={true}
+                  charset="detailed"
+                  isPlaying={true}
+                  autoPlay={true}
+                  enableSpacebarToggle={true}
+                  priority={true}
+                  playOnlyWhenVisible={false}
+                  className="video-ascii"
+                />
                 <article className="about-copy-card about-copy-card--overlay about-copy-card--desktop">
                   <p className="eyebrow">about me / beyond the cv</p>
                   <h3>Research-minded builder with an eye for beauty in systems and design.</h3>
@@ -920,14 +793,13 @@ function App() {
           <div className="experience-stack">
             {experienceCards.map((card) => {
               const hasForegroundMedia = card.video.renderMode === 'video'
-              const showBackgroundAscii = Boolean(card.secondaryVideo) && !isMobileMedia
 
               return (
                 <article
-                  className={`experience-card${showBackgroundAscii ? ' experience-card--with-background' : ''}${hasForegroundMedia ? '' : ' experience-card--copy-only'}`}
+                  className={`experience-card${card.secondaryVideo ? ' experience-card--with-background' : ''}${hasForegroundMedia ? '' : ' experience-card--copy-only'}`}
                   key={card.title}
                 >
-                {showBackgroundAscii && card.secondaryVideo ? (
+                {card.secondaryVideo ? (
                   <div className="experience-card__background" aria-hidden="true">
                     <Video2Ascii
                       key={`${card.title}-${card.secondaryVideo.src}-background`}
@@ -977,7 +849,6 @@ function App() {
                   <ExperienceMedia
                     title={card.title}
                     video={card.video}
-                    isMobileMedia={isMobileMedia}
                   />
                 ) : null}
                 </article>

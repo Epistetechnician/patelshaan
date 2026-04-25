@@ -87,18 +87,13 @@
 .hero-panel__ascii-surface,
 .hero-panel__ascii-surface > div,
 .hero-panel__ascii-surface canvas,
-.hero-panel__ascii-surface video,
-.hero-panel__native-video {
+.hero-panel__ascii-surface video {
   width: 100%;
   height: 100%;
 }
 
 .hero-panel__ascii-surface {
   transform: none;
-}
-
-.hero-panel__native-video {
-  object-fit: cover;
 }
 
 .hero-panel__ascii-surface .video-to-ascii {
@@ -242,10 +237,6 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
-
-.video-ascii--native {
-  object-fit: cover;
 }
 
 .video-ascii .video-to-ascii,
@@ -832,12 +823,6 @@
   background: transparent;
 }
 
-.experience-media__video--ascii-fallback {
-  height: 100%;
-  max-height: none;
-  object-fit: cover;
-}
-
 .experience-media__caption {
   margin: 0;
   width: 100%;
@@ -1333,13 +1318,6 @@
     inset: 0.75rem;
   }
 
-  .hero-panel__ascii-background,
-  .hero-panel__ascii-surface,
-  .hero-panel__ascii-surface > div,
-  .hero-panel__native-video {
-    min-height: 100%;
-  }
-
   .hero-name {
     font-size: clamp(1.35rem, 6vw, 1.8rem);
   }
@@ -1411,14 +1389,6 @@
 
   .experience-media__video {
     max-height: clamp(14rem, 78vw, 20rem);
-  }
-
-  .video-ascii--native,
-  .experience-media__video--ascii-fallback {
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    object-fit: cover;
   }
 
   .experience-media__overlay {
@@ -1599,18 +1569,6 @@
   .hero-panel__ascii-background,
   .hero-panel__background-tint {
     inset: 0.65rem;
-  }
-
-  .hero-panel {
-    min-height: 34rem;
-  }
-
-  .media-frame__body {
-    height: clamp(16rem, 92vw, 22rem);
-  }
-
-  .experience-media__body {
-    height: clamp(13rem, 82vw, 18rem);
   }
 
   .eyebrow,

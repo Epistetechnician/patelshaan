@@ -2,8 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent }
 
 const CHAR_WIDTH_RATIO = 0.6
 const OUTPUT_DPR_LIMIT = 2
+const COMPACT_OUTPUT_DPR_LIMIT = 1
 const SAMPLE_SCALE = 2
 const CONTRAST_BOOST = 1.08
+const COMPACT_TARGET_FPS = 12
+const COMPACT_MAX_COLUMNS = 56
+const COMPACT_MIN_CHARACTER_WIDTH = 8.5
 
 type VideoFrameCallback = (now: number, metadata: unknown) => void
 
@@ -137,6 +141,7 @@ export default function LocalVideo2Ascii({
   const animationFrameRef = useRef<number | null>(null)
   const videoFrameCallbackRef = useRef<number | null>(null)
   const lastVideoTimeRef = useRef(-1)
+  const lastDrawTimestampRef = useRef(0)
   const hasRenderedFrameRef = useRef(false)
   const fpsWindowRef = useRef({ lastTimestamp: 0, frames: 0 })
   const [isReady, setIsReady] = useState(false)
@@ -165,6 +170,7 @@ export default function LocalVideo2Ascii({
     setShouldLoadVideo(priority)
     setHasRenderedFrame(false)
     lastVideoTimeRef.current = -1
+    lastDrawTimestampRef.current = 0
     hasRenderedFrameRef.current = false
     fpsWindowRef.current = { lastTimestamp: 0, frames: 0 }
 
@@ -292,32 +298,44 @@ export default function LocalVideo2Ascii({
     }
   }, [segments, shouldPlay, usesLoopWindow])
 
-  const drawFrame = useCallback(() => {
+  const drawFrame = useCallback((timestamp = performance.now()) => {
     const container = containerRef.current
     const canvas = canvasRef.current
     const video = videoRef.current
     if (!container || !canvas || !video || !isReady) {
-      return
+      return false
     }
 
     if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
-      return
+      return false
     }
-
-    if (video.currentTime === lastVideoTimeRef.current) {
-      return
-    }
-    lastVideoTimeRef.current = video.currentTime
 
     const width = Math.max(1, container.clientWidth)
     const height = Math.max(1, container.clientHeight)
     const isCompactViewport = width <= 768
+    const compactFrameInterval = 1000 / COMPACT_TARGET_FPS
+
+    if (
+      isCompactViewport &&
+      hasRenderedFrameRef.current &&
+      timestamp - lastDrawTimestampRef.current < compactFrameInterval
+    ) {
+      return false
+    }
+
+    if (video.currentTime === lastVideoTimeRef.current && hasRenderedFrameRef.current) {
+      return false
+    }
+
+    lastVideoTimeRef.current = video.currentTime
+    lastDrawTimestampRef.current = timestamp
+
     const renderRect = getCoverRect(width, height, video.videoWidth, video.videoHeight)
     const renderWidth = Math.max(1, renderRect.width)
     const renderHeight = Math.max(1, renderRect.height)
     const dpr = Math.min(
       window.devicePixelRatio || 1,
-      isCompactViewport ? 1.5 : OUTPUT_DPR_LIMIT,
+      isCompactViewport ? COMPACT_OUTPUT_DPR_LIMIT : OUTPUT_DPR_LIMIT,
     )
 
     if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
@@ -352,9 +370,13 @@ export default function LocalVideo2Ascii({
       ctx.fillRect(0, 0, width, height)
     }
 
-    const minCharacterWidth = isCompactViewport ? 6 : 4.8
+    const minCharacterWidth = isCompactViewport ? COMPACT_MIN_CHARACTER_WIDTH : 4.8
     const maxColumnsForViewport = Math.max(24, Math.floor(renderWidth / minCharacterWidth))
-    const cols = clamp(numColumns ?? maxColumnsForViewport, 24, maxColumnsForViewport)
+    const cols = clamp(
+      numColumns ?? maxColumnsForViewport,
+      24,
+      isCompactViewport ? Math.min(maxColumnsForViewport, COMPACT_MAX_COLUMNS) : maxColumnsForViewport,
+    )
     const estimatedFontSize = renderWidth / (cols * CHAR_WIDTH_RATIO)
     const rows = Math.max(1, Math.ceil(renderHeight / estimatedFontSize))
     const charWidth = renderWidth / cols
@@ -373,7 +395,7 @@ export default function LocalVideo2Ascii({
 
     const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true })
     if (!sampleCtx) {
-      return
+      return false
     }
 
     sampleCtx.clearRect(0, 0, sampleCols, sampleRows)
@@ -432,6 +454,8 @@ export default function LocalVideo2Ascii({
       hasRenderedFrameRef.current = true
       setHasRenderedFrame(true)
     }
+
+    return true
   }, [blend, brightness, chars, colored, highlight, isReady, numColumns])
 
   useEffect(() => {
@@ -453,14 +477,16 @@ export default function LocalVideo2Ascii({
     }
 
     const tick = (timestamp: number) => {
-      drawFrame()
-      updateFps(timestamp)
+      if (drawFrame(timestamp)) {
+        updateFps(timestamp)
+      }
       animationFrameRef.current = window.requestAnimationFrame(tick)
     }
 
     const tickVideoFrame: VideoFrameCallback = (now) => {
-      drawFrame()
-      updateFps(now)
+      if (drawFrame(now)) {
+        updateFps(now)
+      }
       if (video.requestVideoFrameCallback) {
         videoFrameCallbackRef.current = video.requestVideoFrameCallback(tickVideoFrame)
       }

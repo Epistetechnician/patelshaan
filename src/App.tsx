@@ -702,13 +702,6 @@ function App() {
                 </article>
               </div>
             </div>
-            <article className="about-copy-card about-copy-card--mobile">
-              <p className="eyebrow">about me / beyond the cv</p>
-              <h3>Research-minded builder with an eye for beauty in systems and design.</h3>
-              <h4 className="about-quote">
-                I like to think that our collective actions become notes in the opening melody of the symphony of life.
-              </h4>
-            </article>
           </div>
 
           <div className="foundation-grid">

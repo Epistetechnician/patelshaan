@@ -5,9 +5,9 @@ const OUTPUT_DPR_LIMIT = 2
 const COMPACT_OUTPUT_DPR_LIMIT = 1
 const SAMPLE_SCALE = 2
 const CONTRAST_BOOST = 1.08
-const COMPACT_TARGET_FPS = 12
-const COMPACT_MAX_COLUMNS = 56
-const COMPACT_MIN_CHARACTER_WIDTH = 8.5
+const COMPACT_TARGET_FPS = 10
+const COMPACT_MAX_COLUMNS = 42
+const COMPACT_MIN_CHARACTER_WIDTH = 9
 
 type VideoFrameCallback = (now: number, metadata: unknown) => void
 
@@ -65,7 +65,7 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
 
-function getCoverRect(
+function getCoverSourceRect(
   containerWidth: number,
   containerHeight: number,
   sourceWidth: number,
@@ -75,25 +75,23 @@ function getCoverRect(
   const sourceAspect = sourceWidth / sourceHeight
 
   if (sourceAspect > containerAspect) {
-    const height = containerHeight
-    const width = height * sourceAspect
+    const cropWidth = sourceHeight * containerAspect
 
     return {
-      width,
-      height,
-      offsetX: (containerWidth - width) / 2,
-      offsetY: 0,
+      sx: (sourceWidth - cropWidth) / 2,
+      sy: 0,
+      sw: cropWidth,
+      sh: sourceHeight,
     }
   }
 
-  const width = containerWidth
-  const height = width / sourceAspect
+  const cropHeight = sourceWidth / containerAspect
 
   return {
-    width,
-    height,
-    offsetX: 0,
-    offsetY: (containerHeight - height) / 2,
+    sx: 0,
+    sy: (sourceHeight - cropHeight) / 2,
+    sw: sourceWidth,
+    sh: cropHeight,
   }
 }
 
@@ -330,9 +328,7 @@ export default function LocalVideo2Ascii({
     lastVideoTimeRef.current = video.currentTime
     lastDrawTimestampRef.current = timestamp
 
-    const renderRect = getCoverRect(width, height, video.videoWidth, video.videoHeight)
-    const renderWidth = Math.max(1, renderRect.width)
-    const renderHeight = Math.max(1, renderRect.height)
+    const sourceRect = getCoverSourceRect(width, height, video.videoWidth, video.videoHeight)
     const dpr = Math.min(
       window.devicePixelRatio || 1,
       isCompactViewport ? COMPACT_OUTPUT_DPR_LIMIT : OUTPUT_DPR_LIMIT,
@@ -359,10 +355,14 @@ export default function LocalVideo2Ascii({
       ctx.globalAlpha = clamp(blend / 100, 0, 1)
       ctx.drawImage(
         video,
-        renderRect.offsetX,
-        renderRect.offsetY,
-        renderWidth,
-        renderHeight,
+        sourceRect.sx,
+        sourceRect.sy,
+        sourceRect.sw,
+        sourceRect.sh,
+        0,
+        0,
+        width,
+        height,
       )
       ctx.restore()
     } else {
@@ -371,16 +371,16 @@ export default function LocalVideo2Ascii({
     }
 
     const minCharacterWidth = isCompactViewport ? COMPACT_MIN_CHARACTER_WIDTH : 4.8
-    const maxColumnsForViewport = Math.max(24, Math.floor(renderWidth / minCharacterWidth))
+    const maxColumnsForViewport = Math.max(24, Math.floor(width / minCharacterWidth))
     const cols = clamp(
       numColumns ?? maxColumnsForViewport,
       24,
       isCompactViewport ? Math.min(maxColumnsForViewport, COMPACT_MAX_COLUMNS) : maxColumnsForViewport,
     )
-    const estimatedFontSize = renderWidth / (cols * CHAR_WIDTH_RATIO)
-    const rows = Math.max(1, Math.ceil(renderHeight / estimatedFontSize))
-    const charWidth = renderWidth / cols
-    const cellHeight = renderHeight / rows
+    const estimatedFontSize = width / (cols * CHAR_WIDTH_RATIO)
+    const rows = Math.max(1, Math.ceil(height / estimatedFontSize))
+    const charWidth = width / cols
+    const cellHeight = height / rows
     const fontSize = cellHeight
 
     if (!sampleCanvasRef.current) {
@@ -400,7 +400,17 @@ export default function LocalVideo2Ascii({
 
     sampleCtx.clearRect(0, 0, sampleCols, sampleRows)
     sampleCtx.imageSmoothingEnabled = true
-    sampleCtx.drawImage(video, 0, 0, sampleCols, sampleRows)
+    sampleCtx.drawImage(
+      video,
+      sourceRect.sx,
+      sourceRect.sy,
+      sourceRect.sw,
+      sourceRect.sh,
+      0,
+      0,
+      sampleCols,
+      sampleRows,
+    )
     const imageData = sampleCtx.getImageData(0, 0, sampleCols, sampleRows).data
 
     ctx.font = `${fontSize * 0.94}px ui-monospace, SFMono-Regular, Menlo, Monaco, monospace`
@@ -437,8 +447,8 @@ export default function LocalVideo2Ascii({
 
         const charIndex = Math.min(chars.length - 1, Math.floor(luminance * (chars.length - 1)))
         const char = chars[charIndex] || ' '
-        const drawX = renderRect.offsetX + x * charWidth
-        const drawY = renderRect.offsetY + y * cellHeight
+        const drawX = x * charWidth
+        const drawY = y * cellHeight
 
         if (highlightStrength > 0) {
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${highlightStrength * 0.45})`

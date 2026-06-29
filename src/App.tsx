@@ -245,7 +245,7 @@ const experienceCards: ExperienceCard[] = [
 ]
 
 const foundations = [
-  'Economics and Data Science at Columbia University, with research spanning from sustainable development to environmental impact assessments and more. My work sits between technical and natural systems, bio-memetic antifragile design, and post-capitalist musings. ',
+  'Economics and Data Science, with research spanning from sustainable development to environmental impact assessments and more. My work sits between technical and natural systems, bio-memetic antifragile design, and post-capitalist musings. ',
   'I like products and protocols that make complicated environments feel legible, navigable, and alive. I found a passion for sacred economics, secure + verifiable AI, governance design, decentralized networks, public goods, and more.',
   'Interests that keep me grounded: permaculture, DIY engineering, running, biking, cooking, yoga, soccer, chess, Go, and Catan.',
 ]
@@ -689,8 +689,6 @@ function App() {
                   isPlaying={true}
                   autoPlay={true}
                   enableSpacebarToggle={true}
-                  priority={true}
-                  playOnlyWhenVisible={false}
                   className="video-ascii"
                 />
                 <article className="about-copy-card about-copy-card--overlay about-copy-card--desktop">

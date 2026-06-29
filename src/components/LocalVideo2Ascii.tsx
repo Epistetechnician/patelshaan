@@ -65,6 +65,23 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
 
+function isCompactDeviceEnvironment() {
+  if (typeof navigator === 'undefined') {
+    return false
+  }
+
+  const connection = 'connection' in navigator ? (navigator.connection as { saveData?: boolean } | undefined) : undefined
+  const deviceMemory = 'deviceMemory' in navigator ? (navigator.deviceMemory as number | undefined) : undefined
+  const hardwareConcurrency =
+    'hardwareConcurrency' in navigator ? navigator.hardwareConcurrency : undefined
+
+  return Boolean(
+    connection?.saveData ||
+      (deviceMemory !== undefined && deviceMemory <= 4) ||
+      (hardwareConcurrency !== undefined && hardwareConcurrency <= 6),
+  )
+}
+
 function getCoverSourceRect(
   containerWidth: number,
   containerHeight: number,
@@ -92,6 +109,38 @@ function getCoverSourceRect(
     sy: (sourceHeight - cropHeight) / 2,
     sw: sourceWidth,
     sh: cropHeight,
+  }
+}
+
+function getContainDestinationRect(
+  containerWidth: number,
+  containerHeight: number,
+  sourceWidth: number,
+  sourceHeight: number,
+) {
+  const containerAspect = containerWidth / containerHeight
+  const sourceAspect = sourceWidth / sourceHeight
+
+  if (sourceAspect > containerAspect) {
+    const width = containerWidth
+    const height = width / sourceAspect
+
+    return {
+      dx: 0,
+      dy: (containerHeight - height) / 2,
+      dw: width,
+      dh: height,
+    }
+  }
+
+  const height = containerHeight
+  const width = height * sourceAspect
+
+  return {
+    dx: (containerWidth - width) / 2,
+    dy: 0,
+    dw: width,
+    dh: height,
   }
 }
 
@@ -150,7 +199,9 @@ export default function LocalVideo2Ascii({
   const [hasRenderedFrame, setHasRenderedFrame] = useState(false)
 
   const chars = useMemo(() => [...ASCII_CHARSETS[charset].chars], [charset])
-  const shouldPlay = localPlaying && (!playOnlyWhenVisible || isVisible)
+  const compactDeviceRef = useRef(isCompactDeviceEnvironment())
+  const shouldGatePlaybackByVisibility = playOnlyWhenVisible || compactDeviceRef.current
+  const shouldPlay = localPlaying && (!shouldGatePlaybackByVisibility || isVisible)
   const segments = useMemo(
     () => normalizeSegments(playSegments, loopStart, loopEnd),
     [loopEnd, loopStart, playSegments],
@@ -186,7 +237,7 @@ export default function LocalVideo2Ascii({
       return
     }
 
-    if (!playOnlyWhenVisible) {
+    if (!shouldGatePlaybackByVisibility) {
       setShouldLoadVideo(true)
       setIsVisible(true)
       return
@@ -220,7 +271,7 @@ export default function LocalVideo2Ascii({
       loadObserver.disconnect()
       visibilityObserver.disconnect()
     }
-  }, [playOnlyWhenVisible, priority])
+  }, [priority, shouldGatePlaybackByVisibility])
 
   useEffect(() => {
     const video = videoRef.current
@@ -310,7 +361,7 @@ export default function LocalVideo2Ascii({
 
     const width = Math.max(1, container.clientWidth)
     const height = Math.max(1, container.clientHeight)
-    const isCompactViewport = width <= 768
+    const isCompactViewport = width <= 768 || compactDeviceRef.current
     const compactFrameInterval = 1000 / COMPACT_TARGET_FPS
 
     if (
@@ -328,7 +379,17 @@ export default function LocalVideo2Ascii({
     lastVideoTimeRef.current = video.currentTime
     lastDrawTimestampRef.current = timestamp
 
+    const useContainFit = isCompactViewport
     const sourceRect = getCoverSourceRect(width, height, video.videoWidth, video.videoHeight)
+    const containRect = getContainDestinationRect(width, height, video.videoWidth, video.videoHeight)
+    const drawRect = useContainFit
+      ? containRect
+      : {
+          dx: 0,
+          dy: 0,
+          dw: width,
+          dh: height,
+        }
     const dpr = Math.min(
       window.devicePixelRatio || 1,
       isCompactViewport ? COMPACT_OUTPUT_DPR_LIMIT : OUTPUT_DPR_LIMIT,
@@ -353,17 +414,31 @@ export default function LocalVideo2Ascii({
     if (blend > 0) {
       ctx.save()
       ctx.globalAlpha = clamp(blend / 100, 0, 1)
-      ctx.drawImage(
-        video,
-        sourceRect.sx,
-        sourceRect.sy,
-        sourceRect.sw,
-        sourceRect.sh,
-        0,
-        0,
-        width,
-        height,
-      )
+      if (useContainFit) {
+        ctx.drawImage(
+          video,
+          0,
+          0,
+          video.videoWidth,
+          video.videoHeight,
+          drawRect.dx,
+          drawRect.dy,
+          drawRect.dw,
+          drawRect.dh,
+        )
+      } else {
+        ctx.drawImage(
+          video,
+          sourceRect.sx,
+          sourceRect.sy,
+          sourceRect.sw,
+          sourceRect.sh,
+          0,
+          0,
+          width,
+          height,
+        )
+      }
       ctx.restore()
     } else {
       ctx.fillStyle = '#000'
@@ -371,16 +446,16 @@ export default function LocalVideo2Ascii({
     }
 
     const minCharacterWidth = isCompactViewport ? COMPACT_MIN_CHARACTER_WIDTH : 4.8
-    const maxColumnsForViewport = Math.max(24, Math.floor(width / minCharacterWidth))
+    const maxColumnsForViewport = Math.max(24, Math.floor(drawRect.dw / minCharacterWidth))
     const cols = clamp(
       numColumns ?? maxColumnsForViewport,
       24,
       isCompactViewport ? Math.min(maxColumnsForViewport, COMPACT_MAX_COLUMNS) : maxColumnsForViewport,
     )
-    const estimatedFontSize = width / (cols * CHAR_WIDTH_RATIO)
-    const rows = Math.max(1, Math.ceil(height / estimatedFontSize))
-    const charWidth = width / cols
-    const cellHeight = height / rows
+    const estimatedFontSize = drawRect.dw / (cols * CHAR_WIDTH_RATIO)
+    const rows = Math.max(1, Math.ceil(drawRect.dh / estimatedFontSize))
+    const charWidth = drawRect.dw / cols
+    const cellHeight = drawRect.dh / rows
     const fontSize = cellHeight
 
     if (!sampleCanvasRef.current) {
@@ -400,17 +475,31 @@ export default function LocalVideo2Ascii({
 
     sampleCtx.clearRect(0, 0, sampleCols, sampleRows)
     sampleCtx.imageSmoothingEnabled = true
-    sampleCtx.drawImage(
-      video,
-      sourceRect.sx,
-      sourceRect.sy,
-      sourceRect.sw,
-      sourceRect.sh,
-      0,
-      0,
-      sampleCols,
-      sampleRows,
-    )
+    if (useContainFit) {
+      sampleCtx.drawImage(
+        video,
+        0,
+        0,
+        video.videoWidth,
+        video.videoHeight,
+        0,
+        0,
+        sampleCols,
+        sampleRows,
+      )
+    } else {
+      sampleCtx.drawImage(
+        video,
+        sourceRect.sx,
+        sourceRect.sy,
+        sourceRect.sw,
+        sourceRect.sh,
+        0,
+        0,
+        sampleCols,
+        sampleRows,
+      )
+    }
     const imageData = sampleCtx.getImageData(0, 0, sampleCols, sampleRows).data
 
     ctx.font = `${fontSize * 0.94}px ui-monospace, SFMono-Regular, Menlo, Monaco, monospace`
@@ -447,8 +536,8 @@ export default function LocalVideo2Ascii({
 
         const charIndex = Math.min(chars.length - 1, Math.floor(luminance * (chars.length - 1)))
         const char = chars[charIndex] || ' '
-        const drawX = x * charWidth
-        const drawY = y * cellHeight
+        const drawX = drawRect.dx + x * charWidth
+        const drawY = drawRect.dy + y * cellHeight
 
         if (highlightStrength > 0) {
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${highlightStrength * 0.45})`
@@ -471,6 +560,9 @@ export default function LocalVideo2Ascii({
   useEffect(() => {
     const video = videoRef.current as VideoWithFrameCallback | null
     if (!video || !shouldPlay) return
+    const container = containerRef.current
+    const isCompactViewport =
+      (container ? container.clientWidth <= 768 : false) || compactDeviceRef.current
 
     const updateFps = (timestamp: number) => {
       const state = fpsWindowRef.current
@@ -502,7 +594,7 @@ export default function LocalVideo2Ascii({
       }
     }
 
-    if (video.requestVideoFrameCallback) {
+    if (!isCompactViewport && video.requestVideoFrameCallback) {
       videoFrameCallbackRef.current = video.requestVideoFrameCallback(tickVideoFrame)
     } else {
       animationFrameRef.current = window.requestAnimationFrame(tick)

@@ -5,9 +5,9 @@ const OUTPUT_DPR_LIMIT = 2
 const COMPACT_OUTPUT_DPR_LIMIT = 1
 const SAMPLE_SCALE = 2
 const CONTRAST_BOOST = 1.08
-const COMPACT_TARGET_FPS = 10
-const COMPACT_MAX_COLUMNS = 42
-const COMPACT_MIN_CHARACTER_WIDTH = 9
+const COMPACT_TARGET_FPS = 8
+const COMPACT_MAX_COLUMNS = 30
+const COMPACT_MIN_CHARACTER_WIDTH = 10
 
 type VideoFrameCallback = (now: number, metadata: unknown) => void
 
@@ -148,6 +148,7 @@ export default function LocalVideo2Ascii({
   const [isVisible, setIsVisible] = useState(priority)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(priority)
   const [hasRenderedFrame, setHasRenderedFrame] = useState(false)
+  const [isBuffering, setIsBuffering] = useState(false)
 
   const chars = useMemo(() => [...ASCII_CHARSETS[charset].chars], [charset])
   const shouldPlay = localPlaying && (!playOnlyWhenVisible || isVisible)
@@ -167,6 +168,7 @@ export default function LocalVideo2Ascii({
     setIsVisible(priority)
     setShouldLoadVideo(priority)
     setHasRenderedFrame(false)
+    setIsBuffering(false)
     lastVideoTimeRef.current = -1
     lastDrawTimestampRef.current = 0
     hasRenderedFrameRef.current = false
@@ -187,6 +189,12 @@ export default function LocalVideo2Ascii({
     }
 
     if (!playOnlyWhenVisible) {
+      setShouldLoadVideo(true)
+      setIsVisible(true)
+      return
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
       setShouldLoadVideo(true)
       setIsVisible(true)
       return
@@ -464,6 +472,7 @@ export default function LocalVideo2Ascii({
       hasRenderedFrameRef.current = true
       setHasRenderedFrame(true)
     }
+    setIsBuffering(false)
 
     return true
   }, [blend, brightness, chars, colored, highlight, isReady, numColumns])
@@ -547,6 +556,10 @@ export default function LocalVideo2Ascii({
 
     const handleWaiting = () => {
       setIsReady(false)
+      setIsBuffering(true)
+      setHasRenderedFrame(false)
+      hasRenderedFrameRef.current = false
+      lastVideoTimeRef.current = -1
     }
 
     const handleVisibility = () => {
@@ -593,6 +606,15 @@ export default function LocalVideo2Ascii({
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
+
+    if (typeof ResizeObserver === 'undefined') {
+      const handleResize = () => {
+        lastVideoTimeRef.current = -1
+      }
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+
     const observer = new ResizeObserver(() => {
       lastVideoTimeRef.current = -1
     })
@@ -665,6 +687,8 @@ export default function LocalVideo2Ascii({
             width: '100%',
             height: '100%',
             display: 'block',
+            opacity: isBuffering ? 0 : 1,
+            transition: 'opacity 160ms ease',
           }}
         />
         {showStats ? (

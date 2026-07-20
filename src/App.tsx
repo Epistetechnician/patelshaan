@@ -116,6 +116,16 @@ type SocialLink = {
   href: string
 }
 
+type SystemsProject = {
+  index: string
+  title: string
+  discipline: string
+  summary: string
+  boundary: string
+  access: string
+  links?: ExperienceLink[]
+}
+
 const experienceCards: ExperienceCard[] = [
   {
     eyebrow: '2025-2026',
@@ -274,6 +284,61 @@ const socialLinks: SocialLink[] = [
     id: 'telegram',
     label: 'Telegram',
     href: 'https://t.me/epistetechnician',
+  },
+]
+
+const systemsProjects: SystemsProject[] = [
+  {
+    index: '01',
+    title: 'Composed ZK Benchmark OS',
+    discipline: 'Semantics, benchmarks, and evidence',
+    summary:
+      'A semantics-first benchmark architecture for generating control-flow workloads, adversarial variants, replayable backend artifacts, and separately scored evidence.',
+    boundary:
+      'The work is deliberately evidence-bounded: local replay and architecture are not presented as measured benchmark performance or accepted external proof.',
+    access: 'Private workstream / source access is restricted',
+  },
+  {
+    index: '02',
+    title: 'Orbital Mesh',
+    discipline: 'Bounded operator control',
+    summary:
+      'A policy-guided operator control plane for infrastructure remediation and model-lifecycle work, built around explicit gates, steering, auditability, and run memory.',
+    boundary:
+      'A passing local packet is not the same as repeatable deployment readiness; operator authority remains intentionally bounded.',
+    access: 'Private workstream / source access is restricted',
+  },
+  {
+    index: '03',
+    title: 'Recoverable Ghost States',
+    discipline: 'Recoverability and proof libraries',
+    summary:
+      'A proof and evidence library for testing whether adaptive systems can recover state, preserve boundaries, and produce inspectable validation artifacts.',
+    boundary:
+      'It does not claim a hosted production runtime, production authority, or live performance from local validation alone.',
+    access: 'Private workstream / source access is restricted',
+  },
+  {
+    index: '04',
+    title: 'ECDSA.fail',
+    discipline: 'Reversible quantum-circuit research',
+    summary:
+      'Constrained research on reversible secp256k1 point addition: exploring lower-cost circuit constructions while respecting correctness, uncomputation, phase, and harness rules.',
+    boundary:
+      'Local candidates are research inputs, not a statement of leaderboard position or official challenge validation.',
+    access: 'Public challenge contract',
+    links: [
+      {
+        href: 'https://github.com/ecdsafail/ecdsafail-challenge',
+        label: 'Challenge repository',
+        description: 'Read the public harness and its exact reversible-circuit contract.',
+      },
+      {
+        href: 'https://ecdsa.fail/',
+        label: 'Challenge site',
+        description: 'Open the public challenge surface and benchmark context.',
+      },
+    ],
   },
 ]
 
@@ -653,6 +718,9 @@ function App() {
               </h3>
 
               <div className="hero-actions">
+                <a href="#systems" className="button button--solid">
+                  current work
+                </a>
                 <a href="#install" className="button button--solid">
                   install me
                 </a>
@@ -848,9 +916,70 @@ function App() {
           </div>
         </section>
 
+        <section className="systems-section" id="systems">
+          <div className="systems-intro">
+            <div className="section-heading systems-intro__heading">
+              <p className="eyebrow">03 / current systems work</p>
+              <h2>Making technical claims earn their weight.</h2>
+            </div>
+
+            <div className="systems-intro__copy">
+              <p>
+                Recent work has centered on the machinery around consequential
+                systems: how we generate tests, bound authority, preserve
+                provenance, and distinguish a useful local result from a claim
+                the world can rely on.
+              </p>
+              <p className="systems-intro__note">
+                Source availability and the qualification below each project are
+                part of the work, not fine print.
+              </p>
+            </div>
+          </div>
+
+          <div className="systems-ledger" aria-label="Current systems work">
+            {systemsProjects.map((project) => (
+              <article className="systems-project" key={project.title}>
+                <p className="systems-project__index" aria-hidden="true">
+                  {project.index}
+                </p>
+
+                <div className="systems-project__content">
+                  <p className="systems-project__discipline">{project.discipline}</p>
+                  <h3>{project.title}</h3>
+                  <p className="systems-project__summary">{project.summary}</p>
+                  <p className="systems-project__boundary">
+                    <span>Evidence boundary</span>
+                    {project.boundary}
+                  </p>
+                </div>
+
+                {project.links?.length ? (
+                  <div className="systems-project__links" aria-label={`${project.title} links`}>
+                    {project.links.map((link) => (
+                      <a
+                        key={link.href}
+                        className="systems-project__link"
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <span>{link.label}</span>
+                        <span>{link.description}</span>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="systems-project__access">{project.access}</p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="writings-section" id="writings">
           <div className="section-heading">
-            <p className="eyebrow">03 / writings</p>
+            <p className="eyebrow">04 / writings</p>
             <h2>Public-goods essays and open-systems notes.</h2>
             <p className="writings-section__intro">
               These writings sit closest to how I think about public goods,
@@ -880,7 +1009,7 @@ function App() {
 
         <section className="install-section" id="install">
           <div className="section-heading">
-            <p className="eyebrow">04 / terminal path</p>
+            <p className="eyebrow">05 / terminal path</p>
             <h2>Install the terminal version of me.</h2>
           </div>
 
@@ -919,7 +1048,7 @@ press [q] to quit`}</pre>
 
         <section className="model-section" id="model">
           <div className="section-heading">
-            <p className="eyebrow">05 / personal model</p>
+            <p className="eyebrow">06 / personal model</p>
             <h2>Ask the terminal version of me.</h2>
             <p className="model-section__intro">
               `spatel` is no longer only a browser for my CV. It now ships as a

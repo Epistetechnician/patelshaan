@@ -398,13 +398,13 @@ const writingModules = import.meta.glob('./content/writings/*.html', {
 
 const writingOrder = [
   'statebooks-convergence-with-coherence',
+  'architecture-unsecured-credit',
   'sacred-economics-crypto',
-  'gitcoin-grants',
   'dao-capital-flows',
-  'civic-innovation-genz',
   'mrv-onchain',
   'p2p-humanitarian',
-  'architecture-unsecured-credit',
+  'gitcoin-grants',
+  'civic-innovation-genz',
 ]
 
 function parseWritingDocument(filePath: string, rawHtml: string): WritingEntry {
@@ -1063,7 +1063,7 @@ function App() {
         <section className="writings-section" id="writings">
           <div className="section-heading">
             <p className="eyebrow">04 / writings</p>
-            <h2>Public-goods essays and open-systems notes.</h2>
+            <h2>Essays and open-systems notes.</h2>
             <p className="writings-section__intro">
               These writings sit closest to how I think about public goods,
               coordination, infrastructure, civic experimentation, and the

@@ -336,7 +336,7 @@ const systemsProjects: SystemsProject[] = [
   },
   {
     index: '03',
-    title: 'Orbital Mesh',
+    title: 'Lusis Mesh',
     discipline: 'Bounded operator control',
     summary:
       'A policy-guided operator control plane for infrastructure remediation and model-lifecycle work, built around explicit gates, steering, auditability, and run memory.',

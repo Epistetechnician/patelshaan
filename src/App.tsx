@@ -440,22 +440,22 @@ const systemsProjects: SystemsProject[] = [
   {
     index: '01',
     title: 'Statebook',
-    discipline: 'Market coherence and bounded settlement',
+    discipline: 'Financial coherence and bounded externalization',
     summary:
-      'An architecture for comparing federated financial contracts by their paying states, residual risk, executable capacity, capital recognition, and settlement conditions before treating them as one coherent position.',
+      'An architecture for normalizing federated contract terms into StateKeys, bounded payoff comparisons, and seven independent completeness reports before treating a position or externalization path as coherent.',
     boundary:
-      'The current work is documentation-only architecture research. It does not execute trades, recognize margin, hold collateral, or settle value.',
+      'The current work is documentation-only architecture research. It does not execute trades, recognize margin, hold collateral, authorize releases, or settle value.',
     essaySlug: 'statebooks-convergence-with-coherence',
     architecture: {
       src: '/publications/statebook-layer-map.svg',
       alt: 'Statebook architecture layer map showing federated sources, a semantic coherence core, three linked graphs, bounded HSAI evidence, and a separate authority boundary.',
-      caption: 'A coherence layer above federated books, below authority.',
+      caption: 'Architecture preview — semantic coherence above federated books, below authority.',
     },
     links: [
       {
         href: '/publications/statebook-whitepaper.pdf',
         label: 'Read whitepaper',
-        description: 'Open the 59-page Statebook research paper and its bounded design claims.',
+        description: 'Open the updated 72-page research paper and its bounded design claims.',
       },
     ],
   },
@@ -1176,6 +1176,23 @@ function App() {
                       Read essay
                     </button>
                   ) : null}
+
+                  {project.architecture ? (
+                    <figure className="systems-project__preview">
+                      <a
+                        href={project.architecture.src}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Open ${project.title} architecture visual`}
+                      >
+                        <img
+                          src={project.architecture.src}
+                          alt={project.architecture.alt}
+                        />
+                      </a>
+                      <figcaption>{project.architecture.caption}</figcaption>
+                    </figure>
+                  ) : null}
                 </div>
 
                 {project.links?.length ? (
@@ -1197,22 +1214,6 @@ function App() {
                   <p className="systems-project__access">{project.access}</p>
                 )}
 
-                {project.architecture ? (
-                  <figure className="systems-project__architecture">
-                    <a
-                      href={project.architecture.src}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`Open ${project.title} architecture visual`}
-                    >
-                      <img
-                        src={project.architecture.src}
-                        alt={project.architecture.alt}
-                      />
-                    </a>
-                    <figcaption>{project.architecture.caption}</figcaption>
-                  </figure>
-                ) : null}
               </article>
             ))}
           </div>

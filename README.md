@@ -6,7 +6,7 @@ The site combines a narrative portfolio, social links, writing modules, install 
 
 ## Current systems work
 
-The `Current systems work` section presents Statebook, Composed ZK Benchmark OS, Orbital Mesh, Recoverable Ghost States, and ECDSA.fail research. It exposes the Statebook and Recoverable Ghost States PDFs from `public/publications/`, uses the original Statebook architecture SVG, and links each project to its requested public surface. Its short evidence-boundary note for each project is intentional: local validation, architecture work, and research candidates must not be presented as external proof, benchmark results, production readiness, or leaderboard standing.
+The `Current systems work` section presents Statebook, Composed ZK Benchmark OS, Orbital Mesh, Recoverable Ghost States, and ECDSA.fail research. It exposes the updated 72-page Statebook paper and Recoverable Ghost States PDFs from `public/publications/`, adds a compact Statebook architecture preview, and links each project to its requested public surface. The Statebook essay uses original source-term, completeness, finality, capital/legal, architecture, and phase-boundary figures from the paper. Its short evidence-boundary note for each project is intentional: local validation, architecture work, and research candidates must not be presented as external proof, benchmark results, production readiness, or leaderboard standing.
 
 ## Development
 

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Seven independent completeness reports</title>
+  <desc id="desc">Seven non-substitutable reports assess semantic, payoff, execution, capital, settlement, assurance, and recovery completeness. No aggregate green result can hide a relevant failure.</desc>
+  <defs><style>.ink{fill:#162b45}.muted{fill:#667789}.h{font:700 54px Georgia,serif}.t{font:700 27px Georgia,serif}.b{font:24px Georgia,serif}.k{font:700 21px ui-monospace,Consolas,monospace;letter-spacing:1.3px}.x{font:20px ui-monospace,Consolas,monospace}.navy{fill:#fffdfa;stroke:#173a63;stroke-width:3}.red{fill:#fbe9e7;stroke:#b3423c;stroke-width:3}</style></defs>
+  <rect width="1600" height="900" fill="#fbf8f1"/>
+  <text x="70" y="72" class="k ink">FIG 04 / COMPLETENESS REPORTS</text>
+  <text x="70" y="132" class="h ink">Seven independent reports. Seven verdicts.</text>
+  <text x="70" y="172" class="b muted">Independent planes; no report result populates another.</text>
+  <g>
+    <rect x="70" y="230" width="335" height="182" rx="18" class="navy"/><text x="100" y="276" class="t ink">1 / Semantic</text><text x="100" y="318" class="b ink">Are material terms and</text><text x="100" y="350" class="b ink">states represented?</text><text x="100" y="388" class="x muted">unknown blocks action</text>
+    <rect x="430" y="230" width="335" height="182" rx="18" class="navy"/><text x="460" y="276" class="t ink">2 / Payoff</text><text x="460" y="318" class="b ink">Does the portfolio span</text><text x="460" y="350" class="b ink">the declared domain?</text><text x="460" y="388" class="x muted">residual is explicit</text>
+    <rect x="790" y="230" width="335" height="182" rx="18" class="navy"/><text x="820" y="276" class="t ink">3 / Execution</text><text x="820" y="318" class="b ink">Can every leg fill at size,</text><text x="820" y="350" class="b ink">time, and failure bound?</text><text x="820" y="388" class="x muted">theory ≠ book fill</text>
+    <rect x="1150" y="230" width="380" height="182" rx="18" class="navy"/><text x="1180" y="276" class="t ink">4 / Capital</text><text x="1180" y="318" class="b ink">Does a named authority</text><text x="1180" y="350" class="b ink">recognize the offset?</text><text x="1180" y="388" class="x muted">economics ≠ margin</text>
+    <rect x="250" y="466" width="335" height="182" rx="18" class="navy"/><text x="280" y="512" class="t ink">5 / Settlement</text><text x="280" y="554" class="b ink">Do linked obligations reach</text><text x="280" y="586" class="b ink">compatible finality?</text><text x="280" y="624" class="x muted">technical ≠ legal</text>
+    <rect x="630" y="466" width="335" height="182" rx="18" class="navy"/><text x="660" y="512" class="t ink">6 / Assurance</text><text x="660" y="554" class="b ink">Are current action-bound</text><text x="660" y="586" class="b ink">evidence and budgets valid?</text><text x="660" y="624" class="x muted">not one score</text>
+    <rect x="1010" y="466" width="335" height="182" rx="18" class="navy"/><text x="1040" y="512" class="t ink">7 / Recovery</text><text x="1040" y="554" class="b ink">Can every path stop,</text><text x="1040" y="586" class="b ink">reconcile, restore safely?</text><text x="1040" y="624" class="x muted">pause ≠ recovery</text>
+  </g>
+  <rect x="250" y="744" width="1100" height="72" rx="14" class="red"/>
+  <text x="286" y="788" class="t ink">No aggregate complete = true. The weakest relevant verdict controls.</text>
+</svg>

@@ -116,12 +116,6 @@ type SocialLink = {
   href: string
 }
 
-type SystemsArchitecture = {
-  src: string
-  alt: string
-  caption: string
-}
-
 type SystemsProject = {
   index: string
   title: string
@@ -130,8 +124,8 @@ type SystemsProject = {
   boundary: string
   access?: string
   links?: ExperienceLink[]
+  linkLayout?: 'stacked'
   essaySlug?: string
-  architecture?: SystemsArchitecture
 }
 
 type YouTubePlayer = {
@@ -446,16 +440,17 @@ const systemsProjects: SystemsProject[] = [
     boundary:
       'The current work is documentation-only architecture research. It does not execute trades, recognize margin, hold collateral, authorize releases, or settle value.',
     essaySlug: 'statebooks-convergence-with-coherence',
-    architecture: {
-      src: '/publications/statebook-layer-map.svg',
-      alt: 'Statebook architecture layer map showing federated sources, a semantic coherence core, three linked graphs, bounded HSAI evidence, and a separate authority boundary.',
-      caption: 'Architecture preview — semantic coherence above federated books, below authority.',
-    },
+    linkLayout: 'stacked',
     links: [
       {
         href: '/publications/statebook-whitepaper.pdf',
         label: 'Read whitepaper',
         description: 'Open the updated 72-page research paper and its bounded design claims.',
+      },
+      {
+        href: '/publications/statebook-layer-map.svg',
+        label: 'View architecture',
+        description: 'Open the semantic-coherence and authority-boundary map.',
       },
     ],
   },
@@ -1177,26 +1172,17 @@ function App() {
                     </button>
                   ) : null}
 
-                  {project.architecture ? (
-                    <figure className="systems-project__preview">
-                      <a
-                        href={project.architecture.src}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`Open ${project.title} architecture visual`}
-                      >
-                        <img
-                          src={project.architecture.src}
-                          alt={project.architecture.alt}
-                        />
-                      </a>
-                      <figcaption>{project.architecture.caption}</figcaption>
-                    </figure>
-                  ) : null}
                 </div>
 
                 {project.links?.length ? (
-                  <div className="systems-project__links" aria-label={`${project.title} links`}>
+                  <div
+                    className={`systems-project__links${
+                      project.linkLayout === 'stacked'
+                        ? ' systems-project__links--stacked'
+                        : ''
+                    }`}
+                    aria-label={`${project.title} links`}
+                  >
                     {project.links.map((link) => (
                       <a
                         key={link.href}

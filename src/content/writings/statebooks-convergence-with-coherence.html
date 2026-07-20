@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Statebooks: Convergence with Coherence</title>
+  </head>
+  <body>
+    <article>
+      <p class="article-meta">2026 • Financial Semantics &amp; Frontier Risk</p>
+      <h1 class="article-title">Statebooks: Convergence with Coherence</h1>
+      <div class="article-content">
+        <p>
+          Finance is converging in surface area before it has converged in meaning.
+          A perpetual, an event contract, an option spread, and a tokenized claim
+          can all point at the same world while carrying different observation
+          rules, payoff shapes, collateral paths, default regimes, and finality
+          conditions. Seeing them beside one another is useful. Treating them as
+          interchangeable is how a legible interface becomes a dangerous one.
+        </p>
+
+        <p>
+          A Statebook begins with a smaller ambition than an exchange, clearing
+          house, or universal oracle. It asks what each contract means in the
+          states where it pays, then makes the remaining differences visible. The
+          result is a coherence layer above federated books: a place to normalize
+          material terms, compare state-dependent payoffs, expose residual risk,
+          and report whether a proposed position is actually executable,
+          capital-recognized, settlement-compatible, and adequately assured.
+        </p>
+
+        <figure>
+          <a href="/publications/statebook-layer-map.svg" target="_blank" rel="noreferrer">
+            <img
+              src="/publications/statebook-layer-map.svg"
+              alt="Statebook architecture: federated sources feed a semantic coherence core, which produces economic, execution, and assurance graphs beneath a separate authority boundary."
+            />
+          </a>
+          <figcaption>
+            Statebook is a coherence layer above books and below authority.
+          </figcaption>
+        </figure>
+
+        <h2>Convergence is not coherence</h2>
+
+        <p>
+          The useful insight behind market convergence is that more risks can be
+          represented, traded, and composed. Compute capacity, power, model
+          performance, policy, data access, and infrastructure constraints are
+          becoming economically legible. But representation is only the first
+          step. A portfolio still has to answer which exact conditions cause each
+          leg to pay, whether the payoff comparison is exact or approximate, and
+          whether an apparent offset survives execution, margin, settlement, and
+          recovery failure.
+        </p>
+
+        <p>
+          Statebook treats those as different questions rather than a single
+          confidence score. A relationship may be semantically clear while the
+          residual remains material. A residual may be bounded while market depth
+          is insufficient. Execution can be feasible while no recognized
+          collateral regime treats the legs as an offset. Even when every model
+          agrees, settlement authority and legal finality may still be absent.
+          Coherence is earned across these conditions; it is not implied by a
+          shared ticker, correlation, or polished quote screen.
+        </p>
+
+        <h2>Fast internally, deliberate externally</h2>
+
+        <p>
+          The other half of coherence is temporal. Internal risk updates can be
+          fast and still remain reversible. Externalization is different: it can
+          create a transfer, a margin recognition, a custody consequence, or a
+          legal obligation that is difficult to unwind. The Statebook architecture
+          therefore separates a valid internal calculation from authority to act.
+          Evidence, loss budgets, challenge windows, and recovery paths must be
+          able to disagree with a tempting calculation.
+        </p>
+
+        <blockquote>
+          The point is not to make every market slower. It is to make the
+          irreversible edge of a system proportionate to the evidence that has
+          actually arrived.
+        </blockquote>
+
+        <h2>A bounded research direction</h2>
+
+        <p>
+          This is architecture research, not a live trading product or a claim
+          that fragmented markets can be made complete by software alone. The
+          current Statebook work is deliberately bounded to normalized terms,
+          synthetic fixture data, exact local analysis, and explicit non-claims.
+          It does not execute trades, recognize margin, hold collateral, pause a
+          venue, sign a transaction, or settle value.
+        </p>
+
+        <p>
+          That limitation is not a footnote. It is the core design premise:
+          coherence comes from retaining the distinctions that matter until the
+          relevant authority, evidence, and finality conditions can support a
+          stronger action.
+        </p>
+
+        <p>
+          <a href="/publications/statebook-whitepaper.pdf" target="_blank" rel="noreferrer">
+            Read the Statebook whitepaper.
+          </a>
+        </p>
+      </div>
+    </article>
+  </body>
+</html>

@@ -487,6 +487,30 @@
   font-size: 0.92rem;
 }
 
+.systems-project__essay {
+  width: fit-content;
+  margin-top: 0.2rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(231, 239, 236, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(242, 247, 245, 0.96);
+  cursor: pointer;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.systems-project__essay:hover {
+  transform: translateY(-1px);
+  border-color: rgba(147, 226, 216, 0.5);
+  background: rgba(122, 220, 210, 0.1);
+}
+
+.systems-project__essay:active {
+  transform: translateY(0);
+}
+
 .systems-project__links {
   display: grid;
   gap: 0.65rem;
@@ -530,6 +554,39 @@
 }
 
 .systems-project__link span:last-child {
+  color: rgba(186, 205, 199, 0.78);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.systems-project__architecture {
+  grid-column: 2 / -1;
+  display: grid;
+  gap: 0.7rem;
+  margin: 0.25rem 0 0;
+  padding: 1rem;
+  border: 1px solid rgba(231, 239, 236, 0.16);
+  background: rgba(240, 244, 240, 0.04);
+}
+
+.systems-project__architecture a {
+  display: block;
+  overflow: hidden;
+}
+
+.systems-project__architecture img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(13, 27, 38, 0.16);
+  background: #faf7ef;
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.systems-project__architecture a:hover img {
+  transform: scale(1.012);
+}
+
+.systems-project__architecture figcaption {
   color: rgba(186, 205, 199, 0.78);
   font-size: 0.85rem;
   line-height: 1.45;
@@ -1347,6 +1404,24 @@
   line-height: 1.75;
 }
 
+.writing-modal__content figure {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1.5rem 0;
+}
+
+.writing-modal__content figure img {
+  width: 100%;
+  border: 1px solid rgba(231, 239, 236, 0.14);
+  background: #faf7ef;
+}
+
+.writing-modal__content figcaption {
+  color: rgba(186, 205, 199, 0.74);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .writing-modal__content ol,
 .writing-modal__content ul {
   padding-left: 1.25rem;
@@ -1410,6 +1485,10 @@
   .systems-project__links {
     grid-column: 2;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .systems-project__architecture {
+    grid-column: 2;
   }
 
   .systems-project__link:first-child {
@@ -1675,6 +1754,11 @@
     grid-column: auto;
     grid-template-columns: 1fr;
     padding-top: 0.35rem;
+  }
+
+  .systems-project__architecture {
+    grid-column: auto;
+    padding: 0.75rem;
   }
 
   .systems-project__link:first-child {

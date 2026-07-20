@@ -116,14 +116,22 @@ type SocialLink = {
   href: string
 }
 
+type SystemsArchitecture = {
+  src: string
+  alt: string
+  caption: string
+}
+
 type SystemsProject = {
   index: string
   title: string
   discipline: string
   summary: string
   boundary: string
-  access: string
+  access?: string
   links?: ExperienceLink[]
+  essaySlug?: string
+  architecture?: SystemsArchitecture
 }
 
 const experienceCards: ExperienceCard[] = [
@@ -290,43 +298,82 @@ const socialLinks: SocialLink[] = [
 const systemsProjects: SystemsProject[] = [
   {
     index: '01',
+    title: 'Statebook',
+    discipline: 'Market coherence and bounded settlement',
+    summary:
+      'An architecture for comparing federated financial contracts by their paying states, residual risk, executable capacity, capital recognition, and settlement conditions before treating them as one coherent position.',
+    boundary:
+      'The current work is documentation-only architecture research. It does not execute trades, recognize margin, hold collateral, or settle value.',
+    essaySlug: 'statebooks-convergence-with-coherence',
+    architecture: {
+      src: '/publications/statebook-layer-map.svg',
+      alt: 'Statebook architecture layer map showing federated sources, a semantic coherence core, three linked graphs, bounded HSAI evidence, and a separate authority boundary.',
+      caption: 'A coherence layer above federated books, below authority.',
+    },
+    links: [
+      {
+        href: '/publications/statebook-whitepaper.pdf',
+        label: 'Read whitepaper',
+        description: 'Open the 59-page Statebook research paper and its bounded design claims.',
+      },
+    ],
+  },
+  {
+    index: '02',
     title: 'Composed ZK Benchmark OS',
     discipline: 'Semantics, benchmarks, and evidence',
     summary:
       'A semantics-first benchmark architecture for generating control-flow workloads, adversarial variants, replayable backend artifacts, and separately scored evidence.',
     boundary:
       'The work is deliberately evidence-bounded: local replay and architecture are not presented as measured benchmark performance or accepted external proof.',
-    access: 'Private workstream / source access is restricted',
+    links: [
+      {
+        href: 'https://github.com/Epistetechnician/composed-zk-benchmark-os',
+        label: 'GitHub repository',
+        description: 'Open the repository for the benchmark architecture and claim-boundary work; access follows the repository setting.',
+      },
+    ],
   },
   {
-    index: '02',
+    index: '03',
     title: 'Orbital Mesh',
     discipline: 'Bounded operator control',
     summary:
       'A policy-guided operator control plane for infrastructure remediation and model-lifecycle work, built around explicit gates, steering, auditability, and run memory.',
     boundary:
       'A passing local packet is not the same as repeatable deployment readiness; operator authority remains intentionally bounded.',
-    access: 'Private workstream / source access is restricted',
+    links: [
+      {
+        href: 'https://lusislabs.com/',
+        label: 'Visit Lusis Labs',
+        description: 'Open the Lusis Labs public site.',
+      },
+    ],
   },
   {
-    index: '03',
+    index: '04',
     title: 'Recoverable Ghost States',
     discipline: 'Recoverability and proof libraries',
     summary:
       'A proof and evidence library for testing whether adaptive systems can recover state, preserve boundaries, and produce inspectable validation artifacts.',
     boundary:
       'It does not claim a hosted production runtime, production authority, or live performance from local validation alone.',
-    access: 'Private workstream / source access is restricted',
+    links: [
+      {
+        href: '/publications/recoverable-ghost-states-paper.pdf',
+        label: 'Read research paper',
+        description: 'Open the completed 17-page paper on bounded-governed continual learning.',
+      },
+    ],
   },
   {
-    index: '04',
+    index: '05',
     title: 'ECDSA.fail',
     discipline: 'Reversible quantum-circuit research',
     summary:
       'Constrained research on reversible secp256k1 point addition: exploring lower-cost circuit constructions while respecting correctness, uncomputation, phase, and harness rules.',
     boundary:
       'Local candidates are research inputs, not a statement of leaderboard position or official challenge validation.',
-    access: 'Public challenge contract',
     links: [
       {
         href: 'https://github.com/ecdsafail/ecdsafail-challenge',
@@ -350,6 +397,7 @@ const writingModules = import.meta.glob('./content/writings/*.html', {
 }) as Record<string, string>
 
 const writingOrder = [
+  'statebooks-convergence-with-coherence',
   'sacred-economics-crypto',
   'gitcoin-grants',
   'dao-capital-flows',
@@ -362,18 +410,19 @@ const writingOrder = [
 function parseWritingDocument(filePath: string, rawHtml: string): WritingEntry {
   const slug = filePath.split('/').pop()?.replace(/\.html$/, '') ?? filePath
   const document = new DOMParser().parseFromString(rawHtml, 'text/html')
+  const content = document.querySelector('.article-content')
   const title =
     document.querySelector('.article-title')?.textContent?.trim() ??
     slug.replace(/-/g, ' ')
   const meta =
     document.querySelector('.article-meta')?.textContent?.trim() ?? 'Essay'
-  const contentHtml =
-    document.querySelector('.article-content')?.innerHTML.trim() ?? ''
   const summary =
-    document
-      .querySelector('.article-content p')
+    content
+      ?.querySelector('p')
       ?.textContent?.replace(/\s+/g, ' ')
       .trim() ?? ''
+  content?.querySelector('p')?.remove()
+  const contentHtml = content?.innerHTML.trim() ?? ''
 
   return {
     slug,
@@ -952,6 +1001,23 @@ function App() {
                     <span>Evidence boundary</span>
                     {project.boundary}
                   </p>
+                  {project.essaySlug ? (
+                    <button
+                      type="button"
+                      className="systems-project__essay"
+                      onClick={() => {
+                        const writing = writings.find(
+                          (entry) => entry.slug === project.essaySlug,
+                        )
+
+                        if (writing) {
+                          setActiveWriting(writing)
+                        }
+                      }}
+                    >
+                      Read essay
+                    </button>
+                  ) : null}
                 </div>
 
                 {project.links?.length ? (
@@ -972,6 +1038,23 @@ function App() {
                 ) : (
                   <p className="systems-project__access">{project.access}</p>
                 )}
+
+                {project.architecture ? (
+                  <figure className="systems-project__architecture">
+                    <a
+                      href={project.architecture.src}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Open ${project.title} architecture visual`}
+                    >
+                      <img
+                        src={project.architecture.src}
+                        alt={project.architecture.alt}
+                      />
+                    </a>
+                    <figcaption>{project.architecture.caption}</figcaption>
+                  </figure>
+                ) : null}
               </article>
             ))}
           </div>

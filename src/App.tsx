@@ -134,6 +134,147 @@ type SystemsProject = {
   architecture?: SystemsArchitecture
 }
 
+type YouTubePlayer = {
+  destroy: () => void
+  getPlayerState: () => number
+  pauseVideo: () => void
+  playVideo: () => void
+}
+
+type YouTubeNamespace = {
+  Player: new (
+    elementId: string,
+    options: {
+      videoId: string
+      playerVars: Record<string, number | string>
+      events: {
+        onError: () => void
+        onReady: (event: { target: YouTubePlayer }) => void
+        onStateChange: (event: { data: number }) => void
+      }
+    },
+  ) => YouTubePlayer
+}
+
+declare global {
+  interface Window {
+    onYouTubeIframeAPIReady?: () => void
+    YT?: YouTubeNamespace
+  }
+}
+
+const landingMusicVideoId = 'oe8kgXNqLFI'
+
+function LandingMusic() {
+  const playerRef = useRef<YouTubePlayer | null>(null)
+  const [landingMusicPlayback, setLandingMusicPlayback] = useState<
+    'loading' | 'playing' | 'blocked' | 'paused'
+  >('loading')
+
+  useEffect(() => {
+    let isDisposed = false
+    let statusTimeoutId: number | undefined
+
+    const createPlayer = () => {
+      if (isDisposed || !window.YT || playerRef.current) {
+        return
+      }
+
+      playerRef.current = new window.YT.Player('landing-music-player', {
+        videoId: landingMusicVideoId,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          loop: 1,
+          playlist: landingMusicVideoId,
+          playsinline: 1,
+          rel: 0,
+        },
+        events: {
+          onReady: ({ target }) => {
+            target.playVideo()
+            statusTimeoutId = window.setTimeout(() => {
+              if (!isDisposed && target.getPlayerState() !== 1) {
+                setLandingMusicPlayback('blocked')
+              }
+            }, 1500)
+          },
+          onStateChange: ({ data }) => {
+            if (data === 1) {
+              setLandingMusicPlayback('playing')
+            } else if (data === 2) {
+              setLandingMusicPlayback('paused')
+            }
+          },
+          onError: () => setLandingMusicPlayback('blocked'),
+        },
+      })
+    }
+
+    const existingScript = document.getElementById('youtube-iframe-api')
+
+    if (window.YT) {
+      createPlayer()
+    } else {
+      window.onYouTubeIframeAPIReady = createPlayer
+
+      if (!existingScript) {
+        const script = document.createElement('script')
+        script.id = 'youtube-iframe-api'
+        script.src = 'https://www.youtube.com/iframe_api'
+        document.head.appendChild(script)
+      }
+    }
+
+    return () => {
+      isDisposed = true
+      if (statusTimeoutId) {
+        window.clearTimeout(statusTimeoutId)
+      }
+      playerRef.current?.destroy()
+      playerRef.current = null
+    }
+  }, [])
+
+  const toggleLandingMusic = () => {
+    const player = playerRef.current
+
+    if (!player) {
+      return
+    }
+
+    if (landingMusicPlayback === 'playing') {
+      player.pauseVideo()
+      return
+    }
+
+    player.playVideo()
+  }
+
+  const musicControlLabel =
+    landingMusicPlayback === 'playing'
+      ? 'pause music'
+      : landingMusicPlayback === 'loading'
+        ? 'loading music'
+        : 'play music'
+
+  return (
+    <div className="landing-music" aria-live="polite">
+      <div id="landing-music-player" className="landing-music__player" />
+      <button
+        type="button"
+        className="landing-music__control"
+        onClick={toggleLandingMusic}
+        disabled={landingMusicPlayback === 'loading'}
+        aria-pressed={landingMusicPlayback === 'playing'}
+      >
+        <span className="landing-music__indicator" aria-hidden="true" />
+        {musicControlLabel}
+      </button>
+    </div>
+  )
+}
+
 const experienceCards: ExperienceCard[] = [
   {
     eyebrow: '2025-2026',
@@ -730,6 +871,7 @@ function App() {
 
       <main className="page-main">
         <section className="hero-panel">
+          <LandingMusic />
           <div className="hero-panel__ascii-background" aria-hidden="true">
             <Video2Ascii
               key={`hero-${heroVideoSrc}`}
@@ -769,9 +911,6 @@ function App() {
               <div className="hero-actions">
                 <a href="#systems" className="button button--solid">
                   current work
-                </a>
-                <a href="#install" className="button button--solid">
-                  install me
                 </a>
                 <a href="#about" className="button button--ghost">
                   about me
@@ -864,6 +1003,25 @@ function App() {
                 rel="noreferrer"
               >
                 Read Psychohistory
+              </a>
+            </article>
+
+            <article className="foundation-card foundation-card--link foundation-card--terminal">
+              <p className="foundation-card__eyebrow">a terminal version of me</p>
+              <h3>spatel</h3>
+              <p>
+                A small command-line companion built from my CV, writing, and
+                working notes. You can ask it questions, browse the context it
+                draws from, or run it entirely on your own machine.
+              </p>
+              <p className="foundation-card__note">
+                I find that interesting because it treats a personal archive as
+                something inspectable and portable, not a polished substitute
+                for a person. It is an invitation to follow the threads behind
+                the résumé and keep the conversation grounded in real work.
+              </p>
+              <a className="foundation-card__cta" href="#install">
+                See how it works
               </a>
             </article>
 

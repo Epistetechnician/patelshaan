@@ -61,6 +61,56 @@
   overflow: hidden;
 }
 
+.landing-music {
+  position: absolute;
+  z-index: 2;
+  top: clamp(1rem, 2vw, 2.125rem);
+  right: clamp(1rem, 2vw, 2.125rem);
+}
+
+.landing-music__player {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-music__control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.4rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(231, 239, 236, 0.24);
+  background: rgba(5, 8, 13, 0.52);
+  color: rgba(245, 248, 247, 0.94);
+  cursor: pointer;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.landing-music__control:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.landing-music__indicator {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #a8bab5;
+}
+
+.landing-music__control[aria-pressed='true'] .landing-music__indicator {
+  background: #98f0d0;
+  box-shadow: 0 0 0.75rem rgba(152, 240, 208, 0.72);
+}
+
 .hero-panel__ascii-background,
 .hero-panel__background-tint {
   position: absolute;
@@ -1106,6 +1156,13 @@
   background:
     radial-gradient(circle at top right, rgba(183, 141, 255, 0.12), transparent 32%),
     radial-gradient(circle at bottom left, rgba(120, 240, 255, 0.08), transparent 28%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.foundation-card--terminal {
+  background:
+    radial-gradient(circle at top right, rgba(152, 240, 208, 0.12), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(120, 240, 255, 0.06), transparent 28%),
     rgba(255, 255, 255, 0.05);
 }
 

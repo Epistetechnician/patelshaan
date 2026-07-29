@@ -11,36 +11,33 @@ The `Current systems work` section presents Statebook, Composed ZK Benchmark OS,
 ## Development
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ## Production build
 
 ```sh
-npm run build
-npm run start
+pnpm run build
+pnpm run preview
 ```
-
-The production start command serves the built `dist/` output with `serve` on `0.0.0.0:$PORT`, which is a better fit for Railway than `vite preview`.
 
 ## Deploy
 
-This project includes `railway.json` so Railway can:
+Pushes to `main` deploy the static `dist/` build to GitHub Pages through `.github/workflows/deploy-pages.yml`.
 
-- build with `npm run build`
-- serve with `npm run start`
+- Pages source: GitHub Actions
+- Canonical domain: `shaan4d.xyz`
+- `www.shaan4d.xyz` should redirect to the canonical apex after DNS is configured
 
-Node runtime note:
+The required DNS records are:
 
-- the app requires Node `22.12+`
-- `package.json` declares the engine version
-- if Railway still picks the wrong version, set `NIXPACKS_NODE_VERSION=22` in the project variables
+- apex `A` records: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`
+- `www` `CNAME`: `Epistetechnician.github.io`
 
-Railway deploy note:
+Verify the domain in the GitHub account Pages settings before switching DNS. Retain GitHub's verification TXT record, and enable `Enforce HTTPS` after GitHub provisions the certificate.
 
-- keep the writing source files inside `src/content/writings`
-- do not rely on parent-directory content imports for deploy-critical assets, because Railway may build the app from the `site` directory only
+The app is client-only. GitHub Pages cannot run server processes or backend APIs.
 
 Repository target:
 

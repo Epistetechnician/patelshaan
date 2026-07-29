@@ -1,0 +1,3 @@
+# Isolate this package from unrelated workspace configuration in parent directories.
+packages:
+  - .

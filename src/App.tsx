@@ -512,6 +512,12 @@ const systemsProjects: SystemsProject[] = [
       'Local candidates are research inputs, not a statement of leaderboard position or official challenge validation.',
     links: [
       {
+        href: '/publications/ecdsafail-open-autoresearch-v3.1.pdf',
+        label: 'Read research paper',
+        description:
+          'Open the 62-page paper on Open Autoresearch and reversible secp256k1 point addition in Shor\'s algorithm.',
+      },
+      {
         href: 'https://github.com/ecdsafail/ecdsafail-challenge',
         label: 'Challenge repository',
         description: 'Read the public harness and its exact reversible-circuit contract.',

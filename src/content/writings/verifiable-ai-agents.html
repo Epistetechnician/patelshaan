@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>An Agent Should Have to Earn Every Action</title>
+  </head>
+  <body>
+    <article>
+      <p class="article-meta">2026 • Verifiable AI Agents</p>
+      <h1 class="article-title">An Agent Should Have to Earn Every Action</h1>
+      <div class="article-content">
+        <p>
+          The usual way to make an agent safe is to prompt it carefully and hope.
+          I wanted the opposite: an architecture in which an untrusted proposal
+          can only act by passing through evidence, deterministic admission, a
+          single-use capability, a separate broker, and a sandbox, with every step
+          replayable and every failure closing to freeze or rollback. The person
+          affected by an agent's action should be able to ask "what exactly
+          happened, and who allowed it," and get an answer that does not depend
+          on trusting the agent.
+        </p>
+
+        <h2>What I built</h2>
+
+        <p>
+          Security Alignment OS is a Rust reference implementation of that loop.
+          It has evidence review records, admission, single-use capabilities,
+          consented specialist memory, a capability broker running as a separate
+          process, one sandboxed file transformation, and a transaction-bound
+          multi-file maintenance path over private immutable generations. The
+          maintenance evaluator checks patch structure in its own sandboxed
+          process and never executes candidate code. No model runs in the loop.
+          The point was to get the control plane right first, so that when a
+          model is eventually placed inside it, the boundary does not depend on
+          the model behaving.
+        </p>
+
+        <h2>What the tests say</h2>
+
+        <ul>
+          <li>
+            <strong>279 tests pass, 0 fail.</strong> That includes an adversarial
+            runner that attacks the broker directly: path escape, replay, forged
+            receipts, malformed child operations, and telemetry containment.
+          </li>
+          <li>
+            <strong>The loop is a small, replayable kernel.</strong> Policy,
+            budgets, single-use execution, lifecycle, journaling, an independent
+            checker, and signed receipts compose without a shared trusted
+            component beyond the caller-owned policy and clock.
+          </li>
+          <li>
+            <strong>A machine-attested reproduction.</strong> One execution on a
+            Google Confidential Space Intel TDX instance passed all 20 required
+            scenarios. The signed attestation verified nonce, issuer, audience,
+            TDX model, Secure Boot, disabled debug, Intel TCB, immutable image
+            digest, source revision, and the project identity. This is a
+            machine-attested reproduction. It is not an independent replication,
+            and that gate stays inconclusive until a second, separately
+            administered host runs it.
+          </li>
+          <li>
+            <strong>Versioned replication evidence.</strong> Newer packet
+            versions bind the broker executable digest and the per-host runner
+            digest into signed reports, and older packets stay verifiable under
+            their original identities.
+          </li>
+        </ul>
+
+        <h2>Three design lessons from the inference-marketplace work</h2>
+
+        <p>
+          The HyperIntel foundation applies the same discipline to routing and
+          settlement for inference. Three findings there have generalized in my
+          head to agents of any kind.
+        </p>
+
+        <ol>
+          <li>
+            <strong>Replay protection needs a durable compare-and-swap, not just
+            a nonce.</strong> The store registers an exact initial state and
+            advances it atomically. Exact retries are idempotent and a competing
+            writer is rejected as stale.
+          </li>
+          <li>
+            <strong>Classify crash states; do not resume them.</strong> A
+            consumed admission with no terminal record fails closed and demands a
+            fresh authenticated nonce or operator reconciliation. Resuming
+            silently is how an agent ends up acting twice.
+          </li>
+          <li>
+            <strong>Prove the narrow thing.</strong> With Z3 4.15.0, a
+            two-candidate abstraction of the router cannot select an ineligible
+            offer (unsat), and a deliberately weakened selector can (sat). The
+            check is bound to the SHA-256 of the routing source, because a proof
+            about a file that has since changed proves nothing. The local gate
+            passes 115 tests with 0 failures and 2 ignored.
+          </li>
+        </ol>
+
+        <h2>The same idea at the outcome layer</h2>
+
+        <p>
+          The outcome protocol in HyperAI applies the discipline to claims about
+          computation. A claim is frozen, observed, checked by pinned validators,
+          disputed, finalized, and prepared for settlement as portable evidence.
+          Of 16 end-to-end scenarios, 9 run as one composed automated path,
+          including an invalid candidate followed by a valid one, an incomplete
+          observation that stays unresolved, a nondeterministic validator that
+          surfaces a replay divergence instead of an answer, tampered evidence
+          rejected with a typed error, and a settlement crash that recovers
+          without resubmitting. Fail-closed defaults carried the design.
+          Evidence is append-only, so a correction supersedes rather than
+          rewrites. A fourteen-case gateway demo gave one benign acceptance,
+          thirteen unsafe rejections, zero false rejections, and fourteen
+          recomputation agreements. It is a small demo, and I report it as one.
+        </p>
+
+        <h2>The Orbital Mesh control plane</h2>
+
+        <p>
+          Orbital Mesh brings the pattern to infrastructure remediation. Signals
+          go in. A decision is evaluated against policy and quality gates. The run
+          pauses for operator steering before actuation by default, then executes
+          through a bounded layer. Canonical run events get Merkle roots and
+          per-event proofs. Live Kubernetes actions are off by default and limited
+          by explicit context and namespace allowlists. I describe it as
+          policy-guided and operator-steerable, and I avoid "self-healing,"
+          because the human stays in the loop by design.
+        </p>
+
+        <h2>Gaps I am not hiding</h2>
+
+        <ul>
+          <li>Independent replication on a second host has not happened.</li>
+          <li>Persisted state is plaintext. Digests detect accidental tampering, not an attacker who can rewrite both content and digest.</li>
+          <li>There is no protection against a hostile process under the same user ID.</li>
+          <li>The confidential-compute runner prints its attestation token to standard output and must not be launched outside a controlled test.</li>
+          <li>The Linux sandbox backend was compile-checked on x86_64 only.</li>
+        </ul>
+
+        <h2>What this does not establish</h2>
+
+        <p>
+          No scientific alignment result, no production readiness, and no
+          complete multi-tenant isolation. It shows the shape of an auditable
+          agent boundary, not that any real agent is safe inside it.
+        </p>
+      </div>
+    </article>
+  </body>
+</html>

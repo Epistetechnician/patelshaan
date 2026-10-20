@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>What We Know and Still Don't: A Research Map</title>
+  </head>
+  <body>
+    <article>
+      <p class="article-meta">2026 • Research Map • AI Evolution, Intelligence, Safety &amp; Security</p>
+      <h1 class="article-title">What We Know and Still Don't: A Research Map</h1>
+      <div class="article-content">
+        <p>
+          This is the front door to a series of notes on six questions I have
+          spent the past year on: whether AI systems can keep learning without
+          losing themselves, what they represent inside, whether their agents can
+          be held to account, and whether the infrastructure beneath them can be
+          verified by the people who depend on it. I am publishing all of it,
+          including the dead ends, because most of what I learned is what did
+          not work, and that is the part other people most need.
+        </p>
+
+        <h2>The one rule behind everything</h2>
+
+        <p>
+          Every project here follows a single discipline. A result is bound to an
+          exact state slice, a protocol, and a claim ceiling, from a design note
+          at the bottom to an independently reproduced result at the top. A
+          synthetic pass qualifies a harness and not a hypothesis. A local replay
+          is not independent evidence. A model may propose evidence, but it may
+          not approve it, widen its own capabilities, edit its own evaluator, or
+          promote its own update.
+        </p>
+
+        <p>
+          Nearly all the work sits at the lowest rung of that ladder: bounded,
+          local, and not independently replicated. When a post says "passed,"
+          read it with that ceiling attached. If you want the whole argument in
+          one place, the flagship essay in the systems section ties these notes
+          together.
+        </p>
+
+        <h2>The six directions</h2>
+
+        <ol>
+          <li>
+            <strong>Continual learning and alignment benchmarks.</strong> Can a
+            model keep its competence and its values as it keeps learning? A
+            synthetic harness passes, a matched-progress comparison fails, and
+            the real-model series mostly ends in "no candidate."
+          </li>
+          <li>
+            <strong>Hybrid synthetic-data systems.</strong> Synthetic data as a
+            provenance-bound factory that is never allowed to certify itself, and
+            the evaluation gates that make that enforceable.
+          </li>
+          <li>
+            <strong>Mechanistic interpretability and nonlinguistic
+            representations.</strong> One narrow measurement qualification, a
+            long run of terminal negatives, and a result about why raw
+            coordinates are the wrong unit for mechanism claims.
+          </li>
+          <li>
+            <strong>Verifiable AI agents.</strong> A kernel in which an untrusted
+            proposal acts only through evidence, admission, a single-use
+            capability, and a sandbox, with 279 passing tests and one
+            hardware-attested run.
+          </li>
+          <li>
+            <strong>MPC, zero-knowledge proofs, and post-quantum
+            cryptography.</strong> A semantic benchmark generator for ZK, a
+            formal-evidence ladder that refuses to over-claim, and the
+            quantum-circuit work behind ECDSA.fail. The thinnest area for built
+            results, and the post says so.
+          </li>
+          <li>
+            <strong>Decentralized compute and data infrastructure.</strong>
+            Outcome protocols, replay-safe settlement, tamper-evident run logs,
+            and data lineage as the primitives a community would need to verify
+            work it did not do itself.
+          </li>
+        </ol>
+
+        <h2>How the questions connect</h2>
+
+        <p>
+          Intelligence and evolution questions (does it keep learning, what is it
+          representing) feed safety questions (does it still behave, and can we
+          tell). Safety questions become security questions the moment an agent
+          can act on someone's behalf, because then the issue is what an
+          untrusted proposal can cause and who can prove what happened. And
+          proofs are only as durable as the cryptography under them and as
+          independent as the infrastructure that checks them. Each layer borrows
+          the humility of the one before it.
+        </p>
+
+        <h2>What I would want a reader to take away</h2>
+
+        <ul>
+          <li>Terminal negative results were the main output. I kept them.</li>
+          <li>
+            Process and tooling failures cost more phases than science failures.
+            Recording them as stops, not results, kept the claims honest. One
+            interpretability lane, for instance, was blocked outright because a
+            pinned dependency had no build for the machine's architecture.
+          </li>
+          <li>
+            A fail-closed refusal to promote evidence is a feature, even when it
+            makes the headline smaller.
+          </li>
+          <li>
+            Narrow positive claims are the right kind to make. None of mine has
+            been promoted beyond its ceiling.
+          </li>
+          <li>
+            Measurement is usually the weakest link. Two graders disagreed by a
+            factor of three about how safe the same outputs were.
+          </li>
+        </ul>
+
+        <h2>Where this stands</h2>
+
+        <p>
+          Several of the underlying repositories are still in private staging. I
+          am releasing the findings now and will link source as each clears its
+          release review. Nothing here is a benchmark result, a production claim,
+          or an independent replication unless a post says so explicitly. If you
+          find an error, I would rather hear it from you than discover it later.
+        </p>
+      </div>
+    </article>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+.rp {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) var(--page-gutter) 6rem;
+  color: rgba(247, 249, 248, 0.92);
+}
+.rp h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); margin: 1.5rem 0 0.5rem; letter-spacing: -0.02em; }
+.rp h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.14em; color: #9cb0aa; margin: 2.5rem 0 0.75rem; font-weight: 600; }
+.rp p, .rp li { line-height: 1.65; color: rgba(247, 249, 248, 0.82); }
+.rp a { color: #a5ddd3; }
+.rp-back { font-size: 0.85rem; text-decoration: none; color: #9cb0aa !important; }
+.rp-lede { font-size: 1.15rem; margin: 0 0 1.5rem; }
+.rp-code { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.9rem; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); border-radius: 6px; }
+.rp-code code { flex: 1; overflow-x: auto; white-space: pre-wrap; word-break: break-all; font-size: 0.85rem; font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+.rp-code button, .rp-tabs button { font: inherit; font-size: 0.78rem; color: inherit; background: transparent; border: 1px solid rgba(255,255,255,0.18); border-radius: 4px; padding: 0.25rem 0.6rem; cursor: pointer; }
+.rp-tabs { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; }
+.rp-tabs button[aria-selected='true'] { background: rgba(165,221,211,0.16); border-color: rgba(165,221,211,0.5); }
+.rp-note { font-size: 0.85rem; color: #9cb0aa !important; margin: 0.5rem 0; }
+.rp-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+.rp-metrics div { border: 1px solid rgba(165,221,211,0.25); padding: 0.8rem; border-radius: 6px; }
+.rp-metrics strong { display: block; font-size: 1.15rem; }
+.rp-metrics span { font-size: 0.8rem; color: #9cb0aa; }
+.rp-links { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+.rp-list { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
+.rp-list a { display: block; padding: 1rem; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; text-decoration: none; }
+.rp-list strong { display: block; color: rgba(247,249,248,0.95); }
+.rp-list span { color: #9cb0aa; font-size: 0.9rem; }
+.rp-foot { margin-top: 3rem; font-size: 0.8rem; color: #9cb0aa !important; }

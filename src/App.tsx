@@ -512,10 +512,15 @@ const systemsProjects: SystemsProject[] = [
       'Local candidates are research inputs, not a statement of leaderboard position or official challenge validation.',
     links: [
       {
+        href: 'https://arxiv.org/abs/2609.09582',
+        label: 'Read arXiv paper',
+        description: 'Open the September 2026 v2 paper and its complete author list.',
+      },
+      {
         href: '/publications/ecdsafail-open-autoresearch-v3.1.pdf',
-        label: 'Read research paper',
+        label: 'Earlier research edition',
         description:
-          'Open the 62-page paper on Open Autoresearch and reversible secp256k1 point addition in Shor\'s algorithm.',
+          'Open the earlier 62-page project paper on Open Autoresearch and reversible secp256k1 point addition.',
       },
       {
         href: 'https://github.com/ecdsafail/ecdsafail-challenge',
@@ -539,6 +544,14 @@ const writingModules = import.meta.glob('./content/writings/*.html', {
 }) as Record<string, string>
 
 const writingOrder = [
+  'evidence-bounded-intelligence',
+  'ai-research-map-evolution-intelligence-safety-security',
+  'continual-learning-and-alignment-benchmarks',
+  'hybrid-synthetic-data-and-evaluation',
+  'mechanistic-interpretability-negative-results',
+  'verifiable-ai-agents',
+  'zero-knowledge-mpc-and-post-quantum-security',
+  'decentralized-compute-and-data-provenance',
   'statebooks-convergence-with-coherence',
   'architecture-unsecured-credit',
   'sacred-economics-crypto',
@@ -1145,6 +1158,113 @@ function App() {
             </div>
           </div>
 
+          <article className="featured-essay" aria-labelledby="featured-essay-title">
+            <div className="featured-essay__meta">
+              <span>Flagship essay</span>
+              <span>Safety · Security · Intelligence · Sovereignty · Privacy</span>
+            </div>
+            <h3 id="featured-essay-title">
+              Evidence-Bounded Intelligence: Why Authority Over AI Systems Should
+              Follow Evidence, Not Capability
+            </h3>
+            <p className="featured-essay__summary">
+              A long-form position built from my own experiments, and mostly
+              from the ones that failed. Every figure is tagged to a repository
+              report, and every claim carries its ceiling.
+            </p>
+            <div className="featured-essay__metrics" aria-label="Selected findings">
+              <div>
+                <strong>15.4% vs 53.6%</strong>
+                <span>two safety graders, same outputs</span>
+              </div>
+              <div>
+                <strong>0 of 12</strong>
+                <span>relative gains that became absolute retention</span>
+              </div>
+              <div>
+                <strong>279 / 279</strong>
+                <span>agent-kernel tests, one attested run, no independent replication</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="featured-essay__cta"
+              onClick={() => {
+                const writing = writings.find(
+                  (entry) => entry.slug === 'evidence-bounded-intelligence',
+                )
+
+                if (writing) {
+                  setActiveWriting(writing)
+                }
+              }}
+            >
+              Read the essay
+            </button>
+            <a className="featured-essay__cta" href="#/research">
+              Inspect and pull the five repositories
+            </a>
+          </article>
+
+          <article className="featured-paper" aria-labelledby="featured-paper-title">
+            <a
+              className="featured-paper__art"
+              href="https://arxiv.org/abs/2609.09582"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open the ECDSA.Fail paper on arXiv"
+            >
+              <img
+                src="/publications/ecdsafail-feature-preview.svg"
+                alt="An elliptic-curve orbit threaded through reversible quantum circuit gates."
+              />
+              <span className="featured-paper__art-label">ECDSA.FAIL / OPEN AUTORESEARCH</span>
+            </a>
+
+            <div className="featured-paper__body">
+              <div className="featured-paper__meta">
+                <span>Featured research</span>
+                <span>arXiv:2609.09582 · v2 · 19 Sep 2026</span>
+              </div>
+              <h3 id="featured-paper-title">
+                ECDSA.Fail: Open Autoresearch for Optimizing Elliptic-Curve Point
+                Addition in Shor’s Algorithm
+              </h3>
+              <p className="featured-paper__summary">
+                A public, evaluator-verified research loop for improving reversible
+                secp256k1 point-addition circuits, a costly primitive inside
+                Shor’s algorithm.
+              </p>
+              <div className="featured-paper__metrics" aria-label="Selected paper results">
+                <div>
+                  <strong>−86.1%</strong>
+                  <span>score reduction reported by participants</span>
+                </div>
+                <div>
+                  <strong>1.496B</strong>
+                  <span>Q × T best score at the paper’s 26 Jul cutoff</span>
+                </div>
+              </div>
+              <p className="featured-paper__qualification">
+                The paper reports a later 1.259B score separately. Its coherent
+                windowed variant is evaluated as a per-call sensitivity model,
+                not a full-Shor success estimate; comparisons use different
+                interfaces and accounting conventions.
+              </p>
+              <div className="featured-paper__actions">
+                <a href="https://arxiv.org/abs/2609.09582" target="_blank" rel="noreferrer">
+                  Read the paper <span aria-hidden="true">↗</span>
+                </a>
+                <a href="https://github.com/Layr-Labs/ecdsafail-challenge" target="_blank" rel="noreferrer">
+                  Explore the challenge <span aria-hidden="true">↗</span>
+                </a>
+                <a href="https://ecdsa.fail/" target="_blank" rel="noreferrer">
+                  Visit ECDSA.fail <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
           <div className="systems-ledger" aria-label="Current systems work">
             {systemsProjects.map((project) => (
               <article className="systems-project" key={project.title}>
@@ -1218,7 +1338,9 @@ function App() {
             <p className="writings-section__intro">
               These writings sit closest to how I think about public goods,
               coordination, infrastructure, civic experimentation, and the
-              kinds of systems that deserve long-term stewardship.
+              kinds of systems that deserve long-term stewardship. The most
+              recent are a research series on AI evolution, intelligence,
+              safety, and security, written with their failures included.
             </p>
           </div>
 

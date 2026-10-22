@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Who Vouches for the Data and the Compute?</title>
+  </head>
+  <body>
+    <article>
+      <p class="article-meta">2026 • Decentralized Compute &amp; Data Infrastructure</p>
+      <h1 class="article-title">Who Vouches for the Data and the Compute?</h1>
+      <div class="article-content">
+        <p>
+          A model is only as trustworthy as the data it learned from and the
+          machine that ran it, and today both are vouched for by whoever operates
+          them. I have been prototyping what it takes to make those claims
+          independently checkable, so that a community can do work together
+          without having to take any one party's word for it.
+        </p>
+
+        <h2>Buyer-controlled compute</h2>
+
+        <p>
+          HyperAI models a compute market where the buyer holds control: offers,
+          buyer constraints, deals, fulfillment receipts, and mock settlement,
+          all modeled locally and synthetically before any provider, payment, or
+          fleet action exists. HyperIntel narrows this to inference. Offers are
+          signed, reliability is expressed as typed artifacts with exact
+          count-to-PPM arithmetic, and routing optimizes the buyer's expected
+          successful cost rather than platform revenue. Provider price and
+          platform fee are separate signed fields, and hidden spread is
+          prohibited by the economics contract.
+        </p>
+
+        <h2>Outcome protocol: verifying that work was done</h2>
+
+        <p>
+          The harder question is how to settle on a claim about computation. The
+          protocol freezes a claim, observes the result, runs it through pinned
+          validators, allows disputes, finalizes, and prepares settlement. The
+          interesting behavior is in the failure paths. Incomplete observation,
+          replay divergence, and runner errors all resolve to unresolved with no
+          settlement artifact. Settlement is idempotent, and the intent is
+          persisted before submission so a crash recovers cleanly. In a dispute
+          with a counterexample, a provisional false is refused and the claim
+          later finalizes true with a single mock effect. Two gaps remain named in
+          the record: live container timeout classification and composed
+          stale-binding refusal.
+        </p>
+
+        <h2>Offline-checkable receipts</h2>
+
+        <p>
+          In HyperIntel, route, usage, settlement, and evidence identities are
+          derived, so any tampering with them is rejected offline against a
+          separately supplied trust registry. The point is the direction of
+          trust. An independent party can check a receipt without calling the
+          operator, which is the property a decentralized network needs from its
+          participants. The accompanying custody contract is equally clear about
+          what is not yet protected: the replay store is a local file that is not
+          encrypted, replicated, or tenant-isolated, and the harness makes no
+          confidentiality or no-retention claim.
+        </p>
+
+        <h2>Provenance for training data</h2>
+
+        <p>
+          The Mesh Brain data refinery turns mixed operational sources into
+          supervised, preference, trajectory, eval, red-team, and provenance rows
+          with source-aware envelopes. It is built around the questions a
+          decentralized data market would face: can mixed sources become
+          auditable training data without cross-tenant leakage, without audit-only
+          rows becoming trainable, and without losing where each row came from?
+          Post-training manifests carry lineage, tenant isolation, and rollback
+          metadata, and release gates remain required before anything is
+          promoted.
+        </p>
+
+        <h2>Tamper-evident run history</h2>
+
+        <p>
+          Orbital Mesh computes Merkle roots over canonical run events and
+          returns a proof for each. Anyone holding a root can check that a given
+          event was part of the history and that the history was not quietly
+          edited. The same append-only structure underlies the evidence ledgers
+          in the other repositories, where a corrected outcome supersedes rather
+          than rewrites.
+        </p>
+
+        <h2>Incentives: the open part</h2>
+
+        <p>
+          Provenance and verification are the technical half. The economic half is
+          who gets paid for contributing clean data, challenging bad data, or
+          re-running a computation to check it. I have written about
+          public-goods funding and capital flows in earlier essays, and the
+          settlement layer in these prototypes is a zero-value mock on purpose. I
+          have not run a real incentive experiment. That is the next research
+          question and not a result.
+        </p>
+
+        <h2>What this does not establish</h2>
+
+        <p>
+          No live market, no real settlement, no decentralized network, and no
+          measured incentive effect. Everything here is local and synthetic. What
+          exists is the shape of the verification and provenance primitives such a
+          system would need, with their limits written next to them.
+        </p>
+      </div>
+    </article>
+  </body>
+</html>

@@ -110,10 +110,10 @@ export const frontierPillars: FrontierPillar[] = [
       },
       {
         kind: 'established',
-        title: 'Sanitizing broker trajectory gate & supply-chain defense',
-        metric: '4.75× SWE precision lift (+26.6 pp, CI [+0.114, +0.417]) · 83/83 hacks caught',
+        title: 'Sanitizing broker trajectory gate, closed-loop reflex & supply-chain defense',
+        metric: '45.0% vs 0.0% v3 gate (9/9 recall) · 4.75× pooled lift · 83/83 hacks caught',
         detail:
-          'Across 238 Gemma-4 SWE trajectories (34 tasks), enforcing passing post-edit checks + blocking post-failure test edits while broker-stripping `repro.py` lifts solve rate from 7.1% to 33.7% (saving 65.1% of holdout budget), paired with Devkit’s AST (`0` FPs on 23 files) and egress/hook gates.',
+          'Across 238 Gemma-4 SWE trajectories (34 tasks), enforcing passing post-edit checks + blocking post-failure test edits while broker-stripping `repro.py` lifts pooled solve rate from 7.1% to 33.7% (65.1% holdout saved), hits 45.0% (9/20) vs 0.0% (0/14) on 31B `v3` (100% recall of solved tasks), and recovers all 9/34 solves in a `k20 -> v3` reflex while saving 41.2% of stage-2 runs.',
         artifact: 'patelshaan-lab · primitives/verified_loop.py',
         href: 'https://github.com/Epistetechnician/patelshaan-lab',
       },
@@ -198,12 +198,12 @@ export const frontierPillars: FrontierPillar[] = [
         href: '#/research/holdout-ledger',
       },
       {
-        title: 'Fast-to-slow consolidation over 4-bit bases',
+        title: 'Router-free consolidation of routed deltas into a single 4-bit matrix at 7B+',
         horizon: 'Approaching · Continual scaling',
         bottleneck:
-          'Our Qwen3-1.7B `cl7b` experiments proved independent rank-16 task deltas destroy capability when summed (wiki NLL 15.96 fp / 17.74 4-bit) and lose facts under 1/K scaling.',
+          'On Qwen3-1.7B-Base (3 seeds), frozen-prefix Mahalanobis-routed rank-16 deltas (`cl_orthodelta_mlx.py`) already reach 94.4% [90.6%..96.9%] multi-task fact accuracy on fp (81.3% on 4-bit) with +0.00002 WikiText NLL drift and 94.4%–96.1% selective-unlearning retention, using an L8 router.',
         unlock:
-          'Scheduled on-policy KL/SDFT consolidation from ephemeral per-deployment deltas into a shared 4-bit base, gated against the 0.997 `replay_kl` bar.',
+          'Scheduled on-policy KL distillation that folds the routed fast-delta bank into a single router-free 4-bit weight matrix at 7B–27B scale.',
         href: '#/research/hsi-lab',
       },
     ],
@@ -257,11 +257,11 @@ export const frontierPillars: FrontierPillar[] = [
       },
       {
         kind: 'established',
-        title: 'Nullspace-protected subspace-routed continual delta algebra',
-        metric: '0.988 multi-task acc · 0.990 unlearn retention · 0.984 in 4-bit',
+        title: 'Mahalanobis-routed & nullspace-protected continual delta algebra on Qwen3-1.7B',
+        metric: '94.4% 3-seed fp / 81.3% 4-bit acc · +0.00002 Wiki NLL · 94.4%–96.1% unlearning',
         detail:
-          'Targeting `cl7b`’s sum/stack failures (5 seeds × 4 tasks), projecting task input bases orthogonal to `[U_cap, U_safe, A_0..A_{k-1}]` with subspace routing cuts capability drift MSE from 2.014 to 0.00006, keeps 1.000 safety refusal, and preserves 99.0% of other tasks when `d_0` is unlearned.',
-        artifact: 'patelshaan-lab · primitives/orthodelta.py',
+          'Across 3 seeds on real Qwen3-1.7B-Base (`cl_orthodelta_mlx.py`, 4 tasks × 40 facts, zero replay), freezing `L0..L7` + `L8` Mahalanobis-whitened causal routing (`160/160` route acc) lifts 4-delta composition from 21.5% unrouted (wiki NLL 15.2) to 94.4% [90.6%..96.9%] on fp and 81.3% on 4-bit group-64 weights, beating `replay_kl` on general retention (`3.2939` vs `3.596` Wiki NLL, `1.00` vs `0.91` real capitals) while retaining 94.4%–96.1% on remaining tasks under O(1) unlearning.',
+        artifact: 'rsi-loops/cl7b/cl_orthodelta_mlx.py (3 seeds + q4)',
         href: 'https://github.com/Epistetechnician/patelshaan-lab',
       },
     ],

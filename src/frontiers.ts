@@ -110,11 +110,11 @@ export const frontierPillars: FrontierPillar[] = [
       },
       {
         kind: 'established',
-        title: 'Agent trajectory & supply-chain defense hygiene',
-        metric: '0 FP on 23 files · 8% vs 30% unverified-submit resolution',
+        title: 'Sanitizing broker trajectory gate & supply-chain defense',
+        metric: '4.75× SWE precision lift (+26.6 pp, CI [+0.114, +0.417]) · 83/83 hacks caught',
         detail:
-          'Devkit ships stdlib git-hook enforcement, sandbox egress allowlists, PolinRider/extension compromise scanning, AST experiment gates (`runhygiene`), and 238-trace SWE-agent auditing (`trajhygiene`).',
-        artifact: 'patelshaan-lab / devkit',
+          'Across 238 Gemma-4 SWE trajectories (34 tasks), enforcing passing post-edit checks + blocking post-failure test edits while broker-stripping `repro.py` lifts solve rate from 7.1% to 33.7% (saving 65.1% of holdout budget), paired with Devkit’s AST (`0` FPs on 23 files) and egress/hook gates.',
+        artifact: 'patelshaan-lab · primitives/verified_loop.py',
         href: 'https://github.com/Epistetechnician/patelshaan-lab',
       },
     ],
@@ -152,11 +152,11 @@ export const frontierPillars: FrontierPillar[] = [
     established: [
       {
         kind: 'established',
-        title: 'Bit-priced adaptive holdout certificates with zero violations',
-        metric: '9 / 9 hypotheses · 0 / 59,200 violations (Wald 100% wrong)',
+        title: 'Bit-priced adaptive holdouts & anytime Empirical-Bernstein e-processes',
+        metric: '0 / 59,200 violations · −40.4% tighter e-process CIs · −13.5% queries',
         detail:
-          'Holdout Ledger charges `min(verdict bits, description length)` with a compressible-core fallback and complexity-priced `mdl` gate—retaining 94.4% of true gain (98.6% at batch-64 with 96 bits) while blocking holdout-fitting patches.',
-        artifact: 'holdout-ledger · PREREG_COMMIT',
+          'Holdout Ledger passes 9/9 pre-registered hypotheses (Wald 100% wrong under attack); upgrading to predictable Empirical-Bernstein + MDL betting martingales keeps 0/1,000 anytime sequential violations while tightening low-variance bounds by 40.4% and pruning losers early.',
+        artifact: 'holdout-ledger + primitives/verified_loop.py',
         href: '#/research/holdout-ledger',
       },
       {
@@ -254,6 +254,15 @@ export const frontierPillars: FrontierPillar[] = [
           'Theseus Lab proved raw neuron indices carry zero representation-independent identity (−0.983 same-label cosine vs 0.9999996 mapped), fitted modules miss local derivatives, and safety graders disagree 3.5× (15.4% vs 53.6%).',
         artifact: 'theseus-lab · V8–V39',
         href: '#/research/theseus-lab',
+      },
+      {
+        kind: 'established',
+        title: 'Nullspace-protected subspace-routed continual delta algebra',
+        metric: '0.988 multi-task acc · 0.990 unlearn retention · 0.984 in 4-bit',
+        detail:
+          'Targeting `cl7b`’s sum/stack failures (5 seeds × 4 tasks), projecting task input bases orthogonal to `[U_cap, U_safe, A_0..A_{k-1}]` with subspace routing cuts capability drift MSE from 2.014 to 0.00006, keeps 1.000 safety refusal, and preserves 99.0% of other tasks when `d_0` is unlearned.',
+        artifact: 'patelshaan-lab · primitives/orthodelta.py',
+        href: 'https://github.com/Epistetechnician/patelshaan-lab',
       },
     ],
     approaching: [
@@ -359,11 +368,11 @@ export const frontierPillars: FrontierPillar[] = [
     established: [
       {
         kind: 'established',
-        title: 'Statebook: 7 completeness vectors & 3 finality clocks across federated markets',
-        metric: '72-page whitepaper · 7 non-compensating reports · 3 clocks',
+        title: 'Statebook: 7 completeness vectors, live 188-contract Polymarket receipt & Two-Clock MDL',
+        metric: '72-page paper · 6.03% live partition gap · +51.62 bits 2-clock MDL gain',
         detail:
-          'Normalizes event contracts, perpetuals, options spreads, and tokenized claims into `StateKeys` and bounded payoff residuals—separating execution finality, economic settlement, and irreversible externalization.',
-        artifact: 'statebook-whitepaper.pdf',
+          'Normalizes event, perp, and option contracts into `StateKeys` and 3 separated finality clocks; live offline-verified Polymarket Gamma receipt (13 pure partitions/ladders, 188 contracts) measured 6.03% partition sum residual, 4.93 bps spread, and 2.5h finality lag, while Rissanen MDL proved venue-vs-oracle separation saves +51.62 bits.',
+        artifact: 'statebook-whitepaper.pdf + primitives/multi_clock.py',
         href: '/publications/statebook-whitepaper.pdf',
         essaySlug: 'statebooks-convergence-with-coherence',
       },

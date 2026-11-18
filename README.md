@@ -1,45 +1,32 @@
-# `patelshaan`
+# `patelshaan` (`shaan4d.xyz`)
 
-Personal portfolio site for Shaan Patel, built with React, TypeScript, and Vite.
+Personal portfolio and research monograph for Shaan Patel, built with React, TypeScript, and Vite.
 
-The site combines a narrative portfolio, social links, writing modules, install instructions for the `spatel-cv` terminal resume project, and an evidence-bounded current-systems-work ledger.
+## Architecture & content surfaces
 
-## Current systems work
+1. **Breakthroughs & Approaching Frontiers (`#frontiers`, `src/frontiers.ts`, `src/FrontiersSection.tsx`)**:
+   Interactive six-pillar matrix juxtaposing verified breakthroughs (positive mechanisms, formal kernels, and falsification/equivalence controls) against the exact next gates across:
+   - Security, Certified Authority & Post-Quantum Readiness (`formasec`, `security-alignment-os`, `ECDSA.fail`, `devkit`)
+   - Scalability, Holdout Pricing & Self-Improving Loops (`holdout-ledger`, `playbox` F3, `caduceus`, `hsi-lab`, `cl7b`)
+   - Computer Science & ML Research (`mech-interp-unified` R6 & F2, `jspace-pilot`, `temporal-grid-safety`, `theseus-lab`, `aligned-holistic-continual-learning`)
+   - Decentralization, Multi-Owner Rooms & Verifiable Markets (`playbox`, `HyperIntel`, `composed-zk-benchmark-os`, `Halo Labs`)
+   - Socio-Economic Architecture (`Statebook` 72-page whitepaper, Cash-Flow Unsecured Credit, Sacred Economics, DAO Capital Flows, Climate MRV)
+   - Socio-Cultural Inquiry & Computational Humanities (`kailas-corpus` 15-language passage test + 195-episode pilgrimage `kime` coding + blinded Tibetan/Sanskrit scholar handoff)
+2. **Research Monograph (`#/research` and `#/research/<slug>`, lazy-loaded via `src/ResearchPage.tsx`)**:
+   Twelve full repository studies plus the Mount Kailas field study, with copyable reproduction commands, SVG architecture diagrams (`src/arch.ts`), interactive browser simulations (`src/Demos.tsx`), real captured test replays (`src/Replay.tsx`), and a 7-thread humanistic commonplace book (`src/humanities.ts`, `src/lineage.ts`).
+3. **Systems & Publications (`#systems`)**:
+   Flagship essays (`approaching-breakthroughs-across-systems`, `evidence-bounded-intelligence`), `ECDSA.fail` (`arXiv:2609.09582` v2) interactive Pareto chart, `Statebook` 72-page whitepaper and architecture SVGs, `Recoverable Ghost States`, and evidence-bounded project ledger.
+4. **Writings (`#writings`) & Terminal Companion (`#install`, `#model`)**:
+   17 essays across AI assurance and socio-economic design, plus install and local-model Q&A flows for `spatel` (`Epistetechnician/spatel-cv`).
 
-The `Current systems work` section presents Statebook, Composed ZK Benchmark OS, Orbital Mesh, Recoverable Ghost States, and ECDSA.fail research. It exposes the updated 72-page Statebook paper, the Recoverable Ghost States paper, and the 62-page ECDSA.Fail Open Autoresearch paper from `public/publications/`, and places project-specific architecture and challenge links beside those research resources. The Statebook essay uses original source-term, completeness, finality, capital/legal, architecture, and phase-boundary figures from the paper. Its short evidence-boundary note for each project is intentional: local validation, architecture work, and research candidates must not be presented as external proof, benchmark results, production readiness, or leaderboard standing.
-
-## Development
+## Development & verification
 
 ```sh
 pnpm install
 pnpm run dev
-```
-
-## Production build
-
-```sh
-pnpm run build
-pnpm run preview
+pnpm run verify:full   # eslint + tsc -b + vite build
 ```
 
 ## Deploy
 
-Pushes to `main` deploy the static `dist/` build to GitHub Pages through `.github/workflows/deploy-pages.yml`.
-
-- Pages source: GitHub Actions
-- Canonical domain: `shaan4d.xyz`
-- `www.shaan4d.xyz` should redirect to the canonical apex after DNS is configured
-
-The required DNS records are:
-
-- apex `A` records: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`
-- `www` `CNAME`: `Epistetechnician.github.io`
-
-Verify the domain in the GitHub account Pages settings before switching DNS. Retain GitHub's verification TXT record, and enable `Enforce HTTPS` after GitHub provisions the certificate.
-
-The app is client-only. GitHub Pages cannot run server processes or backend APIs.
-
-Repository target:
-
-- GitHub: `https://github.com/Epistetechnician/patelshaan`
-- Terminal CV: `https://github.com/Epistetechnician/spatel-cv`
+Pushes to `main` deploy the static `dist/` build to GitHub Pages (`https://shaan4d.xyz`) through `.github/workflows/deploy-pages.yml`.

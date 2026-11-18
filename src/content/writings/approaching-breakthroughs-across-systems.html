@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>What Held, What Broke, and What Is Within Reach</title>
+  </head>
+  <body>
+    <article>
+      <p class="article-meta">2026 • Portfolio Synthesis • Security, Scalability, ML, Decentralization, Socio-Economics &amp; Culture</p>
+      <h1 class="article-title">What Held, What Broke, and What Is Within Reach: Across Security, Scalability, Decentralization, and Socio-Economic Design</h1>
+      <div class="article-content">
+        <p>
+          Looking back across twelve research repositories, two architecture
+          whitepapers, operator roles in crypto and public goods, and a
+          fifteen-language cultural corpus, the work turns out to be one inquiry
+          asked in six places: when systems grow too fast or too fragmented for
+          any person to inspect by hand, what lets strangers verify a claim, bound
+          authority, and keep cooperating without taking an operator's word for
+          it?
+        </p>
+
+        <p>
+          Most summaries of independent research flatten the record into wins. I
+          think the dead ends, self-caught confounds, and equivalence nulls are
+          half of what we actually discovered. Killing a plausible mirage with a
+          harder control isolates the bottleneck that has to be crossed next.
+          Every number below points to a repository receipt or retained report in
+          the evidence index at the end, and every claim stays inside its stated
+          ceiling: bounded, local or single-host attested, and awaiting external
+          replication unless noted.
+        </p>
+
+        <h2>1. Security and certified authority: shrink what must be trusted</h2>
+
+        <p>
+          Prompting a model to behave is not a security boundary. Across three
+          repositories, the pattern that held was separating untrusted search from
+          a tiny, replayable admission kernel. In <strong>FormaSec</strong> [E1],
+          untrusted proposers (enumerators, Bend, and seven live LLMs) suggest
+          multi-step compositions while a Python reference kernel and a Rust
+          production core—with Kani model-checking on its pure decision logic and
+          Lean 4 proofs of structural soundness (<code>admitAlg</code>,
+          <code>plan_sound</code>)—decide admission before Linux Landlock runs a
+          single step. Python and Rust produced byte-identical receipts on 135 of
+          135 admission cases, agreed with Lean on 600 of 600 structural cases,
+          caught 75 of 75 spec mutants with zero false accepts, and admitted zero
+          unsafe proposals across 552 hostile sessions [E1]. Along the way, a
+          hostile proposer constructed a diamond DAG with 2<sup>n</sup> paths that
+          exhausted 14 GB of RAM—forcing resource bounds into the formal plan.
+        </p>
+
+        <p>
+          <strong>Security Alignment OS</strong> [E2] proved the runtime half of
+          that loop: 279 passing Rust tests, an adversarial runner attacking the
+          capability broker directly, and 20 of 20 scenarios verified on a Google
+          Confidential Space Intel TDX instance. Meanwhile,
+          <strong>ECDSA.Fail</strong> [E3] compressed reversible
+          <code>secp256k1</code> point-addition circuits inside Shor's algorithm
+          by 86.1% in <code>Q × T</code> score (1.496 billion at the July cutoff;
+          1.259 billion in a later coherent windowed model), reminding us that
+          elliptic-curve signatures on agent receipts sit on a finite clock.
+        </p>
+
+        <p>
+          <strong>What we are approaching next in security:</strong> independent
+          second-host TDX/SEV-SNP replication so hardware attestation stops being
+          single-operator; repeatable proof-carrying <code>zklean</code>/SP1
+          certificates; and applying our 14-class adversarial trace-mutation
+          method to post-quantum signature verifiers inside agent receipts.
+        </p>
+
+        <h2>2. Scalability and self-improvement: pricing the holdout in bits</h2>
+
+        <p>
+          Autonomous optimization loops can already run hundreds of experiments
+          overnight. Their bottleneck is epistemic: every time a loop asks a
+          sealed holdout "did that help?", a bit of the holdout leaks into the
+          next proposal. In <strong>Holdout Ledger</strong> [E4], pre-registered
+          before 200 confirmatory seeds (59,200 total runs), standard zero-bit
+          Wald confidence bounds failed in 100% of patch-attacked runs and 54% of
+          mixed runs. Charging the minimum of released verdict bits and output
+          description length—with a compressible-core fallback and an online
+          Minimum Description Length (<code>mdl</code>) gate—produced
+          <strong>0 certificate violations in 59,200 runs</strong> (9 of 9
+          hypotheses passed), blocked every holdout-fitting patch, kept 94.4% of
+          honest gain, and kept 98.6% when batching 64 candidates into 96 bits
+          [E4].
+        </p>
+
+        <p>
+          Two live harnesses put that governance to work. On an H100 pretraining
+          target, <strong>Playbox F3</strong> [E5] rejected seven noisy candidates
+          and caught a planted dev-set memorizer red-handed (+0.866 dev gain,
+          holdout bpb 2.203–2.434 against a 1.195 ceiling), while its Mac Tier-B
+          loop reached a 2.84× verified speedup. For agent skill evolution,
+          <strong>Caduceus</strong> [E6] paired a 13-lane admission gate and RFC
+          9162 Merkle ledger with cluster-bootstrapped evaluations, lifting Claude
+          Haiku by +0.245 and Sonnet by +0.305 while refusing 43 of 43 seeded
+          attacks—and honestly keeping its phrase-tripwire lane disabled after it
+          falsely held 41.0% of 188 real third-party skills.
+        </p>
+
+        <p>
+          Where did synthetic self-scaling hit a wall? In
+          <strong>HSI Lab</strong> [E7] (25 stdlib-recomputed receipts), typed
+          event codecs beat text at equal bytes (+0.640) and verified synthetic
+          experience beat replay (+0.238, or +0.141 above a pool-size control),
+          yet transferring the recipe to Qwen2.5-7B code produced a tight null
+          (−0.0025 [−0.025, +0.020]). Companion experiments on Qwen3-1.7B
+          (<code>cl7b</code>) [E8] showed why modular weight deltas do not rescue
+          continual learning for free: summing four independent rank-16 task
+          deltas wrecked perplexity on both fp (15.96 wiki NLL) and 4-bit bases
+          (17.74), and 1/K scaling restored capability only by erasing learned
+          facts back to chance, leaving 3-seed <code>replay_kl</code> (0.997 fact
+          retention) as the bar to beat.
+        </p>
+
+        <p>
+          <strong>What we are approaching next in scalability:</strong> wiring
+          Holdout Ledger's live MDL bit-pricing and root-cause memory directly
+          into multi-agent GPU coding and training hill-climbs, and building a
+          scheduled fast-delta to on-policy KL consolidation pipeline over 4-bit
+          bases.
+        </p>
+
+        <h2>3. Computer science and ML: calibrating the instruments</h2>
+
+        <p>
+          Mechanistic interpretability and alignment evaluations are only as
+          trustworthy as their controls. Across four ML repositories, pairing
+          strict pre-registration with harder baselines separated real handles
+          from measurement artifacts:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Auditing the interpretability auditors (F2) &amp; neuron
+            replication (R6).</strong> In <strong>Mech-Interp Unified</strong>
+            [E9], a Lean-calibrated matched-random neuron gate replicated causal
+            agreement unit sets across Pythia-2.8B (0.812 logits), Qwen3-1.7B-Base
+            (1.437 vs 0.044 control max, <code>p = 0.000999</code>), and GPT-2 XL,
+            while failing on Pythia-1.4B and shifting under device/dtype changes.
+            When we planted 8 concrete flaw classes across 200 seeds in
+            <code>F2</code>, a static rules gate caught 0 of 8 and an informed
+            probe battery caught only 3 of 8—explaining why published job-count
+            metrics were measuring neuron vector width rather than superposition
+            [E9].
+          </li>
+          <li>
+            <strong>Norm-matched PCA equivalence in J-space.</strong> In
+            <strong>J-Space Pilot</strong> [E10], ablating a Jacobian subspace in
+            OLMo-2-7B (up to 4,000 prompts plus a 1,000-prompt lens refit) and
+            Tulu-3 beat random subspaces (+0.39 to +0.42 logits) but matched
+            damage-equalized top-PCA at <code>0.00 [−0.05, +0.05]</code> on DPO
+            (equivalent within ±0.2 logits in 11 of 12 runs) while uncovering a
+            +2-logit clean-margin level shift.
+          </li>
+          <li>
+            <strong>Representation invariance &amp; derivative gaps.</strong>
+            <strong>Theseus Lab</strong> [E11] showed a function-preserving MLP
+            permutation moves 100% of coordinates with <code>3e-7</code> logit
+            error (−0.983 same-label cosine vs 0.9999996 mapped), fitted blocks
+            match values (0.11 nRMSE) while missing Jacobians (0.885 nRMSE), and
+            two safety graders disagree 3.5× on identical outputs (15.4% vs 53.6%,
+            with 62% benign false-unsafe).
+          </li>
+          <li>
+            <strong>Safety retention under benign fine-tuning drift.</strong>
+            After catching our own v16 confound in
+            <strong>Temporal Grid Safety</strong> [E12] (where the attacker
+            inherited defender learning rates) and showing slow grids null under
+            fair attackers, frozen <strong>discriminant adapters</strong> kept
+            held-out safety refusals at <strong>0.95 vs 0.27 for replay</strong>
+            on OLMo-2-7B and 0.96 vs 0.20 on Qwen3-8B and Mistral-7B across OOD
+            benign drift.
+          </li>
+        </ul>
+
+        <p>
+          <strong>What we are approaching next in CS/ML:</strong> merging F2, the
+          Astral neuron gate, and J-space's norm-matched arms into an
+          out-of-sample Planted-Flaw Benchmark for interpretability tools, and
+          scaling discriminant safety adapters to 20+ seeds and full-weight
+          AdvBench/HarmBench runs.
+        </p>
+
+        <h2>4. Decentralization and socio-economic architecture: coherence without capture</h2>
+
+        <p>
+          Technical verification only matters if the economic and institutional
+          rails around it let people transact, fund maintenance, and exit without
+          permission. In decentralized compute and collaboration,
+          <strong>Playbox</strong> [E5] provides multi-owner rooms under
+          attenuated Biscuit capabilities (and showed cross-family latent steering
+          reaches 87.5% from Qwen3-8B to OLMo-2-7B while still trailing a single
+          plain-text word at 71–77% vs 61–68%); <strong>HyperIntel</strong> [E13]
+          derives route, usage, and settlement digests verifiable offline against
+          caller-supplied trust roots with a Z3-checked router abstraction and
+          zero hidden spread; and <strong>Halo Labs</strong> builds confidential
+          stablecoin and TEE/ZK verifiable-AI infrastructure.
+        </p>
+
+        <p>
+          On the financial and institutional side, the 72-page
+          <strong>Statebook</strong> whitepaper [E14] addresses a quiet hazard as
+          prediction markets, perpetuals, options, and tokenized assets converge:
+          two contracts can point at the same event while diverging in observation
+          windows, funding clocks, legal netting, and recovery. Statebook replaces
+          single green-light flags with <strong>seven non-compensating
+          completeness reports</strong> and <strong>three separated finality
+          clocks</strong> (execution, economic settlement, and irreversible
+          externalization). Alongside operator lessons from NPC Capital, Dream
+          DAO, Eco DAO, Celo, and Solana, our socio-economic essays extend that
+          same design ethic to cash-flow-backed unsecured credit for productive
+          borrowers, a four-layer public-goods capital stack (quadratic funding,
+          retroactive rewards, delegated budgets, streaming maintenance), and
+          contestable on-chain climate MRV.
+        </p>
+
+        <p>
+          <strong>What we are approaching next in decentralization &amp;
+          socio-economics:</strong> benchmarking external zkVM provers (SP1, RISC
+          Zero, Plonky3) against our 14 semantic trace-mutation classes; running a
+          live read-only Statebook completeness monitor over prediction and perp
+          venues; and testing TEE/ZK revenue attestations for privacy-preserving
+          cash-flow credit.
+        </p>
+
+        <h2>5. Socio-cultural inquiry: when computational tools meet sacred time</h2>
+
+        <p>
+          The same discipline—commit to how a neat theory can fail, check the
+          instrument for confounds, and invite domain witnesses—governed our
+          computational humanities study of Mount Kailas
+          (<strong>kailas-corpus</strong>) [E15]. Asking whether complex time
+          (<code>kime</code>: route magnitude plus an independent interpretive
+          phase) describes how Hindu, Buddhist, Jain, and Bon traditions write
+          about the mountain, we built an open-license corpus across 15+ languages
+          (2,362 blind-labeled passages, including 574 Sanskrit passages and 206
+          CC0 Tibetan/Bon texts). First we caught and withdrew an embedding false
+          positive after blind grading showed 97% of top hits were genre and name
+          confounds; the clean passage test was null in Sanskrit (−3.4) and
+          negative in English (−6.3) and Chinese (−18.5).
+        </p>
+
+        <p>
+          Then we ran the pre-registered narrative test across 195 windows from 20
+          pilgrimage books (Krippendorff <code>α = 0.82</code>) [E15]. Only 5.6%
+          of experience episodes decoupled interpretive time from route progress
+          (missing the 10% threshold; 117 of 124 fit plain
+          <code>(lap, progress)</code>). Yet splitting the groups uncovered
+          something sharper: Kailas accounts scored 1.3% decoupled, whereas
+          comparison pilgrimages scored 14.7%, concentrated in Hajj and Holy Land
+          narratives where a fixed liturgical calendar (Day of Arafat, Ramadan,
+          canonical hours) runs independently of distance along the road.
+        </p>
+
+        <p>
+          <strong>What we are approaching next in cultural research:</strong>
+          scoring our seeded, group-blinded handoff sheets (115 Tibetan/Bon rows
+          and 233 Sanskrit rows with test-retest repeats, plus a 40-episode human
+          double-coding pack) with specialist readers, and testing two-clock
+          ritual-vs-route notation directly on Hajj and Jerusalem corpora.
+        </p>
+
+        <h2>6. The single thread</h2>
+
+        <p>
+          Whether the object is a 7B language model under fine-tuning, an agent
+          proposing shell actions, a self-improvement loop querying a holdout, a
+          derivatives position spanning two venues, or a model rater reading
+          eleventh-century Tibetan, the lesson has been identical: capability and
+          fluency arrive first; trustworthy measurement has to be built by hand.
+          Having the harnesses, null controls, formal kernels, and bit-priced
+          ledgers working end to end means the next set of experiments does not
+          start from guesswork. It starts from calibrated ground.
+        </p>
+
+        <h2>Evidence index</h2>
+
+        <ul>
+          <li>[E1] <a href="#/research/formasec">FormaSec</a> (<code>Epistetechnician/formasec</code>), DESIGN.md §§18–29 &amp; SOUNDNESS.md.</li>
+          <li>[E2] <a href="#/research/security-alignment-os">Security Alignment OS</a> (<code>Epistetechnician/security-alignment-os-maintenance</code>), RESEARCH.md &amp; TDX attestation record.</li>
+          <li>[E3] <a href="https://arxiv.org/abs/2609.09582" target="_blank" rel="noreferrer">ECDSA.Fail</a>, arXiv:2609.09582 v2 (19 Sep 2026).</li>
+          <li>[E4] <a href="#/research/holdout-ledger">Holdout Ledger</a> (<code>Epistetechnician/holdout-ledger</code>), PREREG.md, RESULTS.md &amp; <code>formal/HoldoutLedger.lean</code>.</li>
+          <li>[E5] <a href="#/research/playbox">Playbox</a> (<code>Epistetechnician/playbox</code>), <code>docs/f3/pilot/verify.txt</code>, <code>docs/steering.md</code> &amp; <code>docs/audit-claims.md</code>.</li>
+          <li>[E6] <a href="#/research/caduceus">Caduceus</a> (<code>Epistetechnician/caduceus</code>), <code>docs/CLAIMS.md</code> &amp; <code>ledgers/exp-002.result.json</code>.</li>
+          <li>[E7] <a href="#/research/hsi-lab">HSI Lab</a> (<code>Epistetechnician/hsi-lab</code>), <code>docs/REPORT.md</code> &amp; E1–E10 recomputable receipts.</li>
+          <li>[E8] <code>patelshaan-lab/rsi-loops/cl7b</code>, Qwen3-1.7B 3-seed continual-learning &amp; rank-16 delta-composition ledger.</li>
+          <li>[E9] <a href="#/research/mech-interp-unified">Mechanistic Interpretability Unified</a> (<code>Epistetechnician/mech-interp-unified</code>), <code>docs/protocols/R6-result.json</code> &amp; <code>audit/REPORT.md</code>.</li>
+          <li>[E10] <code>patelshaan-lab/jspace-pilot</code>, <code>baseline_writeup.md</code> &amp; OLMo-2 / Tulu-3 gate JSONs.</li>
+          <li>[E11] <a href="#/research/theseus-lab">Theseus Lab</a> (<code>Epistetechnician/theseus-lab</code>), RESEARCH.md.</li>
+          <li>[E12] <a href="#/research/temporal-grid-safety">Temporal Grid Safety</a> (<code>Epistetechnician/temporal-grid-safety</code>), REPORT.md &amp; <code>out30/olmo_refuse.combine.txt</code>.</li>
+          <li>[E13] <a href="#/research/hyperintel">HyperIntel</a> (<code>Epistetechnician/HyperIntel</code>), RESEARCH.md &amp; Z3 router specification.</li>
+          <li>[E14] <a href="/publications/statebook-whitepaper.pdf" target="_blank" rel="noreferrer">Statebook Whitepaper</a> (72 pages) &amp; <em>Statebooks: Convergence with Coherence</em>.</li>
+          <li>[E15] <a href="#/research/sacred-geography-kailas">Sacred Geography as Multi-Temporal Structure</a> (<code>Epistetechnician/kailas-corpus</code>), FINDINGS.md, RESULTS.md &amp; <code>coding/RESULTS_CODING.md</code>.</li>
+        </ul>
+      </div>
+    </article>
+  </body>
+</html>

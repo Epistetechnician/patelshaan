@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" fill="none">
+  <defs>
+    <radialGradient id="field" cx="0" cy="0" r="1" gradientTransform="matrix(890 560 -550 875 265 280)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#163F42"/>
+      <stop offset=".55" stop-color="#0A171D"/>
+      <stop offset="1" stop-color="#05090E"/>
+    </radialGradient>
+    <linearGradient id="curve" x1="135" x2="963" y1="620" y2="267" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#73DFC0" stop-opacity=".15"/>
+      <stop offset=".48" stop-color="#A5F2D2"/>
+      <stop offset="1" stop-color="#77BFE0" stop-opacity=".62"/>
+    </linearGradient>
+    <linearGradient id="wire" x1="117" x2="1090" y1="155" y2="155" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7EDAB9" stop-opacity=".12"/>
+      <stop offset=".52" stop-color="#9BEBCB" stop-opacity=".76"/>
+      <stop offset="1" stop-color="#85BFD5" stop-opacity=".12"/>
+    </linearGradient>
+    <filter id="glow" width="1.5" height="1.5" x="-.25" y="-.25">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0v48" stroke="#B1DCD2" stroke-opacity=".045"/>
+    </pattern>
+  </defs>
+  <path fill="url(#field)" d="M0 0h1200v900H0z"/>
+  <path fill="url(#grid)" d="M0 0h1200v900H0z"/>
+  <circle cx="640" cy="445" r="320" stroke="#86D7C0" stroke-opacity=".08"/>
+  <circle cx="640" cy="445" r="263" stroke="#86D7C0" stroke-opacity=".1" stroke-dasharray="2 10"/>
+  <circle cx="640" cy="445" r="203" stroke="#86D7C0" stroke-opacity=".08"/>
+
+  <!-- Abstract secp256k1 field curve: a visual motif, not measured data. -->
+  <path d="M110 579c82-177 160-278 248-303 85-25 124 178 209 180 94 2 113-236 207-264 75-22 119 74 185 141" stroke="url(#curve)" stroke-width="2.2"/>
+  <path d="M118 606c98-54 174-94 237-91 93 4 130 114 218 115 88 1 114-128 196-150 91-25 157 39 252 24" stroke="#7FC9BE" stroke-opacity=".28" stroke-width="1.2"/>
+  <path d="M174 691c68-80 143-112 222-97 93 18 123 79 203 70 81-9 120-99 200-108 80-8 131 45 208 94" stroke="#83ACCC" stroke-opacity=".23" stroke-width="1.2"/>
+  <g fill="#B4F4D9" filter="url(#glow)">
+    <circle cx="358" cy="284" r="4"/>
+    <circle cx="567" cy="456" r="5"/>
+    <circle cx="774" cy="192" r="4"/>
+    <circle cx="959" cy="333" r="4"/>
+  </g>
+  <g fill="#B4F4D9" fill-opacity=".42">
+    <circle cx="358" cy="284" r="10"/>
+    <circle cx="567" cy="456" r="13"/>
+    <circle cx="774" cy="192" r="10"/>
+    <circle cx="959" cy="333" r="10"/>
+  </g>
+
+  <!-- Reversible circuit register rails and compact gate cells. -->
+  <g stroke="url(#wire)" stroke-width="1.3">
+    <path d="M104 150h992M104 192h992M104 234h992M104 276h992M104 318h992"/>
+    <path d="M104 150v168M1040 150v168" stroke-opacity=".35"/>
+  </g>
+  <g stroke="#A8E9CF" stroke-opacity=".8" stroke-width="1.25">
+    <rect x="204" y="131" width="76" height="76" rx="3"/>
+    <path d="M242 131v76M204 169h76"/>
+    <rect x="374" y="215" width="76" height="76" rx="3"/>
+    <path d="M412 215v76M374 253h76"/>
+    <rect x="544" y="131" width="76" height="76" rx="3"/>
+    <path d="M582 131v76M544 169h76"/>
+    <rect x="714" y="257" width="76" height="76" rx="3"/>
+    <path d="M752 257v76M714 295h76"/>
+    <rect x="884" y="173" width="76" height="76" rx="3"/>
+    <path d="M922 173v76M884 211h76"/>
+  </g>
+  <g fill="#B4F4D9">
+    <circle cx="242" cy="169" r="4"/>
+    <circle cx="412" cy="253" r="4"/>
+    <circle cx="582" cy="169" r="4"/>
+    <circle cx="752" cy="295" r="4"/>
+    <circle cx="922" cy="211" r="4"/>
+  </g>
+  <g fill="#C8DDD6" fill-opacity=".56" font-family="monospace" font-size="12" letter-spacing="3">
+    <text x="105" y="118">REVERSIBLE REGISTER</text>
+    <text x="105" y="362">SECP256K1 / POINT ADDITION</text>
+    <text x="866" y="825">Q × T</text>
+  </g>
+  <path d="M104 789h992" stroke="#B1DCD2" stroke-opacity=".18"/>
+  <circle cx="104" cy="789" r="3" fill="#A8E9CF"/>
+  <circle cx="1096" cy="789" r="3" fill="#A8E9CF"/>
+</svg>

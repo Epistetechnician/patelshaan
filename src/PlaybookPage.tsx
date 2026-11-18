@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { RichText } from './components/RichText'
 import {
   PLAYBOOK_BENCHMARK,
   PLAYBOOK_CATEGORIES,
@@ -102,13 +103,13 @@ function SubcategoryRow({ item }: { item: PlaybookSubcategory }) {
 
       <p style={{ margin: 0, fontSize: '0.93rem', color: 'var(--mute)' }}>
         <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>NIST 1.0 (L0):</strong>{' '}
-        {item.nist_summary}{' '}
-        <em>({item.ergodic_assumption})</em>
+        <RichText text={item.nist_summary} />{' '}
+        <em>(<RichText text={item.ergodic_assumption} />)</em>
       </p>
 
       <p style={{ margin: 0, fontSize: '0.95rem' }}>
         <strong style={{ color: 'var(--good)', fontWeight: 600 }}>Post-Ergodic Invariant (L2):</strong>{' '}
-        {item.mechanical_invariant}{' '}
+        <RichText text={item.mechanical_invariant} />{' '}
         <span style={{ fontSize: '0.82rem', color: 'var(--mute)' }}>
           — <code>{item.evidence_anchor}</code>
         </span>
@@ -158,14 +159,14 @@ export default function PlaybookPage() {
           <a href="https://github.com/Epistetechnician/patelshaan-lab" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
       </header>
-      <p className="rp-rule"><span>POST-ERGODIC RISK MANAGEMENT PLAYBOOK · PERMF v0.1.0</span></p>
+      <p className="rp-rule"><span>POST-ERGODIC RISK MANAGEMENT PLAYBOOK · PERMF v0.2.0</span></p>
 
       <h1>Recompiling NIST AI RMF 1.0 for Mules, Canon Events, and Multi-Clock Systems</h1>
       <p className="rp-lede">
         A drop-in recompilation of all 72 NIST AI RMF 1.0 subcategories from prose self-attestation into
-        stranger-verifiable runtime invariants, extended with a fifth cross-cutting function (<code>CONTAIN</code>,
-        12 subcategories) for heavy-tailed outliers, inevitable phase transitions, reflexive holdout depletion,
-        and cross-owner finality lag.
+        zero-secret, stranger-verifiable runtime invariants (<code>Ed25519 + WOTS+-BLAKE2b Merkle</code>), extended
+        with a fifth cross-cutting function (<code>CONTAIN</code>, 12 subcategories) for heavy-tailed outliers,
+        inevitable phase transitions, sheaf sycophancy/contextuality, and cross-owner finality lag.
       </p>
 
       <CopyCmd command="python3 -m permf.cli benchmark --out-dir permf/results && python3 -m permf.cli verify permf/results/permf_ledger_receipt.json" />
@@ -173,19 +174,19 @@ export default function PlaybookPage() {
       <dl className="rp-results">
         <div>
           <dt>84</dt>
-          <dd>Subcategories (72 NIST 1.0 IDs + 12 net-new CONTAIN IDs across 23 categories)</dd>
+          <dd>Subcategories (72 NIST 1.0 IDs + 12 net-new CONTAIN IDs across 23 categories &amp; 9 gates)</dd>
         </div>
         <div>
           <dt>100%</dt>
-          <dd>Mule DAG bombs (16/16), reward hacks (83/83), and tamper mutations (24/24) caught</dd>
+          <dd>Mule DAGs (16/16), reward hacks (83/83), planted flaws (12/12), &amp; PQ tamper tests (28/28) caught</dd>
         </div>
         <div>
           <dt>0.0%</dt>
           <dd>Anytime holdout false promotions across 250 adaptive Goodharting campaigns</dd>
         </div>
         <div>
-          <dt>99.0%</dt>
-          <dd>Task retention after surgical unlearning &amp; 98.4% after 4-bit consolidation</dd>
+          <dt>94.4%</dt>
+          <dd>3-seed Qwen3-1.7B Mahalanobis-routed fact acc (+0.00002 Wiki NLL drift &amp; 96.1% unlearn keep)</dd>
         </div>
       </dl>
 
@@ -263,8 +264,9 @@ export default function PlaybookPage() {
           </tbody>
         </table>
         <p className="rp-note">
-          Ledger root: <code>{PLAYBOOK_BENCHMARK.ledger_head_sha256.slice(0, 24)}…</code> ({PLAYBOOK_BENCHMARK.ledger_entries}{' '}
-          hash-chained + BLAKE2b PQ-dual-committed gate verdicts; claim ceiling: <code>{PLAYBOOK_BENCHMARK.claim_ceiling}</code>).
+          Public trust root: <code>{PLAYBOOK_BENCHMARK.trust_root_sha256.slice(0, 24)}…</code> · Ledger head:{' '}
+          <code>{PLAYBOOK_BENCHMARK.ledger_head_sha256.slice(0, 20)}…</code> ({PLAYBOOK_BENCHMARK.ledger_entries}{' '}
+          verdicts under <code>{PLAYBOOK_BENCHMARK.custody_scheme}</code>; ceiling: <code>{PLAYBOOK_BENCHMARK.claim_ceiling}</code>).
         </p>
       </section>
 
@@ -398,7 +400,8 @@ export default function PlaybookPage() {
       <section className="rp-sec rp-appendix">
         <h3><span>Appendix</span> Reproduce &amp; Audit Locally</h3>
         <CopyCmd command="./scripts/check" />
-        <CopyCmd command="python3 -m permf.cli inspect &quot;CONTAIN 1.1&quot;" />
+        <CopyCmd command="python3 -m permf.cli precommit-gate --working-tree" />
+        <CopyCmd command="python3 -m permf.cli inspect &quot;CONTAIN 4.2&quot;" />
         <p className="rp-links">
           <a href="#/research">Research Monograph</a>
           <a href="#/">Portfolio Home</a>

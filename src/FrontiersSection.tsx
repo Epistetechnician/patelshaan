@@ -106,7 +106,7 @@ function PillarSheet({
 
           <p className="frontier-sheet__ceiling">
             <span>Scope ceiling — </span>
-            {pillar.ceiling}
+            <InlineCode text={pillar.ceiling} />
           </p>
         </div>
       </div>

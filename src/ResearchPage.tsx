@@ -6,6 +6,7 @@ import { ArchDiagram } from './ArchDiagram'
 import { Demo } from './Demos'
 import { ReplayWindow } from './Replay'
 import { repoUrl, researchCategories, researchRepos, type ResearchRepo } from './research'
+import { RichText } from './components/RichText'
 import { WorkList } from './components/WorkList'
 import { fieldStrands, getField, type FieldStrand } from './field'
 import { threadById, threads, type ThreadId } from './humanities'
@@ -118,12 +119,12 @@ function EssaySections({ essay }: { essay: Essay }) {
       {essay.sections.map((sec, i) => (
         <section key={sec.title} id={`s${i + 1}`} className="rp-sec">
           <h3>
-            <span>{romans[i]}</span> {sec.title}
+            <span>{romans[i]}</span> <RichText text={sec.title} />
           </h3>
           {sec.body.map((p) => (
-            <p key={p.slice(0, 40)}>{p}</p>
+            <p key={p.slice(0, 40)}><RichText text={p} /></p>
           ))}
-          {sec.aside ? <aside className="rp-aside">{sec.aside}</aside> : null}
+          {sec.aside ? <aside className="rp-aside"><RichText text={sec.aside} /></aside> : null}
           {sec.figures?.map((f, j) => (
             <EssayFigure key={j} fig={f} />
           ))}
@@ -147,7 +148,7 @@ function LineageBlock({ data, id, numeral }: { data: Lineage; id: string; numera
         <div key={sec.title} className="rp-lineage__item">
           <h4>{sec.title}</h4>
           {sec.body.map((p) => (
-            <p key={p.slice(0, 40)}>{p}</p>
+            <p key={p.slice(0, 40)}><RichText text={p} /></p>
           ))}
         </div>
       ))}
@@ -166,7 +167,7 @@ function Sources({ sources }: { sources?: { label: string; url: string; why: str
           <a href={src.url} target="_blank" rel="noreferrer">
             {src.label}
           </a>
-          <em>{src.why}</em>
+          <em><RichText text={src.why} /></em>
         </li>
       ))}
     </ul>
@@ -316,7 +317,7 @@ function FieldPage({ field }: { field: FieldStrand }) {
         ))}
       </dl>
 
-      <blockquote className="rp-callout">{essay.callout}</blockquote>
+      <blockquote className="rp-callout"><RichText text={essay.callout} /></blockquote>
       <People text={field.people} />
 
       <ArchDiagram slug={field.slug} />
@@ -347,10 +348,10 @@ function FieldPage({ field }: { field: FieldStrand }) {
         <h3>
           <span>{romans[base + 1]}</span> What this does not show
         </h3>
-        <p>{field.notShown}</p>
+        <p><RichText text={field.notShown} /></p>
         <ul>
           {field.limits.map((l) => (
-            <li key={l}>{l}</li>
+            <li key={l}><RichText text={l} /></li>
           ))}
         </ul>
       </section>
@@ -411,7 +412,7 @@ export function ResearchPage({ slug }: { slug: string }) {
 
       <ReplayWindow slug={repo.slug} repo={repo.repo} />
 
-      <blockquote className="rp-callout">{essay.callout}</blockquote>
+      <blockquote className="rp-callout"><RichText text={essay.callout} /></blockquote>
       {lin ? <People text={lin.people} /> : null}
       {essay.voice ? (
         <div className="rp-voice">
@@ -465,10 +466,10 @@ export function ResearchPage({ slug }: { slug: string }) {
         <h3>
           <span>{romans[buildIdx + 1]}</span> What this does not show
         </h3>
-        <p>{repo.notShown}</p>
+        <p><RichText text={repo.notShown} /></p>
         <ul>
           {repo.limits.map((l) => (
-            <li key={l}>{l}</li>
+            <li key={l}><RichText text={l} /></li>
           ))}
         </ul>
       </section>

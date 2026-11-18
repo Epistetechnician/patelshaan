@@ -1,4 +1,5 @@
 import { Demo } from './Demos'
+import { RichText } from './components/RichText'
 import type { Figure } from './essays'
 
 const chipLabel = { pass: 'pass', fail: 'fail', stop: 'stop', open: 'open' }
@@ -12,7 +13,7 @@ export function EssayFigure({ fig }: { fig: Figure }) {
     case 'plate':
       return (
         <figure className="ef ef-plate">
-          <h4>{fig.title}</h4>
+          <h4><RichText text={fig.title} /></h4>
           <div className="ef-plate__frame">
             <img src={fig.src} alt={fig.alt} loading="lazy" />
           </div>
@@ -21,31 +22,31 @@ export function EssayFigure({ fig }: { fig: Figure }) {
               {fig.legend.map((item) => (
                 <div key={item.label}>
                   <dt>{item.label}</dt>
-                  <dd>{item.detail}</dd>
+                  <dd><RichText text={item.detail} /></dd>
                 </div>
               ))}
             </dl>
           ) : null}
-          <figcaption>{fig.caption}</figcaption>
+          <figcaption><RichText text={fig.caption} /></figcaption>
         </figure>
       )
     case 'roadmap':
       return (
         <figure className="ef">
-          <h4>{fig.title}</h4>
+          <h4><RichText text={fig.title} /></h4>
           <div className="roadmap">
             {([['done', 'Done', fig.done], ['next', 'Next', fig.next], ['blocked', 'Blocked or open', fig.blocked]] as const).map(([k, h, items]) => (
               <div key={k} className={k}>
                 <h5>{h}</h5>
                 <ul>
                   {items.map((i) => (
-                    <li key={i}>{i}</li>
+                    <li key={i}><RichText text={i} /></li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
-          <figcaption>{fig.caption}</figcaption>
+          <figcaption><RichText text={fig.caption} /></figcaption>
         </figure>
       )
     case 'bars':
@@ -160,13 +161,13 @@ export function EssayFigure({ fig }: { fig: Figure }) {
     case 'table':
       return (
         <figure className="ef">
-          <h4>{fig.title}</h4>
+          <h4><RichText text={fig.title} /></h4>
           <div className="ef-scroll">
             <table className="ef-table">
               <thead>
                 <tr>
                   {fig.head.map((h) => (
-                    <th key={h}>{h}</th>
+                    <th key={h}><RichText text={h} /></th>
                   ))}
                 </tr>
               </thead>
@@ -174,14 +175,14 @@ export function EssayFigure({ fig }: { fig: Figure }) {
                 {fig.rows.map((r) => (
                   <tr key={r[0]}>
                     {r.map((c, i) => (
-                      <td key={i}>{c}</td>
+                      <td key={i}><RichText text={c} /></td>
                     ))}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <figcaption>{fig.caption}</figcaption>
+          <figcaption><RichText text={fig.caption} /></figcaption>
         </figure>
       )
   }

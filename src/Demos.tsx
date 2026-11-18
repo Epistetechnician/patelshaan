@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
+import { RichText } from './components/RichText'
 import { NetSwap } from './NetSwap'
 
 function Frame({ title, children, note }: { title: string; children: React.ReactNode; note: string }) {
   return (
     <figure className="ef demo">
       <h4>
-        <span className="demo-tag">live</span> {title}
+        <span className="demo-tag">live</span> <RichText text={title} />
       </h4>
       {children}
-      <figcaption>{note}</figcaption>
+      <figcaption><RichText text={note} /></figcaption>
     </figure>
   )
 }

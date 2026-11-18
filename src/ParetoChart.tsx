@@ -1,8 +1,8 @@
 import data from './ecdsafail-data.json'
 
 const W = 900
-const H = 560
-const M = { l: 64, r: 20, t: 56, b: 52 }
+const H = 520
+const M = { l: 64, r: 24, t: 54, b: 50 }
 const X0 = 640
 const X1 = 1500
 const LOG0 = Math.log10(666170)
@@ -20,7 +20,6 @@ export default function ParetoChart() {
     ([q, t]) => q >= X0 && q <= X1 && t >= 666170 && t <= 656150000,
   )
   const front = (data.front as number[][]).filter(([q]) => q <= X1)
-  // Step line: hold toffoli flat until the next frontier point's qubit count.
   let d = ''
   front.forEach(([q, t], i) => {
     d += i === 0 ? `M${sx(q)},${sy(t)}` : `H${sx(q)}V${sy(t)}`
@@ -36,15 +35,15 @@ export default function ParetoChart() {
       className="pareto"
     >
       <text x={M.l} y={22} className="pareto__title">
-        PARETO FRONTIER · QUBITS VS TOFFOLIS
+        Pareto Frontier — Qubits vs. Toffoli Gates
       </text>
       <text x={M.l} y={40} className="pareto__sub">
-        low qubit {data.front[0][0]} · low Toffoli {fmtExact(746114)} · live ecdsa.fail data, {data.asOf}
+        min qubits {data.front[0][0]} · min Toffoli {fmtExact(746114)} · {data.asOf}
       </text>
       {yTicks.map((t) => (
         <g key={t}>
           <line x1={M.l} x2={W - M.r} y1={sy(t)} y2={sy(t)} className="pareto__grid" />
-          <text x={M.l - 8} y={sy(t) + 4} textAnchor="end" className="pareto__tick">
+          <text x={M.l - 10} y={sy(t) + 4} textAnchor="end" className="pareto__tick">
             {fmt(t)}
           </text>
         </g>
@@ -57,22 +56,22 @@ export default function ParetoChart() {
           </text>
         </g>
       ))}
-      <text x={(M.l + W - M.r) / 2} y={H - 10} textAnchor="middle" className="pareto__axis">
-        Qubits
+      <text x={(M.l + W - M.r) / 2} y={H - 8} textAnchor="middle" className="pareto__axis">
+        Logical Qubits
       </text>
       <text
-        transform={`translate(14 ${(M.t + H - M.b) / 2}) rotate(-90)`}
+        transform={`translate(16 ${(M.t + H - M.b) / 2}) rotate(-90)`}
         textAnchor="middle"
         className="pareto__axis"
       >
-        Toffolis (log)
+        Toffoli Count (log)
       </text>
       {pts.map(([q, t], i) => (
-        <circle key={i} cx={sx(q)} cy={sy(t)} r={2.6} className="pareto__pt" />
+        <circle key={i} cx={sx(q)} cy={sy(t)} r={2.2} className="pareto__pt" />
       ))}
       <path d={d} className="pareto__front" />
       {front.map(([q, t], i) => (
-        <circle key={i} cx={sx(q)} cy={sy(t)} r={3.4} className="pareto__fpt" />
+        <circle key={i} cx={sx(q)} cy={sy(t)} r={3.2} className="pareto__fpt" />
       ))}
     </svg>
   )

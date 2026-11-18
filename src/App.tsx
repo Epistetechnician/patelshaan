@@ -39,80 +39,54 @@ function CopyCommand({ command }: { command: string }) {
         onClick={handleCopy}
         aria-label={`Copy command: ${command}`}
       >
-        {copied ? 'copied' : 'copy'}
+        {copied ? 'Copied' : 'Copy'}
       </button>
     </div>
   )
 }
 
-const installOptions = [
+const cliCommands = [
   {
+    group: 'install',
     label: 'cargo',
-    title: 'Install from the repo',
+    title: 'Install from source',
     command: 'cargo install --git https://github.com/Epistetechnician/spatel-cv.git --bin spatel',
-    note: 'Best developer-friendly path and the fastest way to install the TUI plus personal Q&A stack from source.',
+    note: 'Installs the terminal browser and grounded Q&A engine directly from the repository.',
   },
   {
+    group: 'install',
     label: 'curl',
-    title: 'Install latest release',
+    title: 'One-line shell install',
     command: 'curl -fsSL https://raw.githubusercontent.com/Epistetechnician/spatel-cv/master/install.sh | sh',
-    note: 'Best one-command path for macOS and Linux once release artifacts are published.',
+    note: 'Fetches the latest prebuilt binary for macOS or Linux.',
   },
   {
+    group: 'install',
     label: 'gh',
-    title: 'Download latest release',
+    title: 'GitHub release binary',
     command: 'gh release download --repo Epistetechnician/spatel-cv --pattern "spatel-*"',
-    note: 'Useful for power users who want the latest binary directly.',
-  },
-]
-
-const modelCommands = [
-  {
-    label: 'build',
-    title: 'Create the local persona model',
-    command: 'spatel --build-pico-model',
-    note: 'Builds `shaanpatel-cv-pico` on top of a small local `qwen2.5:0.5b` base through Ollama.',
+    note: 'Downloads release tarballs directly via the GitHub CLI.',
   },
   {
+    group: 'run',
     label: 'ask',
     title: 'Ask one grounded question',
     command: 'spatel --ask "What are you working on right now?"',
-    note: 'Answers with retrieved context, then uses the local model when it exists.',
+    note: 'Retrieves relevant CV entries and essay notes before answering.',
   },
   {
+    group: 'run',
     label: 'chat',
-    title: 'Open the interactive shell',
+    title: 'Interactive shell',
     command: 'spatel --chat',
-    note: 'Runs a conversational CLI for experience, worldview, and current focus questions.',
+    note: 'Opens a conversational session grounded in working notes and essays.',
   },
   {
-    label: 'fallback',
-    title: 'Force the offline corpus path',
-    command: 'spatel --ask "How do you think about public goods?" --offline-only',
-    note: 'Skips Ollama entirely and synthesizes from the embedded Shaan corpus.',
-  },
-]
-
-const modelHighlights = [
-  {
-    eyebrow: 'Grounded corpus',
-    title: 'CV plus worldview, not vibes',
-    body: 'The answer engine is fed by resume entries, personal notes, and essay-grounded worldview summaries so the output stays tied to actual experience.',
-  },
-  {
-    eyebrow: 'Tiny runtime',
-    title: 'Built around a small local base',
-    body: 'The production path uses a tiny `qwen2.5:0.5b` Ollama base and creates a personalized `shaanpatel-cv-pico` derivative.',
-  },
-  {
-    eyebrow: 'Two interfaces',
-    title: 'CLI and TUI both ask back',
-    body: 'You can use `--ask` and `--chat` in the CLI or press `/` inside the TUI to open a live question prompt.',
-  },
-  {
-    eyebrow: 'Failure mode',
-    title: 'Still works when the model is absent',
-    body: 'If Ollama is unavailable, `spatel` falls back to a retrieval-first offline answer instead of failing blankly.',
+    group: 'run',
+    label: 'model',
+    title: 'Build local Ollama model',
+    command: 'spatel --build-pico-model',
+    note: 'Creates `shaanpatel-cv-pico` atop a local `qwen2.5:0.5b` base; falls back offline if absent.',
   },
 ]
 
@@ -171,7 +145,6 @@ type SystemsProject = {
   boundary: string
   access?: string
   links?: ExperienceLink[]
-  linkLayout?: 'stacked'
   essaySlug?: string
 }
 
@@ -292,26 +265,25 @@ function AmbientSoundControl() {
     }
   }
 
-  const label =
-    playback === 'playing'
-      ? 'pause sound'
-      : playback === 'loading'
-        ? 'starting...'
-        : 'sound'
-
   return (
-    <div className="ambient-sound">
-      <div id="landing-music-player" className="landing-music__player" />
+    <div className="sound-toggle">
+      <div id="landing-music-player" className="sound-toggle__player" />
       <button
         type="button"
-        className={`landing-music__control${playback === 'playing' ? ' is-playing' : ''}`}
+        className={`sound-toggle__btn${playback === 'playing' ? ' is-playing' : ''}`}
         onClick={toggleSound}
         disabled={playback === 'loading'}
         aria-pressed={playback === 'playing'}
-        aria-label={playback === 'playing' ? 'Pause ambient music' : 'Play ambient music'}
+        aria-label={playback === 'playing' ? 'Mute ambient audio' : 'Play ambient audio'}
       >
-        <span className="landing-music__indicator" aria-hidden="true" />
-        <span className="landing-music__label">{label}</span>
+        <span className="sound-bars" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="sound-toggle__text">
+          {playback === 'playing' ? 'Sound on' : playback === 'loading' ? 'Loading' : 'Sound'}
+        </span>
       </button>
     </div>
   )
@@ -319,23 +291,22 @@ function AmbientSoundControl() {
 
 const experienceCards: ExperienceCard[] = [
   {
-    eyebrow: '2025-2026',
+    eyebrow: '2025 — 2026',
     title: 'Halo Labs',
-    role: 'Co-Founder and COO',
+    role: 'Co-Founder & COO',
     summary:
-      'Leading research around building a confidential stablecoins network with verifiable AI leveraging trusted execution environments while coordinating partnerships, docs, and developer onboarding.',
+      'Leading research on a confidential stablecoin network and verifiable AI inside trusted execution environments, alongside documentation, developer onboarding, and ecosystem partnerships.',
     details: [
-      'Lead research on developing verifiable AI using TEEs and zk-proofs',
-      'Maintaining website and relevant documentation',
-      'Onboard developers to our light client',
-      'Leading collaborations with our service providers like Phala and Fairblocks',
+      'Research on verifiable AI execution combining TEEs and zero-knowledge proofs.',
+      'Authored technical documentation and light-client onboarding guides.',
+      'Coordinated infrastructure partnerships across Phala, Fairblocks, and ecosystem teams.',
     ],
     video: {
       src: '/ascii/loomhalo-web.mp4',
       poster: '/ascii/loomhalo-poster.jpg',
-      label: 'halo labs / loom reel',
-      caption: 'A live Halo light client walk through',
-      stats: 'docs + loom / live',
+      label: 'halo labs / light client',
+      caption: 'Halo light-client walkthrough',
+      stats: 'live walkthrough',
       renderMode: 'video',
       numColumns: 88,
       blend: 18,
@@ -345,51 +316,51 @@ const experienceCards: ExperienceCard[] = [
     links: [
       {
         href: 'https://docs.halo-labs.xyz/',
-        label: 'Open Halo docs',
-        description: 'Read the Halo Network docs and architecture overview.',
+        label: 'Halo Documentation',
+        description: 'Architecture and protocol docs',
       },
       {
         href: 'https://github.com/Halo-Labs-xyz/halo-verus',
-        label: 'Halo Verus Repository',
-        description: 'Browse my work towards verifiable AI with trusted execution environments and zk-proofs.',
+        label: 'Halo Verus',
+        description: 'Verifiable AI with TEEs & ZK',
       },
       {
         href: 'https://honeysuckle-snowplow-195.notion.site/halomodular-2b40848a31bf80ff89ffe52c7f6fac59?source=copy_link',
-        label: 'Modular Privacy Research',
-        description: 'Read about a modular approach to Privacy',
+        label: 'Modular Privacy Note',
+        description: 'Research memo on modular privacy',
       },
     ],
     secondaryVideo: {
       src: '/ascii/lorenz.mp4',
-      label: 'lorenz attractor / ascii',
-      caption: 'The Lorenz attractor now renders as the ASCII counterpart for Halo.',
-      stats: 'chaotic system / rendered',
+      label: 'lorenz attractor',
+      caption: 'Lorenz chaotic system in ASCII',
+      stats: 'rendered',
       renderMode: 'ascii',
       fitMode: 'ambient',
-      focalY: 0.34,
+      focalY: 0.42,
       posterTime: 4,
       numColumns: 96,
-      blend: 18,
-      highlight: 28,
-      brightness: 1.32,
+      blend: 12,
+      highlight: 18,
+      brightness: 1.25,
     },
   },
   {
-    eyebrow: '2024-2025',
+    eyebrow: '2024 — 2025',
     title: 'NPC Capital',
-    role: 'Full Stack Developer and Researcher',
+    role: 'Full-Stack Developer & Researcher',
     summary:
-      'A liquid crypto fund focused on building the future of decentralized finance, partnered with Polygon.',
+      'Liquid digital-asset fund focused on decentralized market structure, built in partnership with Polygon.',
     details: [
-      'Built heads up display for fund investors',
-      'Established cross chain data pipelines to assist in fund investment decisions',
-      'Worked with validators in the Hyperliquid ecosystem to test real yield strategies',
+      'Designed operator and investor heads-up displays for live portfolio context.',
+      'Built cross-chain data pipelines informing capital allocation decisions.',
+      'Collaborated with Hyperliquid validators to evaluate real-yield strategies.',
     ],
     video: {
       src: '/ascii/npc-skyline.mp4',
-      label: 'markets / skyline / dashboards',
-      caption: 'A clear skyline and kinetic city texture echoes fund interfaces, market context, and live operator tooling.',
-      stats: 'cross-chain / synced',
+      label: 'markets / skyline',
+      caption: 'Skyline ASCII study',
+      stats: 'synced',
       numColumns: 96,
       blend: 10,
       highlight: 10,
@@ -397,41 +368,40 @@ const experienceCards: ExperienceCard[] = [
     },
     secondaryVideo: {
       src: '/ascii/npc-skyline.mp4',
-      label: 'npc skyline / ascii background',
-      caption: 'The NPC skyline now renders as the ASCII background for the card.',
-      stats: 'market context / rendered',
+      label: 'npc skyline',
+      caption: 'Skyline in ASCII',
+      stats: 'rendered',
       renderMode: 'ascii',
       posterTime: 2,
-      numColumns: 128,
-      blend: 10,
-      highlight: 18,
-      brightness: 1.2,
+      numColumns: 124,
+      blend: 8,
+      highlight: 14,
+      brightness: 1.15,
     },
     links: [
       {
         href: 'https://npcgroup.xyz/',
-        label: 'Visit NPC Capital',
-        description: 'Open the NPC Capital website.',
+        label: 'NPC Capital',
+        description: 'Fund overview',
       },
     ],
   },
   {
-    eyebrow: 'Ecosystem',
-    title: 'Public Goods + Open Source',
-    role: 'Celo, Dream DAO, Eco DAO, Solana Foundation',
+    eyebrow: '2022 — 2024',
+    title: 'Public Goods & Open Source',
+    role: 'Solana Foundation, Celo, Dream DAO, Eco DAO',
     summary:
-      'My work spanned across open-source education, public-goods strategy, DAO governance, and ecosystem coordination to help mission-driven communities turn ideas into usable systems.',
+      'Developer documentation, public-goods funding design, and governance stewardship across open-source communities.',
     details: [
-      'Solana Foundation: Updated developer documentation by simplifying wording, tightening versioning across examples, and merging newer SDK commands into lessons.',
-      'Celo: Built content pipelines and public-goods strategy to highlight open-source contributions and initiatives using tools like account abstraction and quadratic funding.',
-      'Dream DAO: Co-stewarded a community of about 100 young builders, helped shape DAO governance, and hosted over 40 online and 4 IRL learning gatherings.',
-      'Eco DAO: Onboarded 3 organizations and 50+ individuals, implemented governance tooling, researched carbon offset financial primitives, and supported 3 NFT launches.',
+      'Solana Foundation: Tightened SDK versioning, examples, and developer lessons.',
+      'Celo: Shaped public-goods strategy around account abstraction and quadratic funding.',
+      'Dream DAO & Eco DAO: Co-stewarded builder cohorts, governance tooling, and ecological primitives.',
     ],
     video: {
       src: '/ascii/public-goods-nature.mp4',
-      label: 'commons / learning / growth',
-      caption: 'A softer organic clip makes the public-goods card feel like stewardship, coordination, and long-term compounding.',
-      stats: 'ecosystem / alive',
+      label: 'commons',
+      caption: 'Canopy in ASCII',
+      stats: 'alive',
       numColumns: 92,
       blend: 6,
       highlight: 16,
@@ -439,252 +409,236 @@ const experienceCards: ExperienceCard[] = [
     },
     secondaryVideo: {
       src: '/ascii/public-goods-nature.mp4',
-      label: 'public goods / ascii background',
-      caption: 'The public-goods nature clip now renders behind the full card in ASCII.',
-      stats: 'commons / rendered',
+      label: 'canopy',
+      caption: 'Forest canopy in ASCII',
+      stats: 'rendered',
       renderMode: 'ascii',
       posterTime: 2,
-      numColumns: 122,
-      blend: 7,
-      highlight: 24,
-      brightness: 1.14,
+      numColumns: 120,
+      blend: 6,
+      highlight: 16,
+      brightness: 1.08,
     },
   },
 ]
 
 const foundations = [
-  'Economics and Data Science, with research spanning from sustainable development to environmental impact assessments and more. My work sits between technical and natural systems, bio-memetic antifragile design, and post-capitalist musings. ',
-  'I like products and protocols that make complicated environments feel legible, navigable, and alive. I found a passion for sacred economics, secure + verifiable AI, governance design, decentralized networks, public goods, and more.',
-  'Interests that keep me grounded: permaculture, DIY engineering, running, biking, cooking, yoga, soccer, chess, Go, and Catan.',
+  {
+    label: 'Discipline',
+    body: 'Trained in Economics and Data Science, with early work in sustainable development and environmental impact assessment. Drawn to where formal mechanisms meet living, adaptive systems.',
+  },
+  {
+    label: 'Questions',
+    body: 'Products and protocols that make complex environments legible and accountable: verifiable AI, cryptographic assurance, market coherence, governance design, and durable public goods.',
+  },
+  {
+    label: 'Off-screen',
+    body: 'Permaculture, DIY engineering, long runs, bike rides, cooking, yoga, soccer, chess, Go, and Catan.',
+  },
 ]
 
-const showDigitalLibrary = false
-const digitalLibraryHref = 'https://shaanpatel.dev/library'
 const favoriteBlogHref = 'https://www.ribbonfarm.com/series/psychohistory/'
 
 const socialLinks: SocialLink[] = [
-  {
-    id: 'x',
-    label: 'X',
-    href: 'https://x.com/epistetechnic',
-  },
-  {
-    id: 'github',
-    label: 'GitHub',
-    href: 'https://github.com/Epistetechnician',
-  },
-  {
-    id: 'linkedin',
-    label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/shaan-patel21/',
-  },
-  {
-    id: 'telegram',
-    label: 'Telegram',
-    href: 'https://t.me/epistetechnician',
-  },
+  { id: 'x', label: 'X', href: 'https://x.com/epistetechnic' },
+  { id: 'github', label: 'GitHub', href: 'https://github.com/Epistetechnician' },
+  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/shaan-patel21/' },
+  { id: 'telegram', label: 'Telegram', href: 'https://t.me/epistetechnician' },
 ]
 
 const systemsProjects: SystemsProject[] = [
   {
     index: '01',
     title: 'Holdout Ledger',
-    discipline: 'Adaptive evaluation integrity and bit-priced holdouts',
+    discipline: 'Adaptive evaluation integrity',
     summary:
-      'A pre-registered hash-chained ledger pricing the verdict bits a sealed holdout releases to a self-improvement loop against output description length, achieving 0 certificate violations across 59,200 confirmatory runs (9/9 hypotheses passed) while standard Wald bounds fail in 100% of attacked runs.',
+      'A pre-registered hash-chained ledger pricing the verdict bits a sealed holdout releases to a self-improvement loop against output description length—0 certificate violations across 59,200 confirmatory runs while standard Wald bounds fail under adaptive reuse.',
     boundary:
-      'Confirmed on tabular ensembles and stylized patch proposers with core Lean 4 counting proofs; in the late regime (true gain ~0.001) nothing is certifiable up to n = 100,000.',
+      'Confirmed on tabular ensembles and stylized patch proposers with core Lean 4 counting proofs; gains around 0.001 remain uncertifiable up to n = 100,000.',
     links: [
       {
         href: '#/research/holdout-ledger',
-        label: 'Read research page & live demo',
-        description: 'Inspect the 59,200-run confirmatory table and interactive MDL budget simulator.',
+        label: 'Research page & demo',
+        description: '59,200-run table & MDL simulator',
       },
       {
         href: 'https://github.com/Epistetechnician/holdout-ledger',
-        label: 'GitHub repository',
-        description: 'Open PREREG.md, confirmatory runs, and HoldoutLedger.lean.',
+        label: 'Repository',
+        description: 'PREREG.md & HoldoutLedger.lean',
       },
     ],
   },
   {
     index: '02',
     title: 'FormaSec & Security Alignment OS',
-    discipline: 'Certified composition and hardware-attested agent kernels',
+    discipline: 'Certified kernels & hardware attestation',
     summary:
-      'Separating untrusted LLM/enumerator proposers from small kernels: Python, Rust (Kani-checked), and Lean 4 agree on 600 structural cases with 0 unsafe admissions across 552 hostile proposals, paired with a 279-test capability broker attested across 20 scenarios on Intel TDX.',
+      'Separating untrusted LLM proposers from small admission kernels: Python, Kani-checked Rust, and Lean 4 agree across 600 cases with 0 unsafe admissions over 552 hostile proposals, paired with a 279-test capability broker attested on Intel TDX.',
     boundary:
-      'Solver proof objects sit outside the Lean TCB, and the TDX run is a single-host machine-attested reproduction awaiting independent second-host replication.',
+      'Solver proof objects sit outside the Lean TCB, and the TDX run is a single-host attestation awaiting independent second-host replication.',
     links: [
       {
         href: '#/research/formasec',
-        label: 'FormaSec research page',
-        description: 'Explore the Python/Rust/Lean admission kernel and interactive DAG checker.',
+        label: 'FormaSec',
+        description: 'Python / Rust / Lean kernel & DAG checker',
       },
       {
         href: '#/research/security-alignment-os',
         label: 'Security Alignment OS',
-        description: 'Inspect the capability-broker loop and 20-scenario TDX attestation.',
+        description: 'Capability broker & TDX attestation',
       },
     ],
   },
   {
     index: '03',
     title: 'Statebook',
-    discipline: 'Financial coherence and bounded externalization',
+    discipline: 'Financial coherence & finality boundaries',
     summary:
-      'An architecture for normalizing federated contract terms into StateKeys, bounded payoff comparisons, seven non-compensating completeness reports, and three separated finality clocks before treating a cross-venue position or externalization path as coherent.',
+      'Normalizing federated contract terms into StateKeys, bounded payoff comparisons, seven non-compensating completeness checks, and three separated finality clocks before treating a cross-venue position as coherent.',
     boundary:
-      'The current work is read-only architecture research. It does not execute trades, recognize margin, hold collateral, authorize releases, or settle value.',
+      'Read-only architecture research; does not execute trades, hold collateral, authorize releases, or settle value.',
     essaySlug: 'statebooks-convergence-with-coherence',
-    linkLayout: 'stacked',
     links: [
       {
         href: '/publications/statebook-whitepaper.pdf',
-        label: 'Read whitepaper',
-        description: 'Open the updated 72-page research paper and its bounded design claims.',
+        label: 'Whitepaper (PDF)',
+        description: '72-page specification',
       },
       {
         href: '/publications/statebook-layer-map.svg',
-        label: 'View architecture',
-        description: 'Open the semantic-coherence and authority-boundary map.',
+        label: 'Layer diagram',
+        description: 'Coherence & authority map',
       },
     ],
   },
   {
     index: '04',
     title: 'Playbox & Caduceus',
-    discipline: 'Multi-owner collaboration rooms and governed skill evolution',
+    discipline: 'Attenuated rooms & governed skill evolution',
     summary:
-      'An 8-crate Rust room substrate under attenuated Biscuit grants whose F3 H100 gate caught a planted dev-set memorizer (plus 2.84× Tier-B speedup), paired with Caduceus’s 13-lane skill release ledger (+0.245 Haiku, +0.305 Sonnet, 43/43 attacks refused).',
+      'An 8-crate Rust room substrate under attenuated Biscuit grants whose H100 gate caught a planted dev-set memorizer, paired with Caduceus’s 13-lane skill release ledger (+0.245 Haiku, +0.305 Sonnet, 43/43 attacks refused).',
     boundary:
-      'Commons v0 runs on a single relay, cross-family latent vectors (87.5%) still trail plain-text words (71–77% vs 61–68%), and Caduceus’s phrase-tripwire lane stays off after a 41% false-hold audit.',
+      'Single-relay v0; cross-family latent vectors still trail plain-text summaries, and phrase tripwires remain off after a 41% false-hold audit.',
     links: [
       {
         href: '#/research/playbox',
-        label: 'Playbox research page',
-        description: 'Multi-owner Biscuit rooms, F3 H100 verification, and latent-steering controls.',
+        label: 'Playbox',
+        description: 'Biscuit rooms & H100 verification',
       },
       {
         href: '#/research/caduceus',
-        label: 'Caduceus research page',
-        description: '13-lane Hermes skill admission, RFC 9162 Merkle ledger, and paired Claude lifts.',
+        label: 'Caduceus',
+        description: '13-lane skill admission & Merkle log',
       },
     ],
   },
   {
     index: '05',
     title: 'Mech-Interp Unified & Temporal Grid Safety',
-    discipline: 'Planted-flaw audits, subspace equivalence, and drift-resistant safety',
+    discipline: 'Planted-flaw audits & benign-drift safety',
     summary:
-      'Out-of-family causal neuron replication on Qwen3-1.7B (p = 0.000999), an F2 planted-flaw audit showing no auditor catches all 8 flaw classes, OLMo-2/Tulu-3 J-space equivalence to norm-matched PCA (0.00 gap), and frozen discriminant adapters retaining 0.95 vs 0.27 held-out refusals under benign OOD fine-tuning.',
+      'Out-of-family causal neuron replication on Qwen3-1.7B, an 8-class planted-flaw audit showing no single auditor catches every flaw, norm-matched PCA equivalence on OLMo-2/Tulu-3, and frozen discriminant adapters retaining 0.95 vs 0.27 refusals under benign OOD fine-tuning.',
     boundary:
-      'Neuron selection shifts with device/dtype, discriminant adapters protect against benign drift rather than 64-step white-box attackers, and all runs sit at or below 8B parameters.',
+      'Discriminant adapters target benign drift rather than white-box attacks; all experiments sit at or below 8B parameters.',
     links: [
       {
         href: '#/research/mech-interp-unified',
-        label: 'Mech-Interp & J-Space',
-        description: 'R6 replication, F2 planted-flaw interactive audit, and norm-matched PCA equivalence.',
+        label: 'Mech-Interp Unified',
+        description: 'Planted-flaw audit & subspace tests',
       },
       {
         href: '#/research/temporal-grid-safety',
         label: 'Temporal Grid Safety',
-        description: 'Self-caught v16 attacker confound and 0.95 vs 0.27 benign-drift refusal retention.',
+        description: 'Refusal retention & v16 confound',
       },
     ],
   },
   {
     index: '06',
     title: 'Composed ZK Benchmark OS',
-    discipline: 'Semantics, adversarial trace mutations, and evidence ceilings',
+    discipline: 'Semantic trace oracles & mutation testing',
     summary:
-      'A semantics-first benchmark architecture generating nine control-flow workload families and 14 adversarial mutation classes so a fast backend that accepts an invalid trace ranks strictly below a slow one that rejects it.',
+      'Generating nine control-flow workload families and 14 adversarial mutation classes so a fast prover backend that accepts an invalid trace ranks strictly below a slower one that rejects it.',
     boundary:
-      'The work is deliberately Level 1 local infrastructure: replay and mutation harnesses are not presented as external zkVM performance numbers or kernel-checked Rust source proofs.',
+      'Local semantic harness; not presented as external zkVM throughput benchmarks or kernel-checked prover proofs.',
     links: [
       {
         href: '#/research/composed-zk-benchmark-os',
-        label: 'Read research page',
-        description: 'Try the interactive trace-mutation oracle and inspect the formal ladder.',
+        label: 'Research page',
+        description: 'Interactive trace-mutation oracle',
       },
       {
         href: 'https://github.com/Epistetechnician/composed-zk-benchmark-os',
-        label: 'GitHub repository',
-        description: 'Open the benchmark architecture and FINDINGS.md.',
+        label: 'Repository',
+        description: 'Harness source & FINDINGS.md',
       },
     ],
   },
   {
     index: '07',
     title: 'Lusis Mesh & Recoverable Ghost States',
-    discipline: 'Bounded operator control and continual-learning proof packs',
+    discipline: 'Operator control planes & state recovery',
     summary:
-      'Policy-guided infrastructure remediation with Merkle-anchored run events and operator steering by default, alongside bounded-governed continual-learning recovery and validation packets.',
+      'Policy-guided infrastructure remediation with Merkle-anchored run logs and explicit operator gates, alongside continual-learning state recovery validation.',
     boundary:
-      'Passing local validation packets do not claim hosted production autonomy; live external runtime replication remains explicitly gated.',
+      'Local validation packets do not claim unattended production autonomy.',
     links: [
       {
         href: 'https://lusislabs.com/',
-        label: 'Visit Lusis Labs',
-        description: 'Open the Lusis Labs public site.',
+        label: 'Lusis Labs',
+        description: 'Project overview',
       },
       {
         href: '/publications/recoverable-ghost-states-paper.pdf',
-        label: 'Read research paper',
-        description: 'Open the 17-page paper on bounded-governed continual learning.',
+        label: 'Research paper (PDF)',
+        description: '17-page continual-learning study',
       },
     ],
   },
   {
     index: '08',
     title: 'ECDSA.fail',
-    discipline: 'Reversible quantum-circuit autoresearch',
+    discipline: 'Reversible quantum-circuit optimization',
     summary:
-      'Evaluator-verified open autoresearch on reversible secp256k1 point addition inside Shor’s algorithm: achieving an 86.1% Q × T score reduction while respecting exactness, uncomputation, and phase invariants.',
+      'Evaluator-verified open autoresearch on reversible secp256k1 point addition inside Shor’s algorithm, cutting the Q × T cost metric by 86.1% under exactness, uncomputation, and phase checks.',
     boundary:
-      'Coherent windowed variants reflect per-call sensitivity models rather than full-Shor success estimates across differing interface conventions.',
+      'Coherent windowed figures reflect per-call sensitivity models rather than full-Shor end-to-end fault-tolerant estimates.',
     links: [
       {
         href: 'https://arxiv.org/abs/2609.09582',
-        label: 'Read arXiv paper',
-        description: 'Open the September 2026 v2 paper and complete author list.',
-      },
-      {
-        href: '/publications/ecdsafail-open-autoresearch-v3.1.pdf',
-        label: 'Earlier research edition',
-        description: 'Open the 62-page project paper on Open Autoresearch.',
+        label: 'arXiv:2609.09582',
+        description: 'September 2026 v2 paper',
       },
       {
         href: 'https://ecdsa.fail/',
-        label: 'Challenge site',
-        description: 'Open the public challenge surface and benchmark context.',
+        label: 'Challenge surface',
+        description: 'Live Pareto frontier & harness',
       },
     ],
   },
   {
     index: '09',
     title: 'Sacred Geography as Multi-Temporal Structure',
-    discipline: 'Multilingual corpora, pilgrimage coding, and complex time',
+    discipline: 'Multilingual corpora & pilgrimage coding',
     summary:
-      'Two pre-registered open-data studies of Mount Kailas: 2,362 blind-labeled passages across 15+ languages and 195 dual-coded pilgrim-account episodes (α = 0.82) testing whether complex time (`kime`) beats `(lap, progress)`.',
+      'Pre-registered study of Mount Kailas across 2,362 passages in 15+ languages and 195 dual-coded pilgrim episodes (α = 0.82), testing whether complex time (`kime`) outperforms simpler `(lap, progress)` coordinates.',
     boundary:
-      'Both Kailas tests are null (Sanskrit −3.4; decoupled episodes 5.6% vs 10% threshold, Kailas 1.3% vs Hajj/Holy Land 14.7%). Blinded Tibetan/Bon (115-row) and Sanskrit (233-row) scholar handoff packs await specialist review.',
+      'Both tests return clean nulls (5.6% decoupled episodes vs 10% threshold); blinded Tibetan, Bon, and Sanskrit packs await specialist review.',
     links: [
       {
         href: '#/research/sacred-geography-kailas',
-        label: 'Read the field study',
-        description: 'The 15-language passage test, 20-account pilgrimage coding, and scholar handoff.',
+        label: 'Field study',
+        description: 'Methods, null results & reading list',
       },
       {
         href: 'https://github.com/Epistetechnician/kailas-corpus',
-        label: 'Open corpus repository',
-        description: 'Browse manifests, lexicons, coding results, and blinded handoff builders.',
+        label: 'Corpus repository',
+        description: 'Manifests, lexicons & handoff packs',
       },
     ],
   },
 ]
 
-// Keep writing source inside the app so Railway builds do not depend on parent folders.
 const writingModules = import.meta.glob('./content/writings/*.html', {
   eager: true,
   import: 'default',
@@ -742,11 +696,8 @@ const writings = Object.entries(writingModules)
   .sort((left, right) => {
     const leftIndex = writingOrder.indexOf(left.slug)
     const rightIndex = writingOrder.indexOf(right.slug)
-
     const normalizedLeftIndex = leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex
-    const normalizedRightIndex =
-      rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex
-
+    const normalizedRightIndex = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex
     return normalizedLeftIndex - normalizedRightIndex
   })
 
@@ -756,109 +707,7 @@ function getWritingFromHash(hash: string): WritingEntry | null {
   return writings.find((entry) => entry.slug === match[1]) ?? null
 }
 
-function StoryDetails({
-  title,
-  details,
-}: {
-  title: string
-  details: string[]
-}) {
-  const contentRef = useRef<HTMLDivElement | null>(null)
-  const [typedLength, setTypedLength] = useState(0)
-  const [isInView, setIsInView] = useState(false)
-  const [hasStarted, setHasStarted] = useState(false)
-  const [completedCount, setCompletedCount] = useState(() =>
-    typeof window !== 'undefined' &&
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ? details.length
-      : 0,
-  )
-
-  useEffect(() => {
-    const node = contentRef.current
-    if (!node || completedCount >= details.length) {
-      return
-    }
-
-    const observedNode = node.closest('.experience-card') ?? node
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const visible = Boolean(entry && entry.intersectionRatio >= 0.14)
-        setIsInView(visible)
-        if (visible) {
-          setHasStarted(true)
-        }
-      },
-      {
-        threshold: [0, 0.14, 0.3],
-        rootMargin: '0px 0px -4% 0px',
-      },
-    )
-
-    observer.observe(observedNode)
-
-    return () => observer.disconnect()
-  }, [completedCount, details.length])
-
-  useEffect(() => {
-    if (!hasStarted || !isInView || completedCount >= details.length) {
-      return
-    }
-
-    const currentDetail = details[completedCount]
-    if (!currentDetail) return
-    let timeoutId: number
-
-    if (typedLength < currentDetail.length) {
-      timeoutId = window.setTimeout(() => {
-        setTypedLength((current) => Math.min(current + 3, currentDetail.length))
-      }, 10)
-    } else {
-      timeoutId = window.setTimeout(() => {
-        setTypedLength(0)
-        setCompletedCount((current) => current + 1)
-      }, 110)
-    }
-
-    return () => window.clearTimeout(timeoutId)
-  }, [completedCount, details, hasStarted, isInView, typedLength])
-
-  return (
-    <div
-      ref={contentRef}
-      className="experience-details"
-      aria-label={`${title} role details`}
-    >
-      {details.map((detail, index) => {
-        const isDone = index < completedCount
-        const isCurrent = index === completedCount && completedCount < details.length
-        const shownPart = isDone ? detail : isCurrent ? detail.slice(0, typedLength) : ''
-        const hiddenPart = isDone ? '' : isCurrent ? detail.slice(typedLength) : detail
-        const showCursor = isCurrent && isInView && hasStarted
-
-        return (
-          <p key={`${title}-detail-${index}`} className="experience-details__line">
-            <span>{shownPart}</span>
-            {showCursor ? (
-              <span className="experience-details__cursor" aria-hidden="true">
-                |
-              </span>
-            ) : null}
-            {hiddenPart ? (
-              <span className="experience-details__untyped" aria-hidden="true">
-                {hiddenPart}
-              </span>
-            ) : null}
-          </p>
-        )
-      })}
-    </div>
-  )
-}
-
-function ExperienceMedia({
+function LazyWalkthroughVideo({
   title,
   video,
 }: {
@@ -871,7 +720,6 @@ function ExperienceMedia({
   )
 
   useEffect(() => {
-    if (video.renderMode !== 'video') return
     const el = videoNodeRef.current
     if (!el || typeof IntersectionObserver === 'undefined') {
       return
@@ -897,66 +745,24 @@ function ExperienceMedia({
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [video.renderMode])
-
-  if (video.renderMode === 'video') {
-    return (
-      <div className="experience-media">
-        <div className="experience-media__video-stack" aria-label={`${title} related video`}>
-          <div className="experience-media__video-shell">
-            <video
-              ref={videoNodeRef}
-              key={`${title}-${video.src}`}
-              className="experience-media__video"
-              src={shouldLoad ? video.src : undefined}
-              poster={video.poster}
-              muted
-              loop
-              playsInline
-              preload={shouldLoad ? 'metadata' : 'none'}
-            />
-          </div>
-          <p className="experience-media__caption">{video.caption}</p>
-        </div>
-      </div>
-    )
-  }
+  }, [])
 
   return (
-    <div className="experience-media">
-      <div className="experience-media__frame" aria-label={`${title} related ASCII video`}>
-        <div className="experience-media__topline">
-          <span>{video.label}</span>
-          <span>{video.stats}</span>
-        </div>
-
-        <div className="experience-media__body">
-          <Video2Ascii
-            key={`${title}-${video.src}`}
-            src={video.src}
-            numColumns={video.numColumns}
-            colored={true}
-            blend={video.blend}
-            highlight={video.highlight}
-            brightness={video.brightness}
-            fitMode={video.fitMode}
-            focalY={video.focalY}
-            posterTime={video.posterTime}
-            audioEffect={0}
-            enableMouse={false}
-            enableRipple={false}
-            charset="detailed"
-            isPlaying={true}
-            autoPlay={true}
-            className="experience-media__ascii"
-          />
-          <div className="experience-media__overlay">
-            <p>{title}</p>
-            <p>{video.caption}</p>
-          </div>
-        </div>
+    <figure className="work-reel" aria-label={`${title} walkthrough`}>
+      <div className="work-reel__frame">
+        <video
+          ref={videoNodeRef}
+          className="work-reel__video"
+          src={shouldLoad ? video.src : undefined}
+          poster={video.poster}
+          muted
+          loop
+          playsInline
+          preload={shouldLoad ? 'metadata' : 'none'}
+        />
       </div>
-    </div>
+      <figcaption className="work-reel__caption">{video.caption}</figcaption>
+    </figure>
   )
 }
 
@@ -967,9 +773,9 @@ function EssayNotes({ slug }: { slug: string }) {
   const notes = essayNotes[slug]
   if (!notes) return null
   return (
-    <footer className="writing-modal__after">
+    <footer className="reader-after">
       <h3>Beside this essay</h3>
-      <p className="writing-modal__chips">
+      <p className="reader-chips">
         {notes.threads.map((t) => (
           <a key={t} href={`#/research?t=${t}`}>
             {threadById(t).title}
@@ -978,7 +784,7 @@ function EssayNotes({ slug }: { slug: string }) {
       </p>
       {notes.inquiries?.length ? (
         <>
-          <h4>Research that sits with it</h4>
+          <h4>Related research</h4>
           <ul>
             {notes.inquiries.map((s) => (
               <li key={s}>
@@ -1024,40 +830,39 @@ function WritingReaderModal({
 
   return (
     <div
-      className="writing-modal"
+      className="reader-modal"
       role="dialog"
       aria-modal="true"
       aria-labelledby={`writing-title-${writing.slug}`}
       onClick={onClose}
     >
-      <div className="writing-modal__backdrop" />
+      <div className="reader-modal__backdrop" />
 
       <div
-        className="writing-modal__shell"
+        className="reader-modal__sheet"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="writing-modal__chrome">
-          <p className="writing-modal__eyebrow">reading mode / archive</p>
+        <div className="reader-modal__bar">
           <button
             ref={closeBtnRef}
             type="button"
-            className="writing-modal__close"
+            className="reader-modal__back"
             onClick={onClose}
             aria-label={`Close ${writing.title}`}
           >
-            close
+            ← Back
           </button>
+          <span className="reader-modal__meta-top">{writing.meta}</span>
         </div>
 
-        <article className="writing-modal__article">
-          <header className="writing-modal__header">
-            <p className="writing-modal__meta">{writing.meta}</p>
+        <article className="reader-modal__body">
+          <header className="reader-modal__header">
             <h2 id={`writing-title-${writing.slug}`}>{writing.title}</h2>
-            <p className="writing-modal__summary">{writing.summary}</p>
+            <p className="reader-modal__lede">{writing.summary}</p>
           </header>
 
           <div
-            className="writing-modal__content"
+            className="reader-modal__prose"
             dangerouslySetInnerHTML={{ __html: writing.contentHtml }}
           />
           <EssayNotes slug={writing.slug} />
@@ -1067,54 +872,13 @@ function WritingReaderModal({
   )
 }
 
-function SocialIcon({ id }: { id: SocialLink['id'] }) {
-  switch (id) {
-    case 'x':
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M18.244 2H21l-6.57 7.51L22.16 22h-6.05l-4.74-6.77L5.45 22H2.69l7.03-8.03L2.34 2h6.2l4.28 6.13L18.244 2Zm-0.97 18.34h1.53L7.71 3.57H6.07l11.204 16.77Z"
-          />
-        </svg>
-      )
-    case 'github':
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M12 2C6.477 2 2 6.589 2 12.25c0 4.528 2.865 8.369 6.839 9.724.5.096.682-.223.682-.495 0-.245-.009-.894-.014-1.755-2.782.62-3.369-1.39-3.369-1.39-.455-1.189-1.11-1.505-1.11-1.505-.908-.638.069-.625.069-.625 1.004.073 1.532 1.059 1.532 1.059.892 1.567 2.341 1.115 2.91.852.091-.666.349-1.115.635-1.372-2.221-.261-4.555-1.14-4.555-5.074 0-1.121.39-2.037 1.029-2.755-.103-.262-.446-1.314.098-2.74 0 0 .84-.277 2.75 1.052A9.305 9.305 0 0 1 12 6.836c.85.004 1.706.118 2.505.346 1.909-1.329 2.748-1.052 2.748-1.052.546 1.426.202 2.478.1 2.74.64.718 1.027 1.634 1.027 2.755 0 3.944-2.337 4.809-4.566 5.064.359.318.68.946.68 1.907 0 1.377-.012 2.488-.012 2.826 0 .274.18.596.688.494C19.138 20.615 22 16.776 22 12.25 22 6.589 17.523 2 12 2Z"
-          />
-        </svg>
-      )
-    case 'linkedin':
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M6.94 8.5H3.56V20h3.38V8.5ZM5.25 3C4.17 3 3.3 3.9 3.3 5s.87 2 1.95 2 1.95-.9 1.95-2S6.33 3 5.25 3Zm15.45 9.86c0-3.48-1.82-5.1-4.56-5.1-2.11 0-3.05 1.19-3.58 2.03V8.5H9.18c.04.85 0 11.5 0 11.5h3.38v-6.42c0-.34.02-.68.12-.92.27-.68.88-1.39 1.91-1.39 1.35 0 1.89 1.05 1.89 2.58V20H20v-6.78Z"
-          />
-        </svg>
-      )
-    case 'telegram':
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M21.448 4.478a1.55 1.55 0 0 0-1.72-.223L3.804 10.93c-.76.323-.72 1.416.062 1.682l3.934 1.34 1.498 4.626c.232.718 1.126.91 1.617.346l2.196-2.522 4.31 3.183c.626.463 1.523.122 1.682-.64l2.522-12.13a1.56 1.56 0 0 0-.177-1.337ZM9.12 13.264l8.75-5.366-6.967 6.996a.82.82 0 0 0-.22.391l-.605 2.616-.958-2.957Zm8.63 4.244-4.044-2.988 5.903-5.928-1.86 8.916Z"
-          />
-        </svg>
-      )
-  }
-}
-
-function SiteHeader({ onNavigateSection }: { onNavigateSection?: () => void }) {
+function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => {
-      setIsScrolled(window.scrollY > 36)
+      setIsScrolled(window.scrollY > 32)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -1130,17 +894,14 @@ function SiteHeader({ onNavigateSection }: { onNavigateSection?: () => void }) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [menuOpen])
 
-  const closeMenu = () => {
-    setMenuOpen(false)
-    onNavigateSection?.()
-  }
+  const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className={`site-header${isScrolled ? ' is-scrolled' : ''}${menuOpen ? ' is-menu-open' : ''}`}>
-      <div className="site-header__bar">
+    <header className={`site-nav${isScrolled ? ' is-scrolled' : ''}${menuOpen ? ' is-open' : ''}`}>
+      <div className="site-nav__inner">
         <a
           href="#top"
-          className="hero-name site-header__brand"
+          className="site-nav__wordmark"
           onClick={(event) => {
             event.preventDefault()
             closeMenu()
@@ -1150,74 +911,60 @@ function SiteHeader({ onNavigateSection }: { onNavigateSection?: () => void }) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         >
-          shaan patel
+          Shaan Patel
         </a>
 
-        <nav className="site-header__nav" aria-label="Primary sections">
-          <a href="#frontiers">frontiers</a>
-          <a href="#systems">systems</a>
-          <a href="#archive">work</a>
-          <a href="#writings">writings</a>
-          <a href="#/research" className="site-header__research-link">
-            research (13)
-          </a>
-          <a href="#install">cli</a>
+        <nav className="site-nav__links" aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#archive">Work</a>
+          <a href="#frontiers">Programme</a>
+          <a href="#systems">Systems</a>
+          <a href="#writings">Writing</a>
+          <a href="#/research">Research</a>
+          <a href="#install">Terminal</a>
         </nav>
 
-        <div className="site-header__controls">
-          <a href="#/research" className="site-header__mobile-research">
-            research
-          </a>
+        <div className="site-nav__right">
           <AmbientSoundControl />
+          <a href="#/research" className="site-nav__mobile-link">
+            Research
+          </a>
           <button
             type="button"
-            className="site-header__menu-btn"
+            className="site-nav__menu-trigger"
             aria-expanded={menuOpen}
-            aria-controls="site-mobile-drawer"
-            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            onClick={() => setMenuOpen((open) => !open)}
+            aria-controls="mobile-nav-sheet"
+            onClick={() => setMenuOpen((v) => !v)}
           >
-            <span className="site-header__menu-icon" aria-hidden="true">
-              <i />
-              <i />
-            </span>
-            <span>{menuOpen ? 'close' : 'index'}</span>
+            {menuOpen ? 'Close' : 'Index'}
           </button>
         </div>
       </div>
 
       {menuOpen ? (
         <>
-          <div
-            className="site-drawer-backdrop"
-            aria-hidden="true"
-            onClick={() => setMenuOpen(false)}
-          />
-          <nav
-            id="site-mobile-drawer"
-            className="site-drawer"
-            aria-label="Mobile navigation"
-          >
+          <div className="site-nav__scrim" aria-hidden="true" onClick={closeMenu} />
+          <nav id="mobile-nav-sheet" className="site-nav__drawer" aria-label="Section index">
             <a href="#about" onClick={closeMenu}>
-              <span>01</span> Foundations &amp; About
-            </a>
-            <a href="#frontiers" onClick={closeMenu}>
-              <span>02</span> Breakthroughs &amp; Approaching Frontiers
+              <span>01</span> About &amp; Foundations
             </a>
             <a href="#archive" onClick={closeMenu}>
-              <span>03</span> Proof of Work
+              <span>02</span> Selected Work
+            </a>
+            <a href="#frontiers" onClick={closeMenu}>
+              <span>03</span> Research Programme
             </a>
             <a href="#systems" onClick={closeMenu}>
               <span>04</span> Systems &amp; Publications
             </a>
             <a href="#writings" onClick={closeMenu}>
-              <span>05</span> Essays &amp; Writings
+              <span>05</span> Essays &amp; Notes
             </a>
             <a href="#install" onClick={closeMenu}>
-              <span>06</span> Terminal Companion (spatel)
+              <span>06</span> Terminal (spatel)
             </a>
-            <a href="#/research" className="site-drawer__highlight" onClick={closeMenu}>
-              <span>↗</span> Research Monograph (13) &amp; Commonplace Book
+            <a href="#/research" className="site-nav__drawer-research" onClick={closeMenu}>
+              <span>→</span> Research Monograph &amp; Commonplace Book
             </a>
           </nav>
         </>
@@ -1233,8 +980,7 @@ function App() {
   const [activeWriting, setActiveWriting] = useState<WritingEntry | null>(() =>
     typeof window !== 'undefined' ? getWritingFromHash(window.location.hash) : null,
   )
-  const [installTab, setInstallTab] = useState(0)
-  const [modelTab, setModelTab] = useState(0)
+  const [cliTab, setCliTab] = useState(0)
 
   const openedViaPushRef = useRef(false)
   const triggerElementRef = useRef<HTMLElement | null>(null)
@@ -1287,7 +1033,6 @@ function App() {
     }
   }, [])
 
-  // Arriving from a research page via an in-page anchor such as #systems.
   useEffect(() => {
     const id = window.location.hash.slice(1)
     if (id && !id.startsWith('/') && !id.startsWith('writing/')) {
@@ -1295,28 +1040,27 @@ function App() {
     }
   }, [])
 
-  const activeInstall = installOptions[installTab] ?? installOptions[0]
-  const activeModelCmd = modelCommands[modelTab] ?? modelCommands[0]
+  const activeCli = cliCommands[cliTab] ?? cliCommands[0]
 
   return (
     <div className="page-shell" id="top">
-      <div className="page-noise" />
       <SiteHeader />
 
       <main className="page-main">
-        <section className="hero-panel">
-          <div className="hero-panel__ascii-background" aria-hidden="true">
+        {/* HERO — Pure living ASCII cinema + restrained monograph intro */}
+        <section className="hero">
+          <div className="hero__canvas" aria-hidden="true">
             <Video2Ascii
               key={`hero-${heroVideoSrc}`}
               src={heroVideoSrc}
               numColumns={176}
               colored={true}
-              blend={14}
+              blend={12}
               highlight={0}
-              brightness={1.24}
+              brightness={1.06}
               fitMode="ambient"
-              focalY={0.36}
-              posterTime={2.0}
+              focalY={0.38}
+              posterTime={3.0}
               audioEffect={0}
               enableMouse={false}
               enableRipple={false}
@@ -1324,55 +1068,47 @@ function App() {
               isPlaying={true}
               autoPlay={true}
               priority={true}
-              className="hero-panel__ascii-surface"
             />
           </div>
-          <div className="hero-panel__background-tint" />
+          <div className="hero__vignette" aria-hidden="true" />
 
-          <div className="hero-copy">
-            <div className="hero-copy__spacer" aria-hidden="true" />
-
-            <div className="hero-copy__bottom">
-              <p className="hero-eyebrow">ml assurance · certified security · verifiable markets · socio-economic design</p>
-              <h1 className="hero-summary">
-                Independent ML, security, and socio-economic systems researcher &amp;
-                operator—building certified agent kernels, bit-priced evaluation
-                ledgers, verifiable compute, and coherent market &amp; cultural
-                infrastructure.
+          <div className="hero__content">
+            <div className="hero__intro">
+              <h1 className="hero__headline">
+                Researcher, operator, and builder working across verifiable AI,
+                cryptography, market design, and public goods.
               </h1>
 
-              <div className="hero-actions">
-                <a href="#frontiers" className="button button--solid">
-                  breakthroughs &amp; frontiers
+              <div className="hero__actions">
+                <a href="#systems" className="btn-primary">
+                  Selected work
                 </a>
-                <a href="#/research" className="button button--accent">
-                  research monograph (13)
-                </a>
-                <a href="#about" className="button button--ghost">
-                  foundations
+                <a href="#/research" className="btn-quiet">
+                  Research monograph <span aria-hidden="true">→</span>
                 </a>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="about-section" id="about">
-          <div className="section-heading">
-            <p className="eyebrow">01 / foundations</p>
-            <h2>A fuller picture of myself.</h2>
+        {/* 01 — ABOUT & FOUNDATIONS */}
+        <section className="ed-section" id="about">
+          <div className="ed-section__head">
+            <p className="ed-eyebrow">01 — Foundations</p>
+            <h2>Beyond the curriculum vitae.</h2>
           </div>
 
-          <div className="about-showcase">
-            <div className="media-frame">
-              <div className="media-frame__body">
+          <div className="about-layout">
+            <figure className="about-figure">
+              <div className="about-figure__stage">
                 <Video2Ascii
                   key={`about-${aboutVideoSrc}`}
                   src={aboutVideoSrc}
                   numColumns={104}
                   colored={true}
                   blend={8}
-                  highlight={18}
-                  brightness={1.15}
+                  highlight={16}
+                  brightness={1.12}
                   posterTime={1.0}
                   audioEffect={0}
                   enableMouse={true}
@@ -1381,150 +1117,75 @@ function App() {
                   isPlaying={true}
                   autoPlay={true}
                   enableSpacebarToggle={true}
-                  className="video-ascii"
                 />
-                <span className="media-frame__hint" aria-hidden="true">
-                  interactive · tap or move
-                </span>
-                <article className="about-copy-card about-copy-card--overlay about-copy-card--desktop">
-                  <p className="eyebrow">about me / beyond the cv</p>
-                  <h3>Research-minded builder with an eye for beauty in systems and design.</h3>
-                  <h4 className="about-quote">
-                    I like to think that our collective actions become notes in the opening melody of the symphony of life.
-                  </h4>
-                </article>
               </div>
+              <figcaption className="about-figure__caption">
+                Interactive glyph study — move or tap across the frame.
+              </figcaption>
+            </figure>
 
-              <article className="about-copy-card about-copy-card--mobile">
-                <p className="eyebrow">about me / beyond the cv</p>
-                <h3>Research-minded builder with an eye for beauty in systems and design.</h3>
-                <p className="about-quote">
-                  I like to think that our collective actions become notes in the opening melody of the symphony of life.
-                </p>
-              </article>
-            </div>
-          </div>
+            <div className="about-editorial">
+              <blockquote className="about-pullquote">
+                “I like to think that our collective actions become notes in the
+                opening melody of the symphony of life.”
+              </blockquote>
 
-          <div className="foundation-grid">
-            {foundations.map((item) => (
-              <article key={item} className="foundation-card">
-                <p>{item}</p>
-              </article>
-            ))}
-
-            {showDigitalLibrary && (
-              <article className="foundation-card foundation-card--link">
-                <p className="foundation-card__eyebrow">digital library / in progress</p>
-                <p>
-                  A home for my future multimedia archive across research, visuals,
-                  field notes, references, and living artifacts.
-                </p>
-                <a
-                  className="foundation-card__cta"
-                  href={digitalLibraryHref}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open digital library
-                </a>
-              </article>
-            )}
-
-            <article className="foundation-card foundation-card--link foundation-card--essay">
-              <p className="foundation-card__eyebrow">favorite blog / ribbonfarm</p>
-              <h3>Psychohistory</h3>
-              <p>
-                Venkatesh Rao&apos;s essays helped me see history, technology, and
-                institutions as living systems shaped by narrative, incentives,
-                and long arcs of coordination.
-              </p>
-              <p className="foundation-card__note">
-                It taught me to look for the hidden currents beneath events:
-                streams, equilibria, infrastructure, mood, and the stories
-                people use to make complexity feel legible.
-              </p>
-              <a
-                className="foundation-card__cta"
-                href={favoriteBlogHref}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Read Psychohistory
-              </a>
-            </article>
-
-            <article className="foundation-card foundation-card--link foundation-card--terminal">
-              <p className="foundation-card__eyebrow">a terminal version of me</p>
-              <h3>spatel</h3>
-              <p>
-                A small command-line companion built from my CV, writing, and
-                working notes. You can ask it questions, browse the context it
-                draws from, or run it entirely on your own machine.
-              </p>
-              <p className="foundation-card__note">
-                I find that interesting because it treats a personal archive as
-                something inspectable and portable, not a polished substitute
-                for a person. It is an invitation to follow the threads behind
-                the résumé and keep the conversation grounded in real work.
-              </p>
-              <a className="foundation-card__cta" href="#install">
-                See how it works
-              </a>
-            </article>
-
-            <article className="foundation-card foundation-card--socials">
-              <p className="foundation-card__eyebrow">find me elsewhere</p>
-              <p>
-                I share thoughts, code, writing, and ongoing work across these
-                corners of the internet.
-              </p>
-              <div className="social-links" aria-label="Social links">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.id}
-                    className="social-link"
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={link.label}
-                    title={link.label}
-                  >
-                    <SocialIcon id={link.id} />
-                  </a>
+              <div className="about-columns">
+                {foundations.map((item) => (
+                  <div key={item.label} className="about-column">
+                    <h3>{item.label}</h3>
+                    <p>{item.body}</p>
+                  </div>
                 ))}
               </div>
-            </article>
+
+              <div className="about-colophon">
+                <div className="about-colophon__item">
+                  <span>Reading touchstone</span>
+                  <a href={favoriteBlogHref} target="_blank" rel="noreferrer" className="text-link">
+                    Venkatesh Rao’s Psychohistory ↗
+                  </a>
+                </div>
+
+                <div className="about-colophon__item">
+                  <span>Portable archive</span>
+                  <a href="#install" className="text-link">
+                    spatel command-line companion ↓
+                  </a>
+                </div>
+
+                <div className="about-colophon__item">
+                  <span>Elsewhere</span>
+                  <div className="inline-socials">
+                    {socialLinks.map((link) => (
+                      <a key={link.id} href={link.href} target="_blank" rel="noreferrer">
+                        {link.label} ↗
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <FrontiersSection
-          onOpenEssay={(slug) => {
-            const writing = writings.find((entry) => entry.slug === slug)
-            if (writing) {
-              openWriting(writing)
-            }
-          }}
-        />
-
-        <section className="archive-section" id="archive">
-          <div className="section-heading">
-            <p className="eyebrow">03 / Proof of work</p>
-            <h2>Experiences that I&apos;m proud of</h2>
+        {/* 02 — SELECTED WORK */}
+        <section className="ed-section" id="archive">
+          <div className="ed-section__head">
+            <p className="ed-eyebrow">02 — Selected Work</p>
+            <h2>Operatorship, engineering, and stewardship.</h2>
           </div>
 
-          <div className="experience-stack">
+          <div className="work-chapters">
             {experienceCards.map((card) => {
-              const hasForegroundMedia = card.video.renderMode === 'video'
+              const hasWalkthrough = card.video.renderMode === 'video'
 
               return (
-                <article
-                  className={`experience-card${card.secondaryVideo ? ' experience-card--with-background' : ''}${hasForegroundMedia ? '' : ' experience-card--copy-only'}`}
-                  key={card.title}
-                >
+                <article className="work-chapter" key={card.title}>
                   {card.secondaryVideo ? (
-                    <div className="experience-card__background" aria-hidden="true">
+                    <div className="work-chapter__ambient" aria-hidden="true">
                       <Video2Ascii
-                        key={`${card.title}-${card.secondaryVideo.src}-background`}
+                        key={`${card.title}-${card.secondaryVideo.src}`}
                         src={card.secondaryVideo.src}
                         numColumns={card.secondaryVideo.numColumns}
                         colored={true}
@@ -1540,471 +1201,359 @@ function App() {
                         charset="detailed"
                         isPlaying={true}
                         autoPlay={true}
-                        className="experience-card__background-ascii"
                       />
-                      <div className="experience-card__background-tint" />
+                      <div className="work-chapter__wash" />
                     </div>
                   ) : null}
 
-                  <div className="experience-card__copy">
-                    <p className="eyebrow">{card.eyebrow}</p>
-                    <h3>{card.title}</h3>
-                    <p className="experience-card__role">{card.role}</p>
-                    {card.summary ? <p>{card.summary}</p> : null}
-                    <StoryDetails title={card.title} details={card.details} />
-                    {card.links?.length ? (
-                      <div className="experience-card__links" aria-label={`${card.title} links`}>
-                        {card.links.map((link) => (
-                          <a
-                            key={link.href}
-                            className="experience-card__link"
-                            href={link.href}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <span>{link.label}</span>
-                            <span>{link.description}</span>
-                          </a>
-                        ))}
+                  <div className={`work-chapter__inner${hasWalkthrough ? ' has-media' : ''}`}>
+                    <div className="work-chapter__prose">
+                      <div className="work-chapter__meta">
+                        <span>{card.eyebrow}</span>
+                        <span>{card.role}</span>
                       </div>
+
+                      <h3>{card.title}</h3>
+                      <p className="work-chapter__summary">{card.summary}</p>
+
+                      <ul className="work-chapter__points">
+                        {card.details.map((detail) => (
+                          <li key={detail}>{detail}</li>
+                        ))}
+                      </ul>
+
+                      {card.links?.length ? (
+                        <div className="work-chapter__links" aria-label={`${card.title} references`}>
+                          {card.links.map((link) => (
+                            <a
+                              key={link.href}
+                              href={link.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="work-link"
+                            >
+                              <span className="work-link__title">{link.label} ↗</span>
+                              <span className="work-link__desc">{link.description}</span>
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {hasWalkthrough ? (
+                      <LazyWalkthroughVideo title={card.title} video={card.video} />
                     ) : null}
                   </div>
-
-                  {hasForegroundMedia ? (
-                    <ExperienceMedia
-                      title={card.title}
-                      video={card.video}
-                    />
-                  ) : null}
                 </article>
               )
             })}
           </div>
         </section>
 
-        <section className="systems-section" id="systems">
-          <div className="systems-intro">
-            <div className="section-heading systems-intro__heading">
-              <p className="eyebrow">04 / systems &amp; publications</p>
+        {/* 03 — RESEARCH PROGRAMME (Tabbed Monograph Sheet) */}
+        <FrontiersSection
+          onOpenEssay={(slug) => {
+            const writing = writings.find((entry) => entry.slug === slug)
+            if (writing) {
+              openWriting(writing)
+            }
+          }}
+        />
+
+        {/* 04 — SYSTEMS & PUBLICATIONS */}
+        <section className="ed-section" id="systems">
+          <div className="ed-section__head ed-section__head--split">
+            <div>
+              <p className="ed-eyebrow">04 — Systems &amp; Publications</p>
               <h2>Making technical claims earn their weight.</h2>
             </div>
 
-            <div className="systems-intro__copy">
+            <div className="ed-lead">
               <p>
-                Recent work has centered on the machinery around consequential
-                systems: how we generate tests, bound authority, preserve
-                provenance, and distinguish a useful local result from a claim
-                the world can rely on.
-              </p>
-              <p className="systems-intro__note">
-                Source availability and the qualification below each project are
-                part of the work, not fine print.
+                How we generate adversarial tests, bound authority, preserve
+                provenance, and separate a clean local result from a claim
+                strangers can rely on. Every entry states its scope ceiling.
               </p>
             </div>
           </div>
 
-          <article className="featured-essay" aria-labelledby="featured-essay-title">
-            <div className="featured-essay__meta">
-              <span>Flagship essay</span>
-              <span>Safety · Security · Intelligence · Sovereignty · Privacy</span>
-            </div>
-            <h3 id="featured-essay-title">
-              Evidence-Bounded Intelligence: Why Authority Over AI Systems Should
-              Follow Evidence, Not Capability
-            </h3>
-            <p className="featured-essay__summary">
-              A long-form position built from my own experiments, and mostly
-              from the ones that failed. Every figure is tagged to a repository
-              report, and every claim carries its ceiling.
-            </p>
-            <div className="featured-essay__metrics" aria-label="Selected findings">
-              <div>
-                <strong>0 / 59,200</strong>
-                <span>holdout certificate violations across 9/9 pre-registered hypotheses (Wald 100% wrong under attack)</span>
-              </div>
-              <div>
-                <strong>0 / 552</strong>
-                <span>unsafe admissions in hostile sessions across Python, Rust, Kani &amp; Lean 4 kernels</span>
-              </div>
-              <div>
-                <strong>0.95 vs 0.27</strong>
-                <span>held-out safety refusal retention under benign OOD fine-tuning vs replay</span>
-              </div>
-              <div>
-                <strong>15.4% vs 53.6%</strong>
-                <span>two safety graders on the same outputs, plus 62% benign prompts flagged unsafe</span>
-              </div>
-            </div>
-            <div className="featured-essay__actions">
-              <button
-                type="button"
-                className="featured-essay__cta featured-essay__cta--primary"
-                onClick={() => {
-                  const writing = writings.find(
-                    (entry) => entry.slug === 'approaching-breakthroughs-across-systems',
-                  )
+          <div className="flagship-duo">
+            <article className="flagship-item" aria-labelledby="featured-essay-title">
+              <p className="flagship-item__kicker">Position Paper · 2026</p>
+              <h3 id="featured-essay-title">
+                Evidence-Bounded Intelligence: Why Authority Over AI Systems Should
+                Follow Evidence, Not Capability
+              </h3>
+              <p className="flagship-item__body">
+                Built from experiments across safety grading, module replacement,
+                and attested kernels—mostly from the runs that failed. Every
+                figure points to a reproducible repository report.
+              </p>
 
-                  if (writing) {
-                    openWriting(writing)
-                  }
-                }}
-              >
-                Read 2026 portfolio synthesis
-              </button>
-              <button
-                type="button"
-                className="featured-essay__cta featured-essay__cta--primary"
-                onClick={() => {
-                  const writing = writings.find(
-                    (entry) => entry.slug === 'evidence-bounded-intelligence',
-                  )
+              <dl className="marginalia-stats">
+                <div>
+                  <dt>15.4% vs 53.6%</dt>
+                  <dd>Two safety graders on identical model outputs</dd>
+                </div>
+                <div>
+                  <dt>0.89 vs 0.11</dt>
+                  <dd>Jacobian error vs value error in learned replacements</dd>
+                </div>
+                <div>
+                  <dt>279 / 279</dt>
+                  <dd>Kernel tests passed on a single attested TDX host</dd>
+                </div>
+              </dl>
 
-                  if (writing) {
-                    openWriting(writing)
-                  }
-                }}
-              >
-                Read Evidence-Bounded Intelligence
-              </button>
-              <a className="featured-essay__cta featured-essay__cta--secondary" href="#/research">
-                Inspect all 13 research pages <span aria-hidden="true">→</span>
-              </a>
-              <a className="featured-essay__cta featured-essay__cta--secondary" href="#/research?t=failure">
-                The reading behind the work <span aria-hidden="true">→</span>
-              </a>
-            </div>
-          </article>
-
-          <article className="featured-paper" aria-labelledby="featured-paper-title">
-            <a
-              className="featured-paper__art"
-              href="https://arxiv.org/abs/2609.09582"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Open the ECDSA.Fail paper on arXiv"
-            >
-              <ParetoChart />
-              <span className="featured-paper__art-label">ECDSA.FAIL / OPEN AUTORESEARCH</span>
-            </a>
-
-            <div className="featured-paper__body">
-              <div className="featured-paper__meta">
-                <span>Featured research</span>
-                <span>arXiv:2609.09582 · v2 · 19 Sep 2026</span>
+              <div className="flagship-item__links">
+                <button
+                  type="button"
+                  className="btn-quiet"
+                  onClick={() => {
+                    const writing = writings.find(
+                      (entry) => entry.slug === 'evidence-bounded-intelligence',
+                    )
+                    if (writing) openWriting(writing)
+                  }}
+                >
+                  Read essay →
+                </button>
+                <a className="text-link" href="#/research">
+                  Inspect repositories →
+                </a>
+                <a className="text-link" href="#/research?t=failure">
+                  Commonplace notes →
+                </a>
               </div>
+            </article>
+
+            <article className="flagship-item flagship-item--paper" aria-labelledby="featured-paper-title">
+              <p className="flagship-item__kicker">arXiv:2609.09582 · Sep 2026</p>
               <h3 id="featured-paper-title">
                 ECDSA.Fail: Open Autoresearch for Optimizing Elliptic-Curve Point
                 Addition in Shor’s Algorithm
               </h3>
-              <p className="featured-paper__summary">
-                A public, evaluator-verified research loop for improving reversible
-                secp256k1 point-addition circuits, a costly primitive inside
-                Shor’s algorithm.
+              <p className="flagship-item__body">
+                Evaluator-verified open research loop for reversible secp256k1
+                point-addition circuits, achieving an 86.1% Q × T reduction
+                (1.496B at paper cutoff; 1.259B post-cutoff).
               </p>
-              <div className="featured-paper__metrics" aria-label="Selected paper results">
-                <div>
-                  <strong>−86.1%</strong>
-                  <span>score reduction reported by participants</span>
-                </div>
-                <div>
-                  <strong>1.496B</strong>
-                  <span>Q × T best score at the paper’s 26 Jul cutoff</span>
-                </div>
-              </div>
-              <p className="featured-paper__qualification">
-                The paper reports a later 1.259B score separately. Its coherent
-                windowed variant is evaluated as a per-call sensitivity model,
-                not a full-Shor success estimate; comparisons use different
-                interfaces and accounting conventions.
-              </p>
-              <div className="featured-paper__actions">
-                <a href="https://arxiv.org/abs/2609.09582" target="_blank" rel="noreferrer">
-                  Read the paper <span aria-hidden="true">↗</span>
-                </a>
-                <a href="https://github.com/Layr-Labs/ecdsafail-challenge" target="_blank" rel="noreferrer">
-                  Explore the challenge <span aria-hidden="true">↗</span>
-                </a>
-                <a href="https://ecdsa.fail/" target="_blank" rel="noreferrer">
-                  Visit ECDSA.fail <span aria-hidden="true">↗</span>
-                </a>
-              </div>
-            </div>
-          </article>
 
-          <div className="systems-ledger" aria-label="Current systems work">
+              <a
+                className="paper-figure"
+                href="https://arxiv.org/abs/2609.09582"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Open ECDSA.Fail paper on arXiv"
+              >
+                <ParetoChart />
+              </a>
+
+              <div className="flagship-item__links">
+                <a href="https://arxiv.org/abs/2609.09582" target="_blank" rel="noreferrer" className="btn-quiet">
+                  Read arXiv paper ↗
+                </a>
+                <a href="https://github.com/Layr-Labs/ecdsafail-challenge" target="_blank" rel="noreferrer" className="text-link">
+                  Challenge harness ↗
+                </a>
+                <a href="https://ecdsa.fail/" target="_blank" rel="noreferrer" className="text-link">
+                  ecdsa.fail ↗
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <div className="ledger" aria-label="Systems and research index">
             {systemsProjects.map((project) => (
-              <article className="systems-project" key={project.title}>
-                <p className="systems-project__index" aria-hidden="true">
+              <article className="ledger-row" key={project.title}>
+                <span className="ledger-row__num" aria-hidden="true">
                   {project.index}
-                </p>
+                </span>
 
-                <div className="systems-project__content">
-                  <p className="systems-project__discipline">{project.discipline}</p>
+                <div className="ledger-row__main">
+                  <p className="ledger-row__discipline">{project.discipline}</p>
                   <h3>{project.title}</h3>
-                  <p className="systems-project__summary">{project.summary}</p>
-                  <p className="systems-project__boundary">
-                    <span>Evidence boundary</span>
+                  <p className="ledger-row__summary">{project.summary}</p>
+                  <p className="ledger-row__ceiling">
+                    <span>Ceiling — </span>
                     {project.boundary}
                   </p>
                   {project.essaySlug ? (
                     <button
                       type="button"
-                      className="systems-project__essay"
+                      className="text-link ledger-row__essay"
                       onClick={() => {
-                        const writing = writings.find(
-                          (entry) => entry.slug === project.essaySlug,
-                        )
-
-                        if (writing) {
-                          openWriting(writing)
-                        }
+                        const writing = writings.find((e) => e.slug === project.essaySlug)
+                        if (writing) openWriting(writing)
                       }}
                     >
-                      Read essay
+                      Companion essay →
                     </button>
                   ) : null}
                 </div>
 
                 {project.links?.length ? (
-                  <div
-                    className={`systems-project__links${
-                      project.linkLayout === 'stacked'
-                        ? ' systems-project__links--stacked'
-                        : ''
-                    }`}
-                    aria-label={`${project.title} links`}
-                  >
+                  <div className="ledger-row__refs" aria-label={`${project.title} links`}>
                     {project.links.map((link) => (
                       <a
                         key={link.href}
-                        className="systems-project__link"
                         href={link.href}
                         target={link.href.startsWith('#') ? undefined : '_blank'}
-                        rel="noreferrer"
+                        rel={link.href.startsWith('#') ? undefined : 'noreferrer'}
+                        className="ledger-ref"
                       >
-                        <span>{link.label}</span>
-                        <span>{link.description}</span>
+                        <span>{link.label} {link.href.startsWith('#') ? '→' : '↗'}</span>
+                        <small>{link.description}</small>
                       </a>
                     ))}
                   </div>
                 ) : (
-                  <p className="systems-project__access">{project.access}</p>
+                  <p className="ledger-row__access">{project.access}</p>
                 )}
               </article>
             ))}
           </div>
         </section>
 
-        <section className="writings-section" id="writings">
-          <div className="section-heading">
-            <p className="eyebrow">05 / writings</p>
-            <h2>Essays and open-systems notes.</h2>
-            <p className="writings-section__intro">
-              These writings sit closest to how I think about public goods,
-              coordination, infrastructure, civic experimentation, and the
-              kinds of systems that deserve long-term stewardship. The most
-              recent are a research series on AI evolution, intelligence,
-              safety, and security, written with their failures included.
-            </p>
+        {/* 05 — WRITING (Literary Table of Contents) */}
+        <section className="ed-section" id="writings">
+          <div className="ed-section__head ed-section__head--split">
+            <div>
+              <p className="ed-eyebrow">05 — Writing</p>
+              <h2>Essays and field notes.</h2>
+            </div>
+
+            <div className="ed-lead">
+              <p>
+                Long-form notes on AI assurance, mechanistic interpretability
+                nulls, market coherence, sacred economics, and public-goods
+                institutions—written with their negative results intact.
+              </p>
+            </div>
           </div>
 
-          <div className="writings-panel">
-            <div className="writings-grid" aria-label="Writing archive">
-              {writings.map((writing) => (
-                <button
-                  key={writing.slug}
-                  type="button"
-                  className="writing-card"
-                  onClick={() => openWriting(writing)}
-                >
-                  <p className="writing-card__meta">{writing.meta}</p>
+          <div className="essay-index" role="list" aria-label="Essay archive">
+            {writings.map((writing, idx) => (
+              <button
+                key={writing.slug}
+                type="button"
+                role="listitem"
+                className="essay-row"
+                onClick={() => openWriting(writing)}
+              >
+                <span className="essay-row__num" aria-hidden="true">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                <div className="essay-row__body">
                   <h3>{writing.title}</h3>
                   <p>{writing.summary}</p>
-                  <span className="writing-card__cta">Open essay</span>
-                </button>
-              ))}
-            </div>
+                </div>
+                <span className="essay-row__meta">{writing.meta}</span>
+              </button>
+            ))}
           </div>
         </section>
 
-        <section className="install-section" id="install">
-          <div className="section-heading">
-            <p className="eyebrow">06 / terminal path</p>
-            <h2>Install the terminal version of me.</h2>
+        {/* 06 — TERMINAL COMPANION */}
+        <section className="ed-section" id="install">
+          <div className="ed-section__head ed-section__head--split">
+            <div>
+              <p className="ed-eyebrow">06 — Terminal Companion</p>
+              <h2>An inspectable CLI archive.</h2>
+            </div>
+
+            <div className="ed-lead">
+              <p>
+                <code>spatel</code> packages my CV, essays, and working notes into
+                a portable Rust binary with an interactive TUI, retrieved Q&amp;A,
+                and an optional local <code>qwen2.5:0.5b</code> Ollama persona
+                that degrades cleanly offline.
+              </p>
+            </div>
           </div>
 
-          <div className="install-grid">
-            <div className="terminal-card">
-              <div className="terminal-card__bar">
-                <span />
-                <span />
-                <span />
+          <div className="terminal-layout">
+            <div className="terminal-transcript" aria-label="Sample spatel session">
+              <div className="terminal-transcript__head">
+                <span>spatel — session</span>
+                <span>rust + local rag</span>
               </div>
-              <pre>{`$ spatel --build-pico-model
-built shaanpatel-cv-pico........... ok
+              <pre>{`$ spatel --ask "How do you think about public goods?"
 
-$ spatel --ask "What breakthroughs are you building toward?"
-bit-priced holdouts for unattended RSI,
-certified Python/Rust/Lean agent kernels,
-planted-flaw ML benchmarks, Statebook
-market coherence, and scholar-checked
-computational humanities.
+Gitcoin mattered because it turned caring about
+public goods into allocative power. Durable funding
+needs a stack: quadratic matching, retroactive
+rewards, delegated domain judgment, and maintenance.
 
-press [/] inside the TUI to ask live
-press [tab] to toggle answer history
-press [q] to quit`}</pre>
+sources: Gitcoin & Public Goods · Sacred Economics
+mode: grounded corpus (offline-capable)
+
+[/] live prompt   [tab] history   [q] quit`}</pre>
             </div>
 
-            <div className="install-options install-options--desktop">
-              {installOptions.map((option) => (
-                <article key={option.label} className="install-option">
-                  <p className="install-option__label">{option.label}</p>
-                  <h3>{option.title}</h3>
-                  <CopyCommand command={option.command} />
-                  <p>{option.note}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="cli-switcher install-options--mobile">
-              <div className="cli-switcher__tabs" role="tablist" aria-label="Install methods">
-                {installOptions.map((option, index) => (
+            <div className="terminal-controls">
+              <div className="cli-tabs" role="tablist" aria-label="spatel commands">
+                {cliCommands.map((item, idx) => (
                   <button
-                    key={option.label}
+                    key={item.label}
                     type="button"
                     role="tab"
-                    aria-selected={installTab === index}
-                    className={`cli-switcher__tab${installTab === index ? ' is-active' : ''}`}
-                    onClick={() => setInstallTab(index)}
+                    aria-selected={cliTab === idx}
+                    className={`cli-tab${cliTab === idx ? ' is-active' : ''}`}
+                    onClick={() => setCliTab(idx)}
                   >
-                    {option.label}
+                    {item.label}
                   </button>
                 ))}
               </div>
-              {activeInstall ? (
-                <article className="install-option">
-                  <p className="install-option__label">{activeInstall.label}</p>
-                  <h3>{activeInstall.title}</h3>
-                  <CopyCommand command={activeInstall.command} />
-                  <p>{activeInstall.note}</p>
-                </article>
-              ) : null}
-            </div>
-          </div>
-        </section>
 
-        <section className="model-section" id="model">
-          <div className="section-heading">
-            <p className="eyebrow">07 / personal model</p>
-            <h2>Ask the terminal version of me.</h2>
-            <p className="model-section__intro">
-              <code>spatel</code> is no longer only a browser for my CV. It now ships as a
-              grounded personal Q&amp;A surface with a local corpus, a tiny Ollama
-              model path, a chat shell, and a TUI question prompt.
-            </p>
-          </div>
-
-          <div className="model-grid">
-            <article className="model-terminal">
-              <div className="model-terminal__bar">
-                <span />
-                <span />
-                <span />
-              </div>
-              <pre>{`$ spatel --ask "How do you think about public goods?"
-Gitcoin matters to me because it turned
-caring about public goods into allocative
-power. My view now is that public-goods
-funding needs a stack: quadratic funding,
-retroactive rewards, delegated judgment,
-and long-lived support for maintenance.
-
-sources: Gitcoin and Public Goods Funding
-mode: persona model`}</pre>
-            </article>
-
-            <div className="model-stack">
-              {modelHighlights.map((item) => (
-                <article key={item.title} className="model-card">
-                  <p className="model-card__eyebrow">{item.eyebrow}</p>
-                  <h3>{item.title}</h3>
-                  <p>
-                    <Inline text={item.body} />
+              {activeCli ? (
+                <div className="cli-panel" role="tabpanel">
+                  <div className="cli-panel__head">
+                    <span>{activeCli.group === 'install' ? 'Installation' : 'Execution'}</span>
+                    <h3>{activeCli.title}</h3>
+                  </div>
+                  <CopyCommand command={activeCli.command} />
+                  <p className="cli-panel__note">
+                    <Inline text={activeCli.note} />
                   </p>
-                </article>
-              ))}
-            </div>
-          </div>
+                </div>
+              ) : null}
 
-          <div className="model-command-grid model-command-grid--desktop">
-            {modelCommands.map((item) => (
-              <article key={item.title} className="model-command">
-                <p className="model-command__label">{item.label}</p>
-                <h3>{item.title}</h3>
-                <CopyCommand command={item.command} />
-                <p>
-                  <Inline text={item.note} />
-                </p>
-              </article>
-            ))}
-          </div>
-
-          <div className="cli-switcher model-command-grid--mobile">
-            <div className="cli-switcher__tabs" role="tablist" aria-label="Model commands">
-              {modelCommands.map((item, index) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  role="tab"
-                  aria-selected={modelTab === index}
-                  className={`cli-switcher__tab${modelTab === index ? ' is-active' : ''}`}
-                  onClick={() => setModelTab(index)}
-                >
-                  {item.label}
-                </button>
-              ))}
+              <dl className="terminal-specs">
+                <div>
+                  <dt>Corpus</dt>
+                  <dd>CV entries, research ceilings, and essay-grounded notes.</dd>
+                </div>
+                <div>
+                  <dt>Fallback</dt>
+                  <dd>Synthesizes directly from embedded passages when Ollama is absent.</dd>
+                </div>
+              </dl>
             </div>
-            {activeModelCmd ? (
-              <article className="model-command">
-                <p className="model-command__label">{activeModelCmd.label}</p>
-                <h3>{activeModelCmd.title}</h3>
-                <CopyCommand command={activeModelCmd.command} />
-                <p>
-                  <Inline text={activeModelCmd.note} />
-                </p>
-              </article>
-            ) : null}
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="site-footer__inner">
-          <div className="site-footer__brand">
-            <span className="site-footer__name">shaan patel</span>
-            <span className="site-footer__tagline">systems · terminals · environments</span>
+      <footer className="colophon">
+        <div className="colophon__inner">
+          <div className="colophon__left">
+            <span className="colophon__name">Shaan Patel</span>
+            <span className="colophon__note">Systems, Terminals &amp; Environments</span>
           </div>
 
-          <nav className="site-footer__links" aria-label="Footer navigation">
-            <a href="#top">top ↑</a>
-            <a href="#frontiers">frontiers</a>
-            <a href="#systems">systems</a>
-            <a href="#writings">writings</a>
-            <a href="#/research">research (13)</a>
-            <a href="#install">cli</a>
+          <nav className="colophon__nav" aria-label="Footer">
+            <a href="#top">Top ↑</a>
+            <a href="#archive">Work</a>
+            <a href="#frontiers">Programme</a>
+            <a href="#writings">Writing</a>
+            <a href="#/research">Research</a>
           </nav>
 
-          <div className="site-footer__socials" aria-label="Social profiles">
+          <div className="colophon__socials">
             {socialLinks.map((link) => (
-              <a
-                key={link.id}
-                href={link.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={link.label}
-                title={link.label}
-              >
-                <SocialIcon id={link.id} />
+              <a key={link.id} href={link.href} target="_blank" rel="noreferrer">
+                {link.label}
               </a>
             ))}
           </div>

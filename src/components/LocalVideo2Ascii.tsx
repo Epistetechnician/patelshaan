@@ -31,7 +31,7 @@ export const ASCII_CHARSETS = {
   binary: { name: 'Binary', chars: ' █' },
   detailed: {
     name: 'Detailed',
-    chars: ` .'` + String.raw`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$`,
+    chars: ` .'` + String.raw`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@`,
   },
   dots: { name: 'Dots', chars: ' ·•●' },
   arrows: { name: 'Arrows', chars: ' ←↙↓↘→↗↑↖' },
@@ -176,7 +176,9 @@ void main() {
   }
 
   float rawLum = dot(videoRgb, vec3(0.2126, 0.7152, 0.0722)) * u_brightness;
-  float contrasted = (rawLum - 0.5) * u_contrast + 0.5;
+  // Filmic shoulder roll-off prevents bright highlights from clipping into flat glyph walls
+  float tonedLum = (rawLum / (1.0 + 0.22 * rawLum)) * 1.22;
+  float contrasted = (tonedLum - 0.5) * u_contrast + 0.5;
   float interactiveLift = (cursorGlow * 0.22 + rippleGlow * 0.28) * step(0.005, rawLum + 0.04);
   float lum = clamp(contrasted + interactiveLift, 0.0, 1.0);
 
@@ -1340,7 +1342,7 @@ export default function LocalVideo2Ascii({
           height: '100%',
           minHeight: 0,
           overflow: 'hidden',
-          background: '#020304',
+          background: '#08090a',
           userSelect: 'none',
           cursor: enableSpacebarToggle || enableRipple ? 'pointer' : 'default',
         }}

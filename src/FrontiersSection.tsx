@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   frontierPillars,
-  portfolioVitalSigns,
   type FrontierDomainId,
   type FrontierPillar,
 } from './frontiers'
@@ -16,7 +15,7 @@ function InlineCode({ text }: { text: string }) {
   )
 }
 
-function PillarCard({
+function PillarSheet({
   pillar,
   onOpenEssay,
 }: {
@@ -24,56 +23,48 @@ function PillarCard({
   onOpenEssay: (slug: string) => void
 }) {
   return (
-    <article className="frontier-pillar" aria-labelledby={`pillar-${pillar.id}`}>
-      <header className="frontier-pillar__header">
-        <div>
-          <p className="frontier-pillar__eyebrow">
-            <span>{pillar.index}</span> · {pillar.subtitle}
+    <article className="frontier-sheet" aria-labelledby={`pillar-${pillar.id}`}>
+      <header className="frontier-sheet__header">
+        <div className="frontier-sheet__titles">
+          <p className="frontier-sheet__meta">
+            <span>{pillar.index}</span> — {pillar.subtitle}
           </p>
           <h3 id={`pillar-${pillar.id}`}>{pillar.title}</h3>
         </div>
-        <p className="frontier-pillar__question">{pillar.question}</p>
+        <p className="frontier-sheet__question">{pillar.question}</p>
       </header>
 
-      <div className="frontier-pillar__columns">
-        <div className="frontier-col frontier-col--established">
-          <h4 className="frontier-col__heading">
-            <span className="frontier-dot frontier-dot--established" aria-hidden="true" />
-            Breakthroughs established (verified in repo artifacts)
-          </h4>
-          <ul className="frontier-items">
+      <div className="frontier-sheet__grid">
+        <div className="frontier-col">
+          <h4 className="frontier-col__label">Established in artifacts</h4>
+          <ul className="frontier-list">
             {pillar.established.map((item) => (
-              <li key={item.title} className="frontier-item">
-                <div className="frontier-item__top">
-                  <span
-                    className={`frontier-badge frontier-badge--${item.kind}`}
-                  >
-                    {item.kind === 'established' ? 'verified positive / kernel' : 'falsification / control'}
-                  </span>
-                  <span className="frontier-item__metric">{item.metric}</span>
+              <li key={item.title} className="frontier-entry">
+                <div className="frontier-entry__head">
+                  <h5>{item.title}</h5>
+                  <span className="frontier-entry__metric">{item.metric}</span>
                 </div>
-                <h5>{item.title}</h5>
                 <p>
                   <InlineCode text={item.detail} />
                 </p>
-                <div className="frontier-item__foot">
-                  <span className="frontier-item__artifact">{item.artifact}</span>
+                <div className="frontier-entry__foot">
+                  <span className="frontier-entry__ref">{item.artifact}</span>
                   {item.essaySlug ? (
                     <button
                       type="button"
-                      className="frontier-item__link"
+                      className="text-link"
                       onClick={() => onOpenEssay(item.essaySlug!)}
                     >
-                      Read essay →
+                      Read note →
                     </button>
                   ) : item.href ? (
                     <a
-                      className="frontier-item__link"
+                      className="text-link"
                       href={item.href}
                       target={item.href.startsWith('#') ? undefined : '_blank'}
                       rel={item.href.startsWith('#') ? undefined : 'noreferrer'}
                     >
-                      Inspect artifact →
+                      Artifact →
                     </a>
                   ) : null}
                 </div>
@@ -82,33 +73,30 @@ function PillarCard({
           </ul>
         </div>
 
-        <div className="frontier-col frontier-col--approaching">
-          <h4 className="frontier-col__heading">
-            <span className="frontier-dot frontier-dot--approaching" aria-hidden="true" />
-            Breakthroughs approaching (next gates &amp; horizons)
-          </h4>
-          <ul className="frontier-items">
+        <div className="frontier-col frontier-col--right">
+          <h4 className="frontier-col__label">Open horizon &amp; next threshold</h4>
+          <ul className="frontier-list">
             {pillar.approaching.map((item) => (
-              <li key={item.title} className="frontier-item frontier-item--next">
-                <div className="frontier-item__top">
-                  <span className="frontier-badge frontier-badge--next">{item.horizon}</span>
+              <li key={item.title} className="frontier-entry">
+                <div className="frontier-entry__head">
+                  <h5>{item.title}</h5>
+                  <span className="frontier-entry__metric">{item.horizon}</span>
                 </div>
-                <h5>{item.title}</h5>
-                <p className="frontier-item__pair">
-                  <strong>Bottleneck isolated:</strong> <InlineCode text={item.bottleneck} />
+                <p>
+                  <InlineCode text={item.bottleneck} />
                 </p>
-                <p className="frontier-item__pair">
-                  <strong>What crossing it unlocks:</strong> <InlineCode text={item.unlock} />
+                <p className="frontier-entry__sub">
+                  <InlineCode text={item.unlock} />
                 </p>
                 {item.href ? (
-                  <div className="frontier-item__foot">
+                  <div className="frontier-entry__foot">
                     <a
-                      className="frontier-item__link"
+                      className="text-link"
                       href={item.href}
                       target={item.href.startsWith('#') ? undefined : '_blank'}
                       rel={item.href.startsWith('#') ? undefined : 'noreferrer'}
                     >
-                      Open foundation →
+                      Foundation →
                     </a>
                   </div>
                 ) : null}
@@ -116,8 +104,8 @@ function PillarCard({
             ))}
           </ul>
 
-          <p className="frontier-ceiling">
-            <span>Evidence ceiling</span>
+          <p className="frontier-sheet__ceiling">
+            <span>Scope ceiling — </span>
             {pillar.ceiling}
           </p>
         </div>
@@ -131,93 +119,71 @@ export function FrontiersSection({
 }: {
   onOpenEssay: (slug: string) => void
 }) {
-  const [selected, setSelected] = useState<'all' | FrontierDomainId>('all')
+  const defaultDomain = frontierPillars[0]?.id ?? 'all'
+  const [selected, setSelected] = useState<'all' | FrontierDomainId>(defaultDomain)
   const visible =
     selected === 'all'
       ? frontierPillars
       : frontierPillars.filter((p) => p.id === selected)
 
   return (
-    <section className="frontiers-section" id="frontiers">
-      <div className="systems-intro">
-        <div className="section-heading systems-intro__heading">
-          <p className="eyebrow">02 / breakthroughs &amp; approaching frontiers</p>
-          <h2>What held, what broke, and what is within reach.</h2>
+    <section className="ed-section frontiers-section" id="frontiers">
+      <div className="ed-section__head ed-section__head--split">
+        <div>
+          <p className="ed-eyebrow">03 — Research Programme</p>
+          <h2>What held, what broke, and what remains open.</h2>
         </div>
 
-        <div className="systems-intro__copy">
+        <div className="ed-lead">
           <p>
-            Across twelve research repositories, architecture papers, and field
-            studies, my work asks one question in six places: how do we make
-            claims about intelligence, authority, markets, and shared culture
-            verifiable without asking strangers to take an operator&apos;s word?
+            Across twelve repositories, architecture papers, and field studies,
+            the work asks one question in six places: how do we make claims
+            about intelligence, authority, markets, and shared culture inspectable
+            without asking strangers to take an operator&apos;s word?
           </p>
-          <p className="systems-intro__note">
-            Positive mechanisms and falsifications sit side by side below. Killing
-            a plausible illusion with a norm-matched control or a planted-flaw
-            audit is treated as a breakthrough of the same rank as passing a
-            gate—because it isolates the exact threshold left to cross.
+          <p className="ed-lead__links">
+            <button
+              type="button"
+              className="text-link"
+              onClick={() => onOpenEssay('approaching-breakthroughs-across-systems')}
+            >
+              Read synthesis essay →
+            </button>
+            <a className="text-link" href="#/research">
+              Full research monograph →
+            </a>
           </p>
         </div>
       </div>
 
-      <div className="vital-strip" aria-label="Selected verified results across repositories">
-        {portfolioVitalSigns.map((item) => (
-          <a
-            key={item.label}
-            className="vital-card"
-            href={item.href}
-            target={item.href.startsWith('#') ? undefined : '_blank'}
-            rel={item.href.startsWith('#') ? undefined : 'noreferrer'}
-          >
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
-          </a>
-        ))}
-      </div>
-
-      <div className="frontier-toolbar">
-        <div className="frontier-tabs" role="tablist" aria-label="Filter research and systems pillars">
+      <nav className="frontier-index" role="tablist" aria-label="Research domains">
+        {frontierPillars.map((pillar) => (
           <button
+            key={pillar.id}
             type="button"
             role="tab"
-            aria-selected={selected === 'all'}
-            className={`frontier-tab${selected === 'all' ? ' is-active' : ''}`}
-            onClick={() => setSelected('all')}
+            aria-selected={selected === pillar.id}
+            className={`frontier-index__tab${selected === pillar.id ? ' is-active' : ''}`}
+            onClick={() => setSelected(pillar.id)}
           >
-            All 6 fronts
+            <span>{pillar.index}</span>
+            {pillar.shortLabel}
           </button>
-          {frontierPillars.map((pillar) => (
-            <button
-              key={pillar.id}
-              type="button"
-              role="tab"
-              aria-selected={selected === pillar.id}
-              className={`frontier-tab${selected === pillar.id ? ' is-active' : ''}`}
-              onClick={() => setSelected(pillar.id)}
-            >
-              <span>{pillar.index}</span> {pillar.shortLabel}
-            </button>
-          ))}
-        </div>
+        ))}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selected === 'all'}
+          className={`frontier-index__tab${selected === 'all' ? ' is-active' : ''}`}
+          onClick={() => setSelected('all')}
+        >
+          All six
+        </button>
+      </nav>
 
-        <div className="frontier-toolbar__actions">
-          <button
-            type="button"
-            className="frontier-SynthesisBtn"
-            onClick={() => onOpenEssay('approaching-breakthroughs-across-systems')}
-          >
-            Read 2026 synthesis essay
-          </button>
-          <a className="frontier-SynthesisLink" href="#/research">
-            Open all 13 research pages →
-          </a>
-        </div>
-      </div>
-
-      <div className="frontier-stack">
+      <div className="frontier-sheets">
         {visible.map((pillar) => (
-          <PillarCard
+          <PillarSheet
             key={pillar.id}
             pillar={pillar}
             onOpenEssay={onOpenEssay}

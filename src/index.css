@@ -3,14 +3,26 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
-  --page-gutter: clamp(1rem, 2vw, 1.5rem);
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
-  line-height: 1.5;
+  --page-gutter: clamp(1.25rem, 4vw, 3.5rem);
+
+  --bg: #08090a;
+  --bg-subtle: #0d0e10;
+  --ink: #f0ede6;
+  --ink-secondary: #a7a39b;
+  --ink-muted: #706d66;
+  --rule: rgba(240, 237, 230, 0.11);
+  --rule-strong: rgba(240, 237, 230, 0.24);
+  --accent: #dfd0b2;
+
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+  font-family: var(--font-sans);
+  line-height: 1.6;
   font-weight: 400;
-  color: rgba(247, 249, 248, 0.94);
-  background: #05070b;
+  color: var(--ink);
+  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,7 +35,7 @@
 
 html {
   scroll-behavior: smooth;
-  background: #05070b;
+  background: var(--bg);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -38,9 +50,8 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at top, rgba(0, 0, 0, 0.24), transparent 30%),
-    linear-gradient(180deg, #071018 0%, #05070b 40%, #05070b 100%);
+  background: var(--bg);
+  color: var(--ink);
 }
 
 a {

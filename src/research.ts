@@ -167,12 +167,12 @@ cert = ledger.certify(admitted_gain=0.217, verdict_bits=96, core_desc_bits=104)`
     headline:
       'Across E1–E10 (25 stdlib-recomputable receipts), typed events beat text by +0.640 at equal bytes and verified synthetic data beats replay by +0.238 (+0.141 above pool-size control), while 7B code hits a tight null (−0.0025).',
     notShown:
-      'Rule-world synthetic recursion works; real 7B code recursion does not yet beat base (0.674), and companion Qwen3-1.7B delta-algebra checks (`cl7b`) show independent task deltas destroy capability when summed without replay consolidation.',
+      'Rule-world synthetic recursion works while real 7B code recursion hits a tight null (0.674); companion 3-seed Qwen3-1.7B-Base Mahalanobis-routed delta algebra (`cl_orthodelta_mlx.py`) solves multi-delta composition without replay at 94.4% [90.6%..96.9%] fact accuracy (81.3% on 4-bit base), +0.00002 WikiText NLL drift, and 94.4%–96.1% selective-unlearning retention.',
     results: [
       { value: '+0.640', label: 'typed event codec vs raw text at equal bytes [0.614, 0.667] (E1)' },
-      { value: '+0.238', label: 'verified synthetic experience vs unverified replay [0.205, 0.270] (E6)' },
+      { value: '94.4% / 81.3%', label: '3-seed Qwen3-1.7B routed delta composition (fp / 4-bit), +0.00002 NLL drift' },
       { value: '+0.141', label: 'verified synthetic minus pool-size-matched control [0.106, 0.177]' },
-      { value: '−0.0025', label: 'tight null on Qwen2.5-7B real code [−0.025, +0.020] (E8-7b)' },
+      { value: '94.4%–96.1%', label: '3-seed other-task retention on Qwen3-1.7B after task-0 / task-2 unlearning' },
     ],
     install: [
       {
@@ -459,18 +459,18 @@ hyperintel-cli $f/evidence-v4.json $f/empty-trusted-keys.json
     name: 'Mechanistic Interpretability Unified',
     repo: 'mech-interp-unified',
     releaseLabel: 'main (R1–R6, F1, F2 + jspace-pilot)',
-    tagline: 'Cross-family causal neuron gates, norm-matched subspace equivalence, and a planted-flaw audit of interpretability tools.',
+    tagline: 'Cross-family causal neuron gates, norm-matched subspace equivalence, and a 12/12 planted-flaw & held-out auditor for interpretability tools.',
     question:
-      'Do small, intervention-selected neuron sets or Jacobian subspaces carry behavior causally across model families and norm-matched PCA controls—and would our interpretability auditors notice if the measuring instrument itself were broken?',
+      'Do small, intervention-selected neuron sets or Jacobian subspaces carry behavior causally across model families and norm-matched PCA controls—and can a unified invariant auditor catch all 8 F2 planted flaws plus 4 held-out subspace/coordinate flaws without rejecting true circuits?',
     headline:
-      'Selected agreement units replicate out of family on Qwen3-1.7B-Base (1.437 vs 0.044 control max, p = 0.000999) and Pythia-2.8B; J-space ablation is equivalent to norm-matched PCA across OLMo-2-7B & Tulu-3 (0.00 [−0.05, +0.05]); and F2 shows no auditor catches all 8 planted instrument flaws (rules gate 0/8, probe battery 3/8).',
+      'Selected agreement units replicate out of family on Qwen3-1.7B-Base (1.437 vs 0.044 control max, p = 0.000999) and Pythia-2.8B; J-space ablation is equivalent to norm-matched PCA across OLMo-2-7B & Tulu-3 (0.00 [−0.05, +0.05]); and our Unified Invariant Auditor (`interp_bench.py`) lifts flaw detection from 0/12 (rules gate) and 3/12 (F2 probes) to 12/12 (8/8 F2 + 4/4 held-out, 100% TPR at 0.0% FPR across 2,800 trials).',
     notShown:
-      'Selected unit sets are necessary and partly sufficient, not proven circuits, and selection shifts with device/dtype (`V60`); J-space ablation efficiency plateaued near 0.50–0.55 even after a 1,000-prompt lens refit.',
+      'Selected unit sets are necessary and partly sufficient rather than exhaustive circuits, and raw index selection shifts with device/dtype (`V60`); J-space ablation efficiency plateaued near 0.50–0.55 even after a 1,000-prompt lens refit.',
     results: [
+      { value: '12 / 12 (0% FPR)', label: 'planted & held-out flaw classes caught by Unified Invariant Auditor vs 0/12 rules & 3/12 F2' },
       { value: '1.437 vs 0.044', label: 'Qwen3-1.7B-Base R6 selected vs matched-random max (p = 0.000999)' },
-      { value: '0 / 8 & 3 / 8', label: 'planted flaw classes caught by rules gate (0/8) and probe battery (3/8) in F2' },
       { value: '0.00 [−0.05, 0.05]', label: 'OLMo-2-7B DPO J-space gap vs norm-matched PCA (11/12 runs within ±0.2)' },
-      { value: '0.650 TPR', label: 'R5b audit on planted superposition at 0.000 FPR (diffuse 0.30)' },
+      { value: '0.650 → 1.00 TPR', label: 'superposition detection lifted from R5b (0.650, diffuse 0.30) to 1.00 with frame + donor gate' },
     ],
     install: [
       {

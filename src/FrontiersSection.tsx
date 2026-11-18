@@ -152,6 +152,9 @@ export function FrontiersSection({
             <a className="text-link" href="#/research">
               Full research monograph →
             </a>
+            <a className="text-link" href="#/playbook">
+              Post-Ergodic RMF Playbook →
+            </a>
           </p>
         </div>
       </div>

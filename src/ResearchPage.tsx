@@ -65,6 +65,7 @@ function TopBar() {
           <a href="#/">Home</a>
           <a href="#frontiers" onClick={() => { window.location.hash = '#frontiers' }}>Frontiers</a>
           <a href="#/research">Research</a>
+          <a href="#/playbook">Playbook</a>
           <a href="https://github.com/Epistetechnician" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
       </header>
@@ -317,6 +318,8 @@ function FieldPage({ field }: { field: FieldStrand }) {
 
       <blockquote className="rp-callout">{essay.callout}</blockquote>
       <People text={field.people} />
+
+      <ArchDiagram slug={field.slug} />
 
       <nav className="rp-toc" aria-label="Sections">
         {toc.map((t, i) => (

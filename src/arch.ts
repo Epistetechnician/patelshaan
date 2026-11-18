@@ -419,4 +419,61 @@ export const archs: Record<string, ArchSpec> = {
     bottom: [{ label: 'hyperintel-cli', sub: 'offline verifier' }, { label: 'Trust registry', sub: 'supplied by the caller' }],
     caption: 'The verifier needs only a bundle and a registry it supplies. The dashed column does not exist yet.',
   },
+  'sacred-geography-kailas': {
+    cols: [
+      {
+        title: 'CORPUS & CIPHERS',
+        boxes: [
+          { id: 'cor', label: '2,626 passages', sub: '15+ langs · 282 bo v3' },
+          { id: 'kat', label: 'Katapayadi audit', sub: '−3.16b falsified' },
+          { id: 'prm', label: 'Pramana & Mandala', sub: '+53.8b bo · +111b pool' },
+        ],
+      },
+      {
+        title: '52-KM KORA S¹',
+        boxes: [
+          { id: 'pil', label: '446 coded windows', sub: 'α = 0.86 · 20+ books' },
+          { id: 'cir', label: 'Circuit r ∈ [0, 1]', sub: '36 Thubron + 30 hist.' },
+          { id: 'def', label: 'Stages 2–5 core', sub: '0.00 defect vs 0.61 edge' },
+        ],
+      },
+      {
+        title: 'CELLULAR SHEAF',
+        boxes: [
+          { id: 'reg', label: '6-frame registers', sub: 'P_j^T P_k = 0 · +82.2b' },
+          { id: 'len', label: 'MandalaSheaf.lean', sub: 'Lean 4.28 · 0 sorry' },
+          { id: 'ctx', label: 'Contextuality LP', sub: 'CF = √2−1 · Dutch book' },
+        ],
+      },
+      {
+        title: 'LIVE LLM PROBE',
+        dashed: true,
+        boxes: [
+          { id: 'qwn', label: 'Qwen3-1.7B-Base', sub: '64 GPU passes (4-frame)' },
+          { id: 'syc', label: 'Sycophancy edge', sub: '87.5% → 56.2% (−31pp)' },
+          { id: 'err', label: 'Label-free x^T L x', sub: '100% vs 50% err · +2.3b' },
+        ],
+      },
+    ],
+    links: [
+      ['cor', 'kat'],
+      ['kat', 'prm'],
+      ['cor', 'pil'],
+      ['pil', 'cir'],
+      ['cir', 'def'],
+      ['prm', 'reg'],
+      ['def', 'reg'],
+      ['reg', 'len'],
+      ['len', 'ctx'],
+      ['len', 'qwn'],
+      ['qwn', 'syc'],
+      ['syc', 'err'],
+    ],
+    bottom: [
+      { label: 'kailas-corpus + primitives', sub: '5 SHA-256 receipts' },
+      { label: 'Scholar handoff v2', sub: '233 sa + 128 bo v3 blind' },
+    ],
+    caption:
+      'From philological falsification of consonant numerology (−3.16 bits) and spatial kora coding (φ = f(r)) to a Lean-verified cellular sheaf unifying multi-frame meaning, quantum contextuality, and unsupervised LLM sycophancy detection.',
+  },
 }

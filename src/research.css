@@ -114,6 +114,18 @@ html.paper { color-scheme: light; }
 .roadmap .done h5 { color: var(--good); } .roadmap .next h5 { color: var(--link); } .roadmap .blocked h5 { color: var(--bad); }
 .roadmap ul { margin: 0; padding-left: 1.1rem; } .roadmap li { font-size: 0.92rem; line-height: 1.5; margin: 0 0 0.4rem; }
 
+/* archival copperplate & cartographic figures */
+.ef-plate__frame { border: 1px solid #c9d3de; background: #faf8f4; padding: 0.55rem; overflow: hidden; }
+.ef-plate__frame img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+.ef-plate__legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 0.65rem 1.2rem; margin: 0.75rem 0 0; padding: 0.65rem 0.8rem; background: var(--box); border-left: 2px solid var(--line); }
+.ef-plate__legend div { margin: 0; }
+.ef-plate__legend dt { font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; color: #2b4a66; }
+.ef-plate__legend dd { margin: 0.15rem 0 0; font-size: 0.82rem; line-height: 1.4; color: var(--mute); }
+.kora-svg { width: 100%; height: auto; display: block; border: 1px solid #d5dde6; background: #faf8f4; margin-bottom: 0.85rem; }
+.kora-regs { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.8rem, 1fr)); gap: 0.35rem; margin: 0.65rem 0 0.85rem; }
+.kora-reg { padding: 0.32rem 0.5rem; border: 1px solid #d2dbe4; font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-size: 0.71rem; color: var(--mute); background: var(--paper); display: flex; justify-content: space-between; align-items: center; }
+.kora-reg.active { background: #dde8f2; border-color: #4d7596; color: #1f3d5a; font-weight: 600; }
+
 /* architecture diagram */
 .arch svg { width: 100%; height: auto; display: block; }
 .arch-title { font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-weight: 700; font-size: 19px; letter-spacing: 0.12em; fill: #2f5d7e; }

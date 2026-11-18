@@ -3,6 +3,8 @@ import App from './App.tsx'
 
 const loadResearch = () => import('./ResearchPage.tsx')
 const ResearchModule = lazy(loadResearch)
+const loadPlaybook = () => import('./PlaybookPage.tsx')
+const PlaybookModule = lazy(loadPlaybook)
 
 export default function Root() {
   const [hash, setHash] = useState(window.location.hash)
@@ -11,7 +13,7 @@ export default function Root() {
     const onChange = () => {
       const next = window.location.hash
       setHash(next)
-      if (next.startsWith('#/research') && !next.includes('?t=')) {
+      if ((next.startsWith('#/research') || next.startsWith('#/playbook')) && !next.includes('?t=')) {
         window.scrollTo(0, 0)
       }
     }
@@ -22,20 +24,30 @@ export default function Root() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       void loadResearch()
+      void loadPlaybook()
     }, 1500)
     return () => window.clearTimeout(timer)
   }, [])
 
   const match = hash.match(/^#\/research\/?([\w-]*)(?:\?t=([\w-]+))?/)
-  const isResearchRoute = Boolean(match)
+  const isPlaybookRoute = hash.startsWith('#/playbook')
+  const isPaperRoute = Boolean(match) || isPlaybookRoute
 
   useEffect(() => {
-    document.documentElement.classList.toggle('paper', isResearchRoute)
+    document.documentElement.classList.toggle('paper', isPaperRoute)
     const themeMeta = document.getElementById('theme-color-meta')
     if (themeMeta) {
-      themeMeta.setAttribute('content', isResearchRoute ? '#fdfcfa' : '#08090a')
+      themeMeta.setAttribute('content', isPaperRoute ? '#fdfcfa' : '#08090a')
     }
-  }, [isResearchRoute])
+  }, [isPaperRoute])
+
+  if (isPlaybookRoute) {
+    return (
+      <Suspense fallback={<div className="rp" aria-busy="true" />}>
+        <PlaybookModule />
+      </Suspense>
+    )
+  }
 
   if (match) {
     return (

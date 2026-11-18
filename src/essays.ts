@@ -7,6 +7,7 @@ export type Figure =
   | { kind: 'flow'; title: string; steps: string[]; tail: string; caption: string }
   | { kind: 'ladder'; title: string; levels: string[]; at: number; caption: string }
   | { kind: 'demo'; id: string }
+  | { kind: 'plate'; title: string; src: string; alt: string; legend?: { label: string; detail: string }[]; caption: string }
   | { kind: 'roadmap'; title: string; done: string[]; next: string[]; blocked: string[]; caption: string }
   | { kind: 'table'; title: string; head: string[]; rows: string[][]; caption: string }
 

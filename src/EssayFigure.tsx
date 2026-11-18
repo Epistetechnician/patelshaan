@@ -9,6 +9,26 @@ export function EssayFigure({ fig }: { fig: Figure }) {
       return null
     case 'demo':
       return <Demo id={fig.id} />
+    case 'plate':
+      return (
+        <figure className="ef ef-plate">
+          <h4>{fig.title}</h4>
+          <div className="ef-plate__frame">
+            <img src={fig.src} alt={fig.alt} loading="lazy" />
+          </div>
+          {fig.legend?.length ? (
+            <dl className="ef-plate__legend">
+              {fig.legend.map((item) => (
+                <div key={item.label}>
+                  <dt>{item.label}</dt>
+                  <dd>{item.detail}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+          <figcaption>{fig.caption}</figcaption>
+        </figure>
+      )
     case 'roadmap':
       return (
         <figure className="ef">

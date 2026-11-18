@@ -236,31 +236,50 @@
           (<code>kime</code>: route magnitude plus an independent interpretive
           phase) describes how Hindu, Buddhist, Jain, and Bon traditions write
           about the mountain, we built an open-license corpus across 15+ languages
-          (2,362 blind-labeled passages, including 574 Sanskrit passages and 206
-          CC0 Tibetan/Bon texts). First we caught and withdrew an embedding false
-          positive after blind grading showed 97% of top hits were genre and name
-          confounds; the clean passage test was null in Sanskrit (−3.4) and
-          negative in English (−6.3) and Chinese (−18.5).
+          (2,626 blind-labeled passages, including 574 Sanskrit passages and 282
+          recovered classical Tibetan <code>ཏི་སེ</code> and Bon Kangyur
+          <code>གཡུང་དྲུང་དགུ་བརྩེགས</code> passages across 145 canonical works).
+          First we caught and withdrew an embedding false positive (3% top-window
+          precision); next we caught an aggregation cancellation in our pooled v2
+          rubric that summed spatial axis-mundi cosmology (<code>cat e</code>)
+          with multi-temporal cosmology (<code>cats a,b,d,f</code>). Separating
+          them established a clean double dissociation: Kailas/Tise/Yungdrung
+          Gutsek is significantly enriched in spatial axis/mandala structure
+          (<code>only e</code>: English +1.22, Sanskrit +3.38, Tibetan v2 +14.76;
+          classical Tibetan <code>ཏི་སེ</code> v3 +21.1, full-text Kangyur/Bon
+          +42.0, Bon <em>Yungdrung Gutsek</em> +44.1 plus +15.7 on coexisting
+          realms <code>cat c</code>), while significantly depleted or tightly
+          null on multi-temporal concepts across every language (English −6.37,
+          Sanskrit −8.43, Hindi −23.33, Chinese −4.97, Tibetan v3 +1.2 and +1.5).
         </p>
 
         <p>
-          Then we ran the pre-registered narrative test across 195 windows from 20
-          pilgrimage books (Krippendorff <code>α = 0.82</code>) [E15]. Only 5.6%
-          of experience episodes decoupled interpretive time from route progress
-          (missing the 10% threshold; 117 of 124 fit plain
-          <code>(lap, progress)</code>). Yet splitting the groups uncovered
-          something sharper: Kailas accounts scored 1.3% decoupled, whereas
-          comparison pilgrimages scored 14.7%, concentrated in Hajj and Holy Land
-          narratives where a fixed liturgical calendar (Day of Arafat, Ramadan,
-          canonical hours) runs independently of distance along the road.
+          In the narrative coding study—expanded to 368 public-domain windows
+          (254 consensus experience episodes across 20 books, Krippendorff
+          <code>α = 0.86</code>) plus a 48-episode locator-only full-circuit
+          study of Colin Thubron’s <em>To a Mountain in Tibet</em> along
+          <code>r ∈ [0, 1]</code> (<code>α = 0.83</code>) [E15]—two distinct
+          clock regimes emerged. Calendar-decoupled ritual time
+          (<code>clock = independent</code>, <code>φ ≠ f(r)</code>) concentrates
+          in Hajj and Holy Land liturgical accounts (16.7% strict vs 3.0% in
+          Kailas explorer logs and 0.0% in non-liturgical comparisons; account
+          permutation <code>p = 0.0022</code>). By contrast, along Thubron’s
+          52-km Kailas kora circuit, 100% (35/35) of episodes braid multiple
+          interpretive frames, route-aligned spatial mandala phase
+          (<code>clock = aligned</code>, <code>φ = f(r)</code>) reaches 20.0%
+          strict (34.3% loose; 9× higher than 19th-century surveyor logs,
+          <code>p = 0.0017</code>), and calendar decoupling drops to 0.0% (0/24)
+          across the mountain circuit proper (Stages 2–5,
+          <code>r ∈ [0.14, 0.84]</code>) once past the Stage 1 Saga Dawa full-moon
+          flagpole gathering.
         </p>
 
         <p>
           <strong>What we are approaching next in cultural research:</strong>
-          scoring our seeded, group-blinded handoff sheets (115 Tibetan/Bon rows
-          and 233 Sanskrit rows with test-retest repeats, plus a 40-episode human
-          double-coding pack) with specialist readers, and testing two-clock
-          ritual-vs-route notation directly on Hajj and Jerusalem corpora.
+          scoring our seeded, group-blinded handoff sheets (115 Tibetan/Bon v2
+          rows, 68 Tibetan/Bon v3 canonical supplement rows, and 233 Sanskrit
+          rows with test-retest repeats, plus a 40-episode human double-coding
+          pack) with specialist readers.
         </p>
 
         <h2>6. The single thread</h2>

@@ -6,6 +6,8 @@ export type FrontierDomainId =
   | 'socioeconomic'
   | 'sociocultural'
 
+export type FrontierId = FrontierDomainId
+
 export type BreakthroughItem = {
   kind: 'established' | 'falsification'
   title: string
@@ -111,9 +113,9 @@ export const frontierPillars: FrontierPillar[] = [
       {
         kind: 'established',
         title: 'Sanitizing broker trajectory gate, closed-loop reflex & supply-chain defense',
-        metric: '45.0% vs 0.0% v3 gate (9/9 recall) · 4.75× pooled lift · 83/83 hacks caught',
+        metric: '33.7% vs 7.1% admitted (retrospective) · 83/83 hacks caught',
         detail:
-          'Across 238 Gemma-4 SWE trajectories (34 tasks), enforcing passing post-edit checks + blocking post-failure test edits while broker-stripping `repro.py` lifts pooled solve rate from 7.1% to 33.7% (65.1% holdout saved), hits 45.0% (9/20) vs 0.0% (0/14) on 31B `v3` (100% recall of solved tasks), and recovers all 9/34 solves in a `k20 -> v3` reflex while saving 41.2% of stage-2 runs.',
+          'Across 238 retrospective Gemma-4 SWE trajectories (34 tasks, 9 ever solved), enforcing passing post-edit checks + blocking post-failure test edits while broker-stripping `repro.py` lifts admitted solve rate from 7.1% to 33.7% (saving 65.1% of holdout runs), catches 83/83 injected test-tamper mutations, and recovers 9/34 solves in a `k20 -> v3` reflex while saving 41.2% of stage-2 runs (prospective SWE-bench Verified validation locked next).',
         artifact: 'patelshaan-lab · primitives/verified_loop.py',
         href: 'https://github.com/Epistetechnician/patelshaan-lab',
       },
@@ -148,14 +150,14 @@ export const frontierPillars: FrontierPillar[] = [
     question:
       'When autonomous loops run thousands of experiments faster than humans can review, how do we certify real improvements mechanically without burning the holdout or gaming the grader?',
     ceiling:
-      'Pre-registered 59,200-run confirmatory simulation + live H100 pilot catching planted memorization + paired Claude skill evaluations; full multi-agent GPU promotion of novel capability wins is next.',
+      'Pre-registered 59,200-run confirmatory simulation + synthetic e-process sim (sd = 0.09) + live H100 pilot catching planted memorization + paired Claude skill evaluations; prospective SWE-bench Verified validation (`TRACK_A_PREREGISTRATION.md`) is next.',
     established: [
       {
         kind: 'established',
-        title: 'Bit-priced adaptive holdouts & anytime Empirical-Bernstein e-processes',
-        metric: '0 / 59,200 violations · −40.4% tighter e-process CIs · −13.5% queries',
+        title: 'Bit-priced adaptive holdouts & anytime Empirical-Bernstein e-processes (simulation)',
+        metric: '0 / 59,200 violations · 0 / 1,000 sequential sim violations',
         detail:
-          'Holdout Ledger passes 9/9 pre-registered hypotheses (Wald 100% wrong under attack); upgrading to predictable Empirical-Bernstein + MDL betting martingales keeps 0/1,000 anytime sequential violations while tightening low-variance bounds by 40.4% and pruning losers early.',
+          'Holdout Ledger passes 9/9 pre-registered simulated hypotheses (Wald 100% wrong under attack); extending to predictable Empirical-Bernstein + MDL betting martingales keeps 0/1,000 anytime sequential violations in low-variance simulation (sd = 0.09, −40.4% width vs Hoeffding; margin narrows toward Hoeffding on real binary SWE outcomes).',
         artifact: 'holdout-ledger + primitives/verified_loop.py',
         href: '#/research/holdout-ledger',
       },
@@ -198,12 +200,12 @@ export const frontierPillars: FrontierPillar[] = [
         href: '#/research/holdout-ledger',
       },
       {
-        title: 'Router-free consolidation of routed deltas into a single 4-bit matrix at 7B+',
+        title: 'Fast-to-slow consolidation against the 3-seed replay_kl bar (`cl7b`)',
         horizon: 'Approaching · Continual scaling',
         bottleneck:
-          'On Qwen3-1.7B-Base (3 seeds), frozen-prefix Mahalanobis-routed rank-16 deltas (`cl_orthodelta_mlx.py`) already reach 94.4% [90.6%..96.9%] multi-task fact accuracy on fp (81.3% on 4-bit) with +0.00002 WikiText NLL drift and 94.4%–96.1% selective-unlearning retention, using an L8 router.',
+          'Independent rank-16 task deltas collapse when summed (`15.96` fp / `17.74` 4-bit wiki NLL) and `1/K` erases facts, leaving 3-seed `replay_kl` (`0.997` fact acc, `3.60` wiki NLL) unbeaten without replay.',
         unlock:
-          'Scheduled on-policy KL distillation that folds the routed fast-delta bank into a single router-free 4-bit weight matrix at 7B–27B scale.',
+          'Scheduled on-policy KL consolidation that preserves `replay_kl`-level retention without unbounded replay buffers at 7B+ scale.',
         href: '#/research/hsi-lab',
       },
     ],
@@ -221,11 +223,11 @@ export const frontierPillars: FrontierPillar[] = [
     established: [
       {
         kind: 'established',
-        title: 'Unified 12/12 planted-flaw interpretability auditor & cross-family neuron gate (R6)',
-        metric: '12 / 12 flaws caught (0% FPR) vs 0/12 rules & 3/12 F2 · Qwen3 R6 p = 0.000999',
+        title: 'Planted-flaw interpretability auditing (F2) & cross-family neuron gate (R6)',
+        metric: 'Rules 0/8 · Probes 3/8 (0/3 out-of-sample) · Qwen3 R6 p = 0.000999',
         detail:
-          'Combining F2’s probe battery + donor-swap sufficiency with `jspace-pilot`’s norm-matched `pcanorm` & level-adjustment gates, `theseus-lab`’s permutation-aligned Jacobian check, and matched-progress controls (`primitives/interp_bench.py`) catches all 8/8 F2 flaws + 4/4 held-out flaws (2,800 trials, 0% FPR on true causal routes), alongside out-of-family causal unit replication on Pythia-2.8B, Qwen3-1.7B-Base (1.437 vs 0.044), and GPT-2 XL.',
-        artifact: 'mech-interp-unified · R6 & F2 + primitives/interp_bench.py',
+          'In F2 Phase 1–2, static rules gates catch 0/8 planted flaw classes and an informed probe battery catches 3/8 in-sample but 0/3 new out-of-sample flaws (`underpowered_null` missed 200/200 seeds), alongside out-of-family causal unit replication on Pythia-2.8B, Qwen3-1.7B-Base (1.437 vs 0.044), and GPT-2 XL.',
+        artifact: 'mech-interp-unified · R6 & F2',
         href: '#/research/mech-interp-unified',
       },
       {
@@ -256,22 +258,13 @@ export const frontierPillars: FrontierPillar[] = [
         href: '#/research/theseus-lab',
       },
       {
-        kind: 'established',
-        title: 'Mahalanobis-routed & nullspace-protected continual delta algebra on Qwen3-1.7B',
-        metric: '94.4% 3-seed fp / 81.3% 4-bit acc · +0.00002 Wiki NLL · 94.4%–96.1% unlearning',
+        kind: 'falsification',
+        title: 'Matched-progress continual-learning falsification',
+        metric: '0 / 5 seeds pass when compared at equal learning progress',
         detail:
-          'Across 3 seeds on real Qwen3-1.7B-Base (`cl_orthodelta_mlx.py`, 4 tasks × 40 facts, zero replay), freezing `L0..L7` + `L8` Mahalanobis-whitened causal routing (`160/160` route acc) lifts 4-delta composition from 21.5% unrouted (wiki NLL 15.2) to 94.4% [90.6%..96.9%] on fp and 81.3% on 4-bit group-64 weights, beating `replay_kl` on general retention (`3.2939` vs `3.596` Wiki NLL, `1.00` vs `0.91` real capitals) while retaining 94.4%–96.1% on remaining tasks under O(1) unlearning.',
-        artifact: 'rsi-loops/cl7b/cl_orthodelta_mlx.py (3 seeds + q4)',
-        href: 'https://github.com/Epistetechnician/patelshaan-lab',
-      },
-      {
-        kind: 'established',
-        title: 'Unsupervised 4-frame cellular-sheaf probe isolates Qwen3-1.7B sycophancy & negation failures',
-        metric: '64 GPU passes · 87.5% → 56.2% sycophancy drop · 100% vs 50% error split (+2.33 bits)',
-        detail:
-          'Evaluating Qwen3-1.7B-Base across 4 logically coupled frames (`direct`, `equivalence`, Pauli-X `negation`, `sycophancy`) reveals a −31.2 pp authority-pressure collapse and separates 100% multi-frame failure items from 50% low-frustration items purely via label-free sheaf Dirichlet energy `x^T L_F x`.',
-        artifact: 'primitives/llm_sheaf_probe.py + MandalaSheaf.lean',
-        href: '#/research/sacred-geography-kailas',
+          'Aligned Holistic Continual Learning proved end-of-training safety wins vanish when interpolated at matched incoming gain (0.5, 1.0, 1.5), establishing matched-progress controls as mandatory.',
+        artifact: 'aligned-holistic-continual-learning',
+        href: '#/research/aligned-holistic-continual-learning',
       },
     ],
     approaching: [
@@ -377,22 +370,13 @@ export const frontierPillars: FrontierPillar[] = [
     established: [
       {
         kind: 'established',
-        title: 'Statebook: 7 completeness vectors, live 188-contract Polymarket receipt & Two-Clock MDL',
-        metric: '72-page paper · 6.03% live partition gap · +51.62 bits 2-clock MDL gain',
+        title: 'Statebook: 7 completeness vectors & live 188-contract Polymarket receipt',
+        metric: '72-page paper · 6.30% live partition gap · 5.04 bps spread',
         detail:
-          'Normalizes event, perp, and option contracts into `StateKeys` and 3 separated finality clocks; live offline-verified Polymarket Gamma receipt (13 pure partitions/ladders, 188 contracts) measured 6.03% partition sum residual, 4.93 bps spread, and 2.5h finality lag, while Rissanen MDL proved venue-vs-oracle separation saves +51.62 bits.',
+          'Normalizes event, perp, and option contracts into `StateKeys` and 3 separated finality clocks; a live read-only Polymarket Gamma receipt (13 partitions/ladders, 188 contracts, HMAC/SHA-256 verified) measured 6.30% max partition residual, 3.90% gross Dutch-book gap, 0.00% cumulative calendar inversion, and 5.04 bps weighted half-spread.',
         artifact: 'statebook-whitepaper.pdf + primitives/multi_clock.py',
         href: '/publications/statebook-whitepaper.pdf',
         essaySlug: 'statebooks-convergence-with-coherence',
-      },
-      {
-        kind: 'established',
-        title: 'Quantum contextuality = Statebook epistemic Dutch-book arbitrage via exact LP duality',
-        metric: 'Strong LP duality gap < 10⁻¹⁰ · Tsirelson CF = 0.4142 (√2 − 1) · Magic Square CF = 1.000',
-        detail:
-          'Abramsky–Brandenburger empirical sheaves (`primitives/empirical_contextuality.py` + Lean 4 weak-duality proof) establish that every Bell/Tsirelson or state-independent Mermin–Peres `3×3` Magic Square obstruction equals the exact guaranteed payout edge of a cross-context epistemic Dutch book.',
-        artifact: 'primitives/empirical_contextuality.py + MandalaSheaf.lean',
-        href: '#/research/sacred-geography-kailas',
       },
       {
         kind: 'established',
@@ -467,17 +451,17 @@ export const frontierPillars: FrontierPillar[] = [
         title: 'Route-locked spatial mandala (`φ = f(r)`) vs. calendar-decoupled liturgical time (`φ ≠ f(r)`)',
         metric: '416+ windows (α = 0.86) · Hajj/Holy Land 16.7% vs Kailas 3.0% (p = 0.0022) · Thubron kora 20.0% aligned',
         detail:
-          'Expanding public-domain coding to 368 windows (254 experience episodes, 20 books) proves calendar-decoupled clocks concentrate in Hajj & Holy Land liturgy (16.7% vs 3.0% Kailas explorers, p = 0.0022; Rissanen MDL < 0.02 bits/ep vs +51.62 bits on Statebook). Locator-only full-circuit coding of Thubron’s *To a Mountain in Tibet* (48 episodes, 35 along r ∈ [0, 1], α = 0.83) shows 100% multi-frame braiding, 20.0% strict (34.3% loose) route-aligned mandala phase (9× higher than 19th-c. surveyors, p = 0.0017), and 0.0% (0/24) calendar decoupling on Stages 2–5 once past the Stage 1 Saga Dawa flagpole gathering.',
+          'Expanding public-domain coding to 368 windows (254 experience episodes, 20 books) proves calendar-decoupled clocks concentrate in Hajj & Holy Land liturgy (16.7% vs 3.0% Kailas explorers, p = 0.0022). Locator-only full-circuit coding of Thubron’s *To a Mountain in Tibet* (48 episodes, 35 along r ∈ [0, 1], α = 0.83) shows 100% multi-frame braiding, 20.0% strict (34.3% loose) route-aligned mandala phase (9× higher than 19th-c. surveyors, p = 0.0017), and 0.0% (0/24) calendar decoupling on Stages 2–5 once past the Stage 1 Saga Dawa flagpole gathering.',
         artifact: 'kailas-corpus · RESULTS_CODING_V2.md',
         href: '#/research/sacred-geography-kailas',
       },
       {
         kind: 'falsification',
-        title: 'Ancient Kaṭapayādi numerology falsified (−3.16b) vs. pramāṇa & S¹ cellular-sheaf architecture (+111b)',
-        metric: '1,084 passages · Kaṭapayādi −3.16b vs Mandala +110.98b · S¹ Stages 2–5 defect 0.000000',
+        title: 'Ancient Kaṭapayādi numerology falsified (−2.89b) vs. pramāṇa & mandala registers (+111b)',
+        metric: '1,084 passages · Kaṭapayādi −2.89b vs Mandala +110.98b',
         detail:
-          'Across 482 IAST-normalized Sanskrit and 602 Classical Tibetan/Bon passages, unconstrained consonant-digit hits match 200 shuffled-akṣara permutations (−3.16 bits), whereas cosmographic pramāṇa metrology (+11.12 bits) and Tibetan/Bon architectural-mandala tiers (+53.79 bits; +110.98 bits pooled) compress spatial cosmology, and Lean-proved `MandalaSheaf` shows 0.00 coboundary defect across Kailas mountain Stages 2–5 (+82.20 bits cross-coder fiber MDL).',
-        artifact: 'ciphers.py · pramana_colophons.py · MandalaSheaf.lean',
+          'Across 482 IAST-normalized Sanskrit and 602 Classical Tibetan/Bon passages, unconstrained consonant-digit hits fall below 200 shuffled-akṣara permutations (−2.89 bits stream MDL), whereas cosmographic pramāṇa metrology (+11.12 bits) and Tibetan/Bon architectural-mandala tiers (+53.79 bits; +110.98 bits pooled) compress spatial cosmology.',
+        artifact: 'ciphers.py · pramana_colophons.py',
         href: '#/research/sacred-geography-kailas',
       },
       {
@@ -503,3 +487,5 @@ export const frontierPillars: FrontierPillar[] = [
     ],
   },
 ]
+
+export const frontiers = frontierPillars

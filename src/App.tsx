@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import ParetoChart from './ParetoChart'
-import { FrontiersSection } from './FrontiersSection'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ExplorerFeed } from './ExplorerFeed'
+import { WikiChip, WikiDrawer } from './WikiDrawer'
 import Video2Ascii from './components/LocalVideo2Ascii'
 import { WorkList } from './components/WorkList'
 import { getField } from './field'
@@ -12,7 +12,9 @@ import './App.css'
 function Inline({ text }: { text: string }) {
   return (
     <>
-      {text.split('`').map((part, i) => (i % 2 ? <code key={i}>{part}</code> : <span key={i}>{part}</span>))}
+      {text.split('`').map((part, i) =>
+        i % 2 ? <code key={i}>{part}</code> : <span key={i}>{part}</span>,
+      )}
     </>
   )
 }
@@ -90,6 +92,57 @@ const cliCommands = [
   },
 ]
 
+const terminalSamples = [
+  {
+    id: 'containment',
+    chip: 'formal containment',
+    prompt: 'How do you keep untrusted agent proposers from executing unsafe actions?',
+    body: `FormaSec pairs untrusted LLM/enumerator search with a tiny
+deterministic kernel verified across Python, Kani-checked Rust,
+and Lean 4 (600/600 structural agreements, 135/135 byte-exact
+receipts, 0/552 hostile admissions) before Linux Landlock runs.
+
+sources: formasec · security-alignment-os (20/20 TDX scenarios)
+ceiling: MachineAttestedReproduction (independent second host pending)`,
+  },
+  {
+    id: 'holdout',
+    chip: 'holdout certificates',
+    prompt: 'How do you keep RSI loops from overfitting their judge?',
+    body: `Holdout Ledger prices every verdict bit released by a sealed
+holdout against patch description length (MDL): 0 / 59,200 false
+certificates across 9/9 pre-registered simulated hypotheses (where
+zero-bit Wald bounds fail 100% under attack).
+
+sources: holdout-ledger (PREREG_COMMIT) · Evidence-Bounded AI
+ceiling: simulation-only; prospective SWE-bench run preregistered`,
+  },
+  {
+    id: 'nulls',
+    chip: 'honest nulls',
+    prompt: 'Which negative results changed your architecture?',
+    body: `1) v16 safety eval-rate confound inflated 60% gain to 95%.
+2) Norm-matched PCA tied J-space geometry on 7B–8B models.
+3) Caduceus phrase tripwire held 41% of benign skills (kept off).
+4) Kailash pooled 2-clock null split into spatial φ = f(r) mandala.
+
+sources: temporal-grid-safety · mech-interp-unified · kailas-corpus
+mode: grounded corpus (offline-capable)`,
+  },
+  {
+    id: 'commons',
+    chip: 'public goods',
+    prompt: 'How do you think about public goods?',
+    body: `Gitcoin mattered because it turned caring about public goods
+into allocative power. Durable funding needs a stack: quadratic
+matching, retroactive rewards, delegated domain judgment, and
+visible Ostrom-style governance rules.
+
+sources: Gitcoin & Public Goods · Sacred Economics
+mode: grounded corpus (offline-capable)`,
+  },
+]
+
 type ExperienceVideo = {
   src: string
   poster?: string
@@ -113,6 +166,7 @@ type ExperienceLink = {
 }
 
 type ExperienceCard = {
+  shortTab: string
   eyebrow: string
   title: string
   role: string
@@ -121,7 +175,10 @@ type ExperienceCard = {
   video: ExperienceVideo
   links?: ExperienceLink[]
   secondaryVideo?: ExperienceVideo
+  wikiIds: string[]
 }
+
+type WritingCategory = 'all' | 'featured' | 'ai' | 'crypto' | 'markets' | 'commons'
 
 type WritingEntry = {
   slug: string
@@ -129,23 +186,14 @@ type WritingEntry = {
   meta: string
   summary: string
   contentHtml: string
+  featured: boolean
+  category: Exclude<WritingCategory, 'all' | 'featured'>
 }
 
 type SocialLink = {
   id: 'x' | 'github' | 'linkedin' | 'telegram'
   label: string
   href: string
-}
-
-type SystemsProject = {
-  index: string
-  title: string
-  discipline: string
-  summary: string
-  boundary: string
-  access?: string
-  links?: ExperienceLink[]
-  essaySlug?: string
 }
 
 type YouTubePlayer = {
@@ -291,6 +339,7 @@ function AmbientSoundControl() {
 
 const experienceCards: ExperienceCard[] = [
   {
+    shortTab: 'Halo Labs',
     eyebrow: '2025 — 2026',
     title: 'Halo Labs',
     role: 'Co-Founder & COO',
@@ -344,8 +393,10 @@ const experienceCards: ExperienceCard[] = [
       highlight: 18,
       brightness: 1.25,
     },
+    wikiIds: ['power', 'trust', 'formasec', 'security-alignment-os'],
   },
   {
+    shortTab: 'NPC Capital',
     eyebrow: '2024 — 2025',
     title: 'NPC Capital',
     role: 'Full-Stack Developer & Researcher',
@@ -385,8 +436,10 @@ const experienceCards: ExperienceCard[] = [
         description: 'Fund overview',
       },
     ],
+    wikiIds: ['statebook', 'measure', 'commons', 'poovey'],
   },
   {
+    shortTab: 'Public Goods',
     eyebrow: '2022 — 2024',
     title: 'Public Goods & Open Source',
     role: 'Solana Foundation, Celo, Dream DAO, Eco DAO',
@@ -419,6 +472,7 @@ const experienceCards: ExperienceCard[] = [
       highlight: 16,
       brightness: 1.08,
     },
+    wikiIds: ['commons', 'ostrom', 'mauss', 'playbox'],
   },
 ]
 
@@ -426,14 +480,17 @@ const foundations = [
   {
     label: 'Discipline',
     body: 'Trained in Economics and Data Science, with early work in sustainable development and environmental impact assessment. Drawn to where formal mechanisms meet living, adaptive systems.',
+    wikiId: 'measure',
   },
   {
     label: 'Questions',
     body: 'Products and protocols that make complex environments legible and accountable: verifiable AI, cryptographic assurance, market coherence, governance design, and durable public goods.',
+    wikiId: 'power',
   },
   {
     label: 'Off-screen',
     body: 'Permaculture, DIY engineering, long runs, bike rides, cooking, yoga, soccer, chess, Go, and Catan.',
+    wikiId: 'sacred',
   },
 ]
 
@@ -444,199 +501,6 @@ const socialLinks: SocialLink[] = [
   { id: 'github', label: 'GitHub', href: 'https://github.com/Epistetechnician' },
   { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/shaan-patel21/' },
   { id: 'telegram', label: 'Telegram', href: 'https://t.me/epistetechnician' },
-]
-
-const systemsProjects: SystemsProject[] = [
-  {
-    index: '01',
-    title: 'Holdout Ledger',
-    discipline: 'Adaptive evaluation integrity',
-    summary:
-      'A pre-registered hash-chained ledger pricing the verdict bits a sealed holdout releases to a self-improvement loop against output description length—0 certificate violations across 59,200 confirmatory runs while standard Wald bounds fail under adaptive reuse.',
-    boundary:
-      'Confirmed on tabular ensembles and stylized patch proposers with core Lean 4 counting proofs; gains around 0.001 remain uncertifiable up to n = 100,000.',
-    links: [
-      {
-        href: '#/research/holdout-ledger',
-        label: 'Research page & demo',
-        description: '59,200-run table & MDL simulator',
-      },
-      {
-        href: 'https://github.com/Epistetechnician/holdout-ledger',
-        label: 'Repository',
-        description: 'PREREG.md & HoldoutLedger.lean',
-      },
-    ],
-  },
-  {
-    index: '02',
-    title: 'FormaSec & Security Alignment OS',
-    discipline: 'Certified kernels & hardware attestation',
-    summary:
-      'Separating untrusted LLM proposers from small admission kernels: Python, Kani-checked Rust, and Lean 4 agree across 600 cases with 0 unsafe admissions over 552 hostile proposals, paired with a 279-test capability broker attested on Intel TDX.',
-    boundary:
-      'Solver proof objects sit outside the Lean TCB, and the TDX run is a single-host attestation awaiting independent second-host replication.',
-    links: [
-      {
-        href: '#/research/formasec',
-        label: 'FormaSec',
-        description: 'Python / Rust / Lean kernel & DAG checker',
-      },
-      {
-        href: '#/research/security-alignment-os',
-        label: 'Security Alignment OS',
-        description: 'Capability broker & TDX attestation',
-      },
-    ],
-  },
-  {
-    index: '03',
-    title: 'Statebook',
-    discipline: 'Financial coherence & finality boundaries',
-    summary:
-      'Normalizing federated contract terms into StateKeys, bounded payoff comparisons, seven non-compensating completeness checks, and three separated finality clocks before treating a cross-venue position as coherent.',
-    boundary:
-      'Read-only architecture research; does not execute trades, hold collateral, authorize releases, or settle value.',
-    essaySlug: 'statebooks-convergence-with-coherence',
-    links: [
-      {
-        href: '/publications/statebook-whitepaper.pdf',
-        label: 'Whitepaper (PDF)',
-        description: '72-page specification',
-      },
-      {
-        href: '/publications/statebook-layer-map.svg',
-        label: 'Layer diagram',
-        description: 'Coherence & authority map',
-      },
-    ],
-  },
-  {
-    index: '04',
-    title: 'Playbox & Caduceus',
-    discipline: 'Attenuated rooms & governed skill evolution',
-    summary:
-      'An 8-crate Rust room substrate under attenuated Biscuit grants whose H100 gate caught a planted dev-set memorizer, paired with Caduceus’s 13-lane skill release ledger (+0.245 Haiku, +0.305 Sonnet, 43/43 attacks refused).',
-    boundary:
-      'Single-relay v0; cross-family latent vectors still trail plain-text summaries, and phrase tripwires remain off after a 41% false-hold audit.',
-    links: [
-      {
-        href: '#/research/playbox',
-        label: 'Playbox',
-        description: 'Biscuit rooms & H100 verification',
-      },
-      {
-        href: '#/research/caduceus',
-        label: 'Caduceus',
-        description: '13-lane skill admission & Merkle log',
-      },
-    ],
-  },
-  {
-    index: '05',
-    title: 'Mech-Interp Unified & Temporal Grid Safety',
-    discipline: 'Planted-flaw audits & benign-drift safety',
-    summary:
-      'Out-of-family causal neuron replication on Qwen3-1.7B, an 8-class planted-flaw audit showing no single auditor catches every flaw, norm-matched PCA equivalence on OLMo-2/Tulu-3, and frozen discriminant adapters retaining 0.95 vs 0.27 refusals under benign OOD fine-tuning.',
-    boundary:
-      'Discriminant adapters target benign drift rather than white-box attacks; all experiments sit at or below 8B parameters.',
-    links: [
-      {
-        href: '#/research/mech-interp-unified',
-        label: 'Mech-Interp Unified',
-        description: 'Planted-flaw audit & subspace tests',
-      },
-      {
-        href: '#/research/temporal-grid-safety',
-        label: 'Temporal Grid Safety',
-        description: 'Refusal retention & v16 confound',
-      },
-    ],
-  },
-  {
-    index: '06',
-    title: 'Composed ZK Benchmark OS',
-    discipline: 'Semantic trace oracles & mutation testing',
-    summary:
-      'Generating nine control-flow workload families and 14 adversarial mutation classes so a fast prover backend that accepts an invalid trace ranks strictly below a slower one that rejects it.',
-    boundary:
-      'Local semantic harness; not presented as external zkVM throughput benchmarks or kernel-checked prover proofs.',
-    links: [
-      {
-        href: '#/research/composed-zk-benchmark-os',
-        label: 'Research page',
-        description: 'Interactive trace-mutation oracle',
-      },
-      {
-        href: 'https://github.com/Epistetechnician/composed-zk-benchmark-os',
-        label: 'Repository',
-        description: 'Harness source & FINDINGS.md',
-      },
-    ],
-  },
-  {
-    index: '07',
-    title: 'Lusis Mesh & Recoverable Ghost States',
-    discipline: 'Operator control planes & state recovery',
-    summary:
-      'Policy-guided infrastructure remediation with Merkle-anchored run logs and explicit operator gates, alongside continual-learning state recovery validation.',
-    boundary:
-      'Local validation packets do not claim unattended production autonomy.',
-    links: [
-      {
-        href: 'https://lusislabs.com/',
-        label: 'Lusis Labs',
-        description: 'Project overview',
-      },
-      {
-        href: '/publications/recoverable-ghost-states-paper.pdf',
-        label: 'Research paper (PDF)',
-        description: '17-page continual-learning study',
-      },
-    ],
-  },
-  {
-    index: '08',
-    title: 'ECDSA.fail',
-    discipline: 'Reversible quantum-circuit optimization',
-    summary:
-      'Evaluator-verified open autoresearch on reversible secp256k1 point addition inside Shor’s algorithm, cutting the Q × T cost metric by 86.1% under exactness, uncomputation, and phase checks.',
-    boundary:
-      'Coherent windowed figures reflect per-call sensitivity models rather than full-Shor end-to-end fault-tolerant estimates.',
-    links: [
-      {
-        href: 'https://arxiv.org/abs/2609.09582',
-        label: 'arXiv:2609.09582',
-        description: 'September 2026 v2 paper',
-      },
-      {
-        href: 'https://ecdsa.fail/',
-        label: 'Challenge surface',
-        description: 'Live Pareto frontier & harness',
-      },
-    ],
-  },
-  {
-    index: '09',
-    title: 'Sacred Geography as Multi-Temporal Structure',
-    discipline: 'Multilingual corpora & pilgrimage coding',
-    summary:
-      'Pre-registered study of Mount Kailas across 2,362 passages in 15+ languages and 195 dual-coded pilgrim episodes (α = 0.82), testing whether complex time (`kime`) outperforms simpler `(lap, progress)` coordinates.',
-    boundary:
-      'Both tests return clean nulls (5.6% decoupled episodes vs 10% threshold); blinded Tibetan, Bon, and Sanskrit packs await specialist review.',
-    links: [
-      {
-        href: '#/research/sacred-geography-kailas',
-        label: 'Field study',
-        description: 'Methods, null results & reading list',
-      },
-      {
-        href: 'https://github.com/Epistetechnician/kailas-corpus',
-        label: 'Corpus repository',
-        description: 'Manifests, lexicons & handoff packs',
-      },
-    ],
-  },
 ]
 
 const writingModules = import.meta.glob('./content/writings/*.html', {
@@ -665,6 +529,35 @@ const writingOrder = [
   'civic-innovation-genz',
 ]
 
+const featuredWritingSlugs = new Set([
+  'approaching-breakthroughs-across-systems',
+  'evidence-bounded-intelligence',
+  'statebooks-convergence-with-coherence',
+  'mechanistic-interpretability-negative-results',
+  'continual-learning-and-alignment-benchmarks',
+  'sacred-economics-crypto',
+])
+
+const writingCategoryBySlug: Record<string, Exclude<WritingCategory, 'all' | 'featured'>> = {
+  'approaching-breakthroughs-across-systems': 'ai',
+  'evidence-bounded-intelligence': 'ai',
+  'statebooks-convergence-with-coherence': 'markets',
+  'ai-research-map-evolution-intelligence-safety-security': 'ai',
+  'continual-learning-and-alignment-benchmarks': 'ai',
+  'hybrid-synthetic-data-and-evaluation': 'ai',
+  'mechanistic-interpretability-negative-results': 'ai',
+  'verifiable-ai-agents': 'crypto',
+  'zero-knowledge-mpc-and-post-quantum-security': 'crypto',
+  'decentralized-compute-and-data-provenance': 'crypto',
+  'architecture-unsecured-credit': 'markets',
+  'sacred-economics-crypto': 'markets',
+  'dao-capital-flows': 'markets',
+  'mrv-onchain': 'commons',
+  'p2p-humanitarian': 'commons',
+  'gitcoin-grants': 'commons',
+  'civic-innovation-genz': 'commons',
+}
+
 function parseWritingDocument(filePath: string, rawHtml: string): WritingEntry {
   const slug = filePath.split('/').pop()?.replace(/\.html$/, '') ?? filePath
   const document = new DOMParser().parseFromString(rawHtml, 'text/html')
@@ -688,6 +581,8 @@ function parseWritingDocument(filePath: string, rawHtml: string): WritingEntry {
     meta,
     summary,
     contentHtml,
+    featured: featuredWritingSlugs.has(slug),
+    category: writingCategoryBySlug[slug] ?? 'commons',
   }
 }
 
@@ -700,6 +595,15 @@ const writings = Object.entries(writingModules)
     const normalizedRightIndex = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex
     return normalizedLeftIndex - normalizedRightIndex
   })
+
+const writingCategories: { id: WritingCategory; label: string; count?: number }[] = [
+  { id: 'featured', label: 'Featured', count: writings.filter((w) => w.featured).length },
+  { id: 'all', label: 'All Essays', count: writings.length },
+  { id: 'ai', label: 'AI & Verification' },
+  { id: 'crypto', label: 'Crypto & Compute' },
+  { id: 'markets', label: 'Markets & Coherence' },
+  { id: 'commons', label: 'Commons & Governance' },
+]
 
 function getWritingFromHash(hash: string): WritingEntry | null {
   const match = hash.match(/^#\/?writing\/([\w-]+)$/)
@@ -769,7 +673,15 @@ function LazyWalkthroughVideo({
 const inquiryName = (slug: string) =>
   researchRepos.find((r) => r.slug === slug)?.name ?? getField(slug)?.name ?? slug
 
-function EssayNotes({ slug }: { slug: string }) {
+function EssayNotes({
+  slug,
+  onOpenWiki,
+  onCloseModal,
+}: {
+  slug: string
+  onOpenWiki: (id: string) => void
+  onCloseModal: () => void
+}) {
   const notes = essayNotes[slug]
   if (!notes) return null
   return (
@@ -777,9 +689,17 @@ function EssayNotes({ slug }: { slug: string }) {
       <h3>Beside this essay</h3>
       <p className="reader-chips">
         {notes.threads.map((t) => (
-          <a key={t} href={`#/research?t=${t}`}>
-            {threadById(t).title}
-          </a>
+          <button
+            key={t}
+            type="button"
+            className="reader-chip-btn"
+            onClick={() => {
+              onCloseModal()
+              onOpenWiki(t)
+            }}
+          >
+            [[{threadById(t).title}]]
+          </button>
         ))}
       </p>
       {notes.inquiries?.length ? (
@@ -803,9 +723,11 @@ function EssayNotes({ slug }: { slug: string }) {
 function WritingReaderModal({
   writing,
   onClose,
+  onOpenWiki,
 }: {
   writing: WritingEntry
   onClose: () => void
+  onOpenWiki: (id: string) => void
 }) {
   const closeBtnRef = useRef<HTMLButtonElement | null>(null)
 
@@ -865,14 +787,18 @@ function WritingReaderModal({
             className="reader-modal__prose"
             dangerouslySetInnerHTML={{ __html: writing.contentHtml }}
           />
-          <EssayNotes slug={writing.slug} />
+          <EssayNotes
+            slug={writing.slug}
+            onOpenWiki={onOpenWiki}
+            onCloseModal={onClose}
+          />
         </article>
       </div>
     </div>
   )
 }
 
-function SiteHeader() {
+function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -917,17 +843,24 @@ function SiteHeader() {
         <nav className="site-nav__links" aria-label="Primary">
           <a href="#about">About</a>
           <a href="#archive">Work</a>
-          <a href="#frontiers">Programme</a>
-          <a href="#systems">Systems</a>
+          <a href="#frontiers">Stream</a>
           <a href="#writings">Writing</a>
-          <a href="#/research">Research</a>
           <a href="#install">Terminal</a>
+          <a href="#/research">Monograph</a>
         </nav>
 
         <div className="site-nav__right">
+          <button
+            type="button"
+            className="site-nav__wiki-btn"
+            onClick={() => onOpenWiki('evidence-bounded')}
+            title="Open [[Wiki]] Knowledge Graph"
+          >
+            [[Wiki]]
+          </button>
           <AmbientSoundControl />
           <a href="#/research" className="site-nav__mobile-link">
-            Research
+            Monograph
           </a>
           <button
             type="button"
@@ -946,25 +879,22 @@ function SiteHeader() {
           <div className="site-nav__scrim" aria-hidden="true" onClick={closeMenu} />
           <nav id="mobile-nav-sheet" className="site-nav__drawer" aria-label="Section index">
             <a href="#about" onClick={closeMenu}>
-              <span>01</span> About &amp; Foundations
+              <span>01</span> Foundations
             </a>
             <a href="#archive" onClick={closeMenu}>
               <span>02</span> Selected Work
             </a>
             <a href="#frontiers" onClick={closeMenu}>
-              <span>03</span> Research Programme
-            </a>
-            <a href="#systems" onClick={closeMenu}>
-              <span>04</span> Systems &amp; Publications
+              <span>03</span> Research Stream &amp; Embeds
             </a>
             <a href="#writings" onClick={closeMenu}>
-              <span>05</span> Essays &amp; Notes
+              <span>04</span> Essays &amp; Notes
             </a>
             <a href="#install" onClick={closeMenu}>
-              <span>06</span> Terminal (spatel)
+              <span>05</span> Terminal (spatel)
             </a>
             <a href="#/research" className="site-nav__drawer-research" onClick={closeMenu}>
-              <span>→</span> Research Monograph &amp; Commonplace Book
+              <span>→</span> Full Research Monograph &amp; Commonplace Book
             </a>
           </nav>
         </>
@@ -980,10 +910,42 @@ function App() {
   const [activeWriting, setActiveWriting] = useState<WritingEntry | null>(() =>
     typeof window !== 'undefined' ? getWritingFromHash(window.location.hash) : null,
   )
+  const [workIdx, setWorkIdx] = useState(0)
+  const [writingCat, setWritingCat] = useState<WritingCategory>('featured')
   const [cliTab, setCliTab] = useState(0)
+  const [sampleIdx, setSampleIdx] = useState(0)
+
+  const [wikiTrail, setWikiTrail] = useState<string[]>([])
+  const [focusedDispatchRequest, setFocusedDispatchRequest] = useState<{
+    id: string
+    nonce: number
+  } | null>(null)
 
   const openedViaPushRef = useRef(false)
   const triggerElementRef = useRef<HTMLElement | null>(null)
+
+  const openWiki = useCallback((id: string) => {
+    setWikiTrail((prev) => {
+      if (prev[prev.length - 1] === id) return prev
+      const existingIdx = prev.indexOf(id)
+      if (existingIdx !== -1) {
+        return prev.slice(0, existingIdx + 1)
+      }
+      return [...prev.slice(-6), id]
+    })
+  }, [])
+
+  const jumpWikiStep = useCallback((idx: number) => {
+    setWikiTrail((prev) => prev.slice(0, idx + 1))
+  }, [])
+
+  const closeWiki = useCallback(() => {
+    setWikiTrail([])
+  }, [])
+
+  const focusDispatch = useCallback((dispatchId: string) => {
+    setFocusedDispatchRequest({ id: dispatchId, nonce: Date.now() })
+  }, [])
 
   const openWriting = useCallback((writing: WritingEntry) => {
     triggerElementRef.current =
@@ -992,6 +954,14 @@ function App() {
     window.history.pushState(null, '', `#writing/${writing.slug}`)
     setActiveWriting(writing)
   }, [])
+
+  const openWritingBySlug = useCallback(
+    (slug: string) => {
+      const found = writings.find((entry) => entry.slug === slug)
+      if (found) openWriting(found)
+    },
+    [openWriting],
+  )
 
   const closeWriting = useCallback(() => {
     const restoreFocus = () => {
@@ -1009,7 +979,10 @@ function App() {
       return
     }
 
-    if (window.location.hash.startsWith('#writing/') || window.location.hash.startsWith('#/writing/')) {
+    if (
+      window.location.hash.startsWith('#writing/') ||
+      window.location.hash.startsWith('#/writing/')
+    ) {
       window.history.replaceState(null, '', window.location.pathname + window.location.search)
     }
     setActiveWriting(null)
@@ -1040,14 +1013,24 @@ function App() {
     }
   }, [])
 
+  const activeWork = experienceCards[workIdx] ?? experienceCards[0]
+  const activeWorkHasWalkthrough = activeWork.video.renderMode === 'video'
+
+  const filteredWritings = useMemo(() => {
+    if (writingCat === 'all') return writings
+    if (writingCat === 'featured') return writings.filter((w) => w.featured)
+    return writings.filter((w) => w.category === writingCat)
+  }, [writingCat])
+
   const activeCli = cliCommands[cliTab] ?? cliCommands[0]
+  const activeSample = terminalSamples[sampleIdx] ?? terminalSamples[0]
 
   return (
     <div className="page-shell" id="top">
-      <SiteHeader />
+      <SiteHeader onOpenWiki={openWiki} />
 
       <main className="page-main">
-        {/* HERO — Pure living ASCII cinema + restrained monograph intro */}
+        {/* HERO — Pure living ASCII cinema + progressive entry trail */}
         <section className="hero">
           <div className="hero__canvas" aria-hidden="true">
             <Video2Ascii
@@ -1075,23 +1058,32 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                Researcher, operator, and builder working across verifiable AI,
-                cryptography, market design, and public goods.
+                Building verification &amp; formal containment infrastructure for
+                autonomous AI systems — alongside cryptography and market design.
               </h1>
 
               <div className="hero__actions">
-                <a href="#systems" className="btn-primary">
-                  Selected work
+                <a href="#frontiers" className="btn-primary">
+                  Explore stream &amp; embeds
                 </a>
                 <a href="#/research" className="btn-quiet">
                   Research monograph <span aria-hidden="true">→</span>
                 </a>
               </div>
+
+              <div className="hero__trails" aria-label="Quick entry nodes">
+                <span className="hero__trails-label">Start a thread:</span>
+                <WikiChip id="evidence-bounded" label="Evidence-Bounded AI" onOpen={openWiki} />
+                <WikiChip id="holdout-ledger" label="Holdout Ledger" onOpen={openWiki} />
+                <WikiChip id="formasec" label="FormaSec" onOpen={openWiki} />
+                <WikiChip id="temporal-grid-safety" label="Discriminant Safety" onOpen={openWiki} />
+                <WikiChip id="statebook" label="Statebook" onOpen={openWiki} />
+              </div>
             </div>
           </div>
         </section>
 
-        {/* 01 — ABOUT & FOUNDATIONS */}
+        {/* 01 — FOUNDATIONS */}
         <section className="ed-section" id="about">
           <div className="ed-section__head">
             <p className="ed-eyebrow">01 — Foundations</p>
@@ -1133,7 +1125,10 @@ function App() {
               <div className="about-columns">
                 {foundations.map((item) => (
                   <div key={item.label} className="about-column">
-                    <h3>{item.label}</h3>
+                    <div className="about-column__head">
+                      <h3>{item.label}</h3>
+                      <WikiChip id={item.wikiId} onOpen={openWiki} />
+                    </div>
                     <p>{item.body}</p>
                   </div>
                 ))}
@@ -1169,257 +1164,144 @@ function App() {
           </div>
         </section>
 
-        {/* 02 — SELECTED WORK */}
+        {/* 02 — SELECTED WORK (Clean Interactive Chapter Stage) */}
         <section className="ed-section" id="archive">
-          <div className="ed-section__head">
-            <p className="ed-eyebrow">02 — Selected Work</p>
-            <h2>Operatorship, engineering, and stewardship.</h2>
-          </div>
-
-          <div className="work-chapters">
-            {experienceCards.map((card) => {
-              const hasWalkthrough = card.video.renderMode === 'video'
-
-              return (
-                <article className="work-chapter" key={card.title}>
-                  {card.secondaryVideo ? (
-                    <div className="work-chapter__ambient" aria-hidden="true">
-                      <Video2Ascii
-                        key={`${card.title}-${card.secondaryVideo.src}`}
-                        src={card.secondaryVideo.src}
-                        numColumns={card.secondaryVideo.numColumns}
-                        colored={true}
-                        blend={card.secondaryVideo.blend}
-                        highlight={card.secondaryVideo.highlight}
-                        brightness={card.secondaryVideo.brightness}
-                        fitMode={card.secondaryVideo.fitMode}
-                        focalY={card.secondaryVideo.focalY}
-                        posterTime={card.secondaryVideo.posterTime}
-                        audioEffect={0}
-                        enableMouse={false}
-                        enableRipple={false}
-                        charset="detailed"
-                        isPlaying={true}
-                        autoPlay={true}
-                      />
-                      <div className="work-chapter__wash" />
-                    </div>
-                  ) : null}
-
-                  <div className={`work-chapter__inner${hasWalkthrough ? ' has-media' : ''}`}>
-                    <div className="work-chapter__prose">
-                      <div className="work-chapter__meta">
-                        <span>{card.eyebrow}</span>
-                        <span>{card.role}</span>
-                      </div>
-
-                      <h3>{card.title}</h3>
-                      <p className="work-chapter__summary">{card.summary}</p>
-
-                      <ul className="work-chapter__points">
-                        {card.details.map((detail) => (
-                          <li key={detail}>{detail}</li>
-                        ))}
-                      </ul>
-
-                      {card.links?.length ? (
-                        <div className="work-chapter__links" aria-label={`${card.title} references`}>
-                          {card.links.map((link) => (
-                            <a
-                              key={link.href}
-                              href={link.href}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="work-link"
-                            >
-                              <span className="work-link__title">{link.label} ↗</span>
-                              <span className="work-link__desc">{link.description}</span>
-                            </a>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    {hasWalkthrough ? (
-                      <LazyWalkthroughVideo title={card.title} video={card.video} />
-                    ) : null}
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
-        {/* 03 — RESEARCH PROGRAMME (Tabbed Monograph Sheet) */}
-        <FrontiersSection
-          onOpenEssay={(slug) => {
-            const writing = writings.find((entry) => entry.slug === slug)
-            if (writing) {
-              openWriting(writing)
-            }
-          }}
-        />
-
-        {/* 04 — SYSTEMS & PUBLICATIONS */}
-        <section className="ed-section" id="systems">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">04 — Systems &amp; Publications</p>
-              <h2>Making technical claims earn their weight.</h2>
+              <p className="ed-eyebrow">02 — Selected Work</p>
+              <h2>Operatorship, engineering, and stewardship.</h2>
             </div>
 
-            <div className="ed-lead">
-              <p>
-                How we generate adversarial tests, bound authority, preserve
-                provenance, and separate a clean local result from a claim
-                strangers can rely on. Every entry states its scope ceiling.
-              </p>
+            <div className="work-switcher" role="tablist" aria-label="Selected work chapters">
+              {experienceCards.map((card, idx) => {
+                const isActive = idx === workIdx
+                return (
+                  <button
+                    key={card.title}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    className={`work-tab${isActive ? ' is-active' : ''}`}
+                    onClick={() => setWorkIdx(idx)}
+                  >
+                    <span className="work-tab__num">0{idx + 1}</span>
+                    <span>{card.shortTab}</span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          <div className="flagship-duo">
-            <article className="flagship-item" aria-labelledby="featured-essay-title">
-              <p className="flagship-item__kicker">Position Paper · 2026</p>
-              <h3 id="featured-essay-title">
-                Evidence-Bounded Intelligence: Why Authority Over AI Systems Should
-                Follow Evidence, Not Capability
-              </h3>
-              <p className="flagship-item__body">
-                Built from experiments across safety grading, module replacement,
-                and attested kernels—mostly from the runs that failed. Every
-                figure points to a reproducible repository report.
-              </p>
-
-              <dl className="marginalia-stats">
-                <div>
-                  <dt>15.4% vs 53.6%</dt>
-                  <dd>Two safety graders on identical model outputs</dd>
-                </div>
-                <div>
-                  <dt>0.89 vs 0.11</dt>
-                  <dd>Jacobian error vs value error in learned replacements</dd>
-                </div>
-                <div>
-                  <dt>279 / 279</dt>
-                  <dd>Kernel tests passed on a single attested TDX host</dd>
-                </div>
-              </dl>
-
-              <div className="flagship-item__links">
-                <button
-                  type="button"
-                  className="btn-quiet"
-                  onClick={() => {
-                    const writing = writings.find(
-                      (entry) => entry.slug === 'evidence-bounded-intelligence',
-                    )
-                    if (writing) openWriting(writing)
-                  }}
-                >
-                  Read essay →
-                </button>
-                <a className="text-link" href="#/research">
-                  Inspect repositories →
-                </a>
-                <a className="text-link" href="#/research?t=failure">
-                  Commonplace notes →
-                </a>
+          <article className="work-chapter work-chapter--staged" key={activeWork.title}>
+            {activeWork.secondaryVideo ? (
+              <div className="work-chapter__ambient" aria-hidden="true">
+                <Video2Ascii
+                  key={`${activeWork.title}-${activeWork.secondaryVideo.src}`}
+                  src={activeWork.secondaryVideo.src}
+                  numColumns={activeWork.secondaryVideo.numColumns}
+                  colored={true}
+                  blend={activeWork.secondaryVideo.blend}
+                  highlight={activeWork.secondaryVideo.highlight}
+                  brightness={activeWork.secondaryVideo.brightness}
+                  fitMode={activeWork.secondaryVideo.fitMode}
+                  focalY={activeWork.secondaryVideo.focalY}
+                  posterTime={activeWork.secondaryVideo.posterTime}
+                  audioEffect={0}
+                  enableMouse={false}
+                  enableRipple={false}
+                  charset="detailed"
+                  isPlaying={true}
+                  autoPlay={true}
+                />
+                <div className="work-chapter__wash" />
               </div>
-            </article>
+            ) : null}
 
-            <article className="flagship-item flagship-item--paper" aria-labelledby="featured-paper-title">
-              <p className="flagship-item__kicker">arXiv:2609.09582 · Sep 2026</p>
-              <h3 id="featured-paper-title">
-                ECDSA.Fail: Open Autoresearch for Optimizing Elliptic-Curve Point
-                Addition in Shor’s Algorithm
-              </h3>
-              <p className="flagship-item__body">
-                Evaluator-verified open research loop for reversible secp256k1
-                point-addition circuits, achieving an 86.1% Q × T reduction
-                (1.496B at paper cutoff; 1.259B post-cutoff).
-              </p>
-
-              <a
-                className="paper-figure"
-                href="https://arxiv.org/abs/2609.09582"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Open ECDSA.Fail paper on arXiv"
-              >
-                <ParetoChart />
-              </a>
-
-              <div className="flagship-item__links">
-                <a href="https://arxiv.org/abs/2609.09582" target="_blank" rel="noreferrer" className="btn-quiet">
-                  Read arXiv paper ↗
-                </a>
-                <a href="https://github.com/Layr-Labs/ecdsafail-challenge" target="_blank" rel="noreferrer" className="text-link">
-                  Challenge harness ↗
-                </a>
-                <a href="https://ecdsa.fail/" target="_blank" rel="noreferrer" className="text-link">
-                  ecdsa.fail ↗
-                </a>
-              </div>
-            </article>
-          </div>
-
-          <div className="ledger" aria-label="Systems and research index">
-            {systemsProjects.map((project) => (
-              <article className="ledger-row" key={project.title}>
-                <span className="ledger-row__num" aria-hidden="true">
-                  {project.index}
-                </span>
-
-                <div className="ledger-row__main">
-                  <p className="ledger-row__discipline">{project.discipline}</p>
-                  <h3>{project.title}</h3>
-                  <p className="ledger-row__summary">{project.summary}</p>
-                  <p className="ledger-row__ceiling">
-                    <span>Ceiling — </span>
-                    {project.boundary}
-                  </p>
-                  {project.essaySlug ? (
-                    <button
-                      type="button"
-                      className="text-link ledger-row__essay"
-                      onClick={() => {
-                        const writing = writings.find((e) => e.slug === project.essaySlug)
-                        if (writing) openWriting(writing)
-                      }}
-                    >
-                      Companion essay →
-                    </button>
-                  ) : null}
+            <div className={`work-chapter__inner${activeWorkHasWalkthrough ? ' has-media' : ''}`}>
+              <div className="work-chapter__prose">
+                <div className="work-chapter__meta">
+                  <span>{activeWork.eyebrow}</span>
+                  <span>{activeWork.role}</span>
                 </div>
 
-                {project.links?.length ? (
-                  <div className="ledger-row__refs" aria-label={`${project.title} links`}>
-                    {project.links.map((link) => (
+                <h3>{activeWork.title}</h3>
+                <p className="work-chapter__summary">{activeWork.summary}</p>
+
+                <ul className="work-chapter__points">
+                  {activeWork.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+
+                {activeWork.links?.length ? (
+                  <div className="work-chapter__links" aria-label={`${activeWork.title} references`}>
+                    {activeWork.links.map((link) => (
                       <a
                         key={link.href}
                         href={link.href}
-                        target={link.href.startsWith('#') ? undefined : '_blank'}
-                        rel={link.href.startsWith('#') ? undefined : 'noreferrer'}
-                        className="ledger-ref"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="work-link"
                       >
-                        <span>{link.label} {link.href.startsWith('#') ? '→' : '↗'}</span>
-                        <small>{link.description}</small>
+                        <span className="work-link__title">{link.label} ↗</span>
+                        <span className="work-link__desc">{link.description}</span>
                       </a>
                     ))}
                   </div>
-                ) : (
-                  <p className="ledger-row__access">{project.access}</p>
-                )}
-              </article>
-            ))}
-          </div>
+                ) : null}
+
+                <div className="work-chapter__foot">
+                  <div className="work-chapter__wikis">
+                    {activeWork.wikiIds.map((wid) => (
+                      <WikiChip key={wid} id={wid} onOpen={openWiki} />
+                    ))}
+                  </div>
+
+                  <div className="work-chapter__step">
+                    <button
+                      type="button"
+                      className="work-step-btn"
+                      onClick={() =>
+                        setWorkIdx((i) => (i - 1 + experienceCards.length) % experienceCards.length)
+                      }
+                      aria-label="Previous work chapter"
+                    >
+                      ← Prev
+                    </button>
+                    <span>
+                      {workIdx + 1} / {experienceCards.length}
+                    </span>
+                    <button
+                      type="button"
+                      className="work-step-btn"
+                      onClick={() => setWorkIdx((i) => (i + 1) % experienceCards.length)}
+                      aria-label="Next work chapter"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {activeWorkHasWalkthrough ? (
+                <LazyWalkthroughVideo title={activeWork.title} video={activeWork.video} />
+              ) : null}
+            </div>
+          </article>
         </section>
 
-        {/* 05 — WRITING (Literary Table of Contents) */}
+        {/* 03 — UNIFIED RESEARCH STREAM, LIVE EMBEDS & WIKI HOOKS */}
+        <ExplorerFeed
+          onOpenEssay={openWritingBySlug}
+          onOpenWiki={openWiki}
+          focusedDispatchRequest={focusedDispatchRequest}
+        />
+
+        {/* 04 — WRITING (Filtered Table of Contents + Thread Wiki Chips) */}
         <section className="ed-section" id="writings">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">05 — Writing</p>
+              <p className="ed-eyebrow">04 — Writing</p>
               <h2>Essays and field notes.</h2>
             </div>
 
@@ -1432,33 +1314,88 @@ function App() {
             </div>
           </div>
 
-          <div className="essay-index" role="list" aria-label="Essay archive">
-            {writings.map((writing, idx) => (
-              <button
-                key={writing.slug}
-                type="button"
-                role="listitem"
-                className="essay-row"
-                onClick={() => openWriting(writing)}
-              >
-                <span className="essay-row__num" aria-hidden="true">
-                  {String(idx + 1).padStart(2, '0')}
-                </span>
-                <div className="essay-row__body">
-                  <h3>{writing.title}</h3>
-                  <p>{writing.summary}</p>
-                </div>
-                <span className="essay-row__meta">{writing.meta}</span>
-              </button>
-            ))}
+          <div className="feed-toolbar essay-toolbar" role="tablist" aria-label="Filter essays">
+            <div className="feed-channels">
+              {writingCategories.map((cat) => {
+                const active = writingCat === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    className={`feed-channel${active ? ' is-active' : ''}`}
+                    onClick={() => setWritingCat(cat.id)}
+                  >
+                    <span>{cat.label}</span>
+                    {cat.count !== undefined ? <small>{cat.count}</small> : null}
+                  </button>
+                )
+              })}
+            </div>
           </div>
+
+          <div className="essay-index" role="list" aria-label="Essay archive">
+            {filteredWritings.map((writing) => {
+              const globalIdx = writings.findIndex((w) => w.slug === writing.slug)
+              const notes = essayNotes[writing.slug]
+              return (
+                <div
+                  key={writing.slug}
+                  role="listitem"
+                  className="essay-row"
+                  onClick={() => openWriting(writing)}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      openWriting(writing)
+                    }
+                  }}
+                >
+                  <span className="essay-row__num" aria-hidden="true">
+                    {String(globalIdx + 1).padStart(2, '0')}
+                  </span>
+                  <div className="essay-row__body">
+                    <h3>{writing.title}</h3>
+                    <p>{writing.summary}</p>
+                    {notes?.threads.length ? (
+                      <div className="essay-row__chips">
+                        {notes.threads.slice(0, 3).map((tid) => (
+                          <WikiChip
+                            key={tid}
+                            id={tid}
+                            label={threadById(tid).title}
+                            onOpen={openWiki}
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                  <span className="essay-row__meta">{writing.meta}</span>
+                </div>
+              )
+            })}
+          </div>
+
+          {writingCat === 'featured' ? (
+            <div className="feed-more-bar">
+              <button
+                type="button"
+                className="btn-quiet"
+                onClick={() => setWritingCat('all')}
+              >
+                Browse all {writings.length} essays &amp; notes ↓
+              </button>
+            </div>
+          ) : null}
         </section>
 
-        {/* 06 — TERMINAL COMPANION */}
+        {/* 05 — TERMINAL COMPANION */}
         <section className="ed-section" id="install">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">06 — Terminal Companion</p>
+              <p className="ed-eyebrow">05 — Terminal Companion</p>
               <h2>An inspectable CLI archive.</h2>
             </div>
 
@@ -1473,20 +1410,28 @@ function App() {
           </div>
 
           <div className="terminal-layout">
-            <div className="terminal-transcript" aria-label="Sample spatel session">
+            <div className="terminal-transcript" aria-label="Interactive sample spatel session">
               <div className="terminal-transcript__head">
-                <span>spatel — session</span>
+                <span>spatel — grounded session</span>
                 <span>rust + local rag</span>
               </div>
-              <pre>{`$ spatel --ask "How do you think about public goods?"
+              <div className="terminal-prompts" role="tablist" aria-label="Sample questions">
+                {terminalSamples.map((s, idx) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={sampleIdx === idx}
+                    className={`terminal-prompt-chip${sampleIdx === idx ? ' is-active' : ''}`}
+                    onClick={() => setSampleIdx(idx)}
+                  >
+                    {s.chip}
+                  </button>
+                ))}
+              </div>
+              <pre>{`$ spatel --ask "${activeSample.prompt}"
 
-Gitcoin mattered because it turned caring about
-public goods into allocative power. Durable funding
-needs a stack: quadratic matching, retroactive
-rewards, delegated domain judgment, and maintenance.
-
-sources: Gitcoin & Public Goods · Sacred Economics
-mode: grounded corpus (offline-capable)
+${activeSample.body}
 
 [/] live prompt   [tab] history   [q] quit`}</pre>
             </div>
@@ -1545,9 +1490,9 @@ mode: grounded corpus (offline-capable)
           <nav className="colophon__nav" aria-label="Footer">
             <a href="#top">Top ↑</a>
             <a href="#archive">Work</a>
-            <a href="#frontiers">Programme</a>
+            <a href="#frontiers">Stream</a>
             <a href="#writings">Writing</a>
-            <a href="#/research">Research</a>
+            <a href="#/research">Monograph</a>
           </nav>
 
           <div className="colophon__socials">
@@ -1564,6 +1509,18 @@ mode: grounded corpus (offline-capable)
         <WritingReaderModal
           writing={activeWriting}
           onClose={closeWriting}
+          onOpenWiki={openWiki}
+        />
+      ) : null}
+
+      {wikiTrail.length > 0 ? (
+        <WikiDrawer
+          trail={wikiTrail}
+          onNavigate={openWiki}
+          onJumpToStep={jumpWikiStep}
+          onClose={closeWiki}
+          onOpenEssay={openWritingBySlug}
+          onFocusDispatch={focusDispatch}
         />
       ) : null}
     </div>

@@ -31,13 +31,13 @@ export const kailas: FieldStrand = {
   kind: 'field',
   name: 'Sacred Geography as Multi-Temporal Structure',
   tagline:
-    'Across 2,626 blind-labeled passages in 15+ languages, 446 coded pilgrimage windows, and a Lean-verified cellular sheaf, Mount Kailash turns out to be a route-locked spatial mandala (φ = f(r)) rather than an asynchronous two-clock calendar.',
+    'Across 2,626 blind-labeled passages in 15+ languages and 416+ coded pilgrimage windows (including Colin Thubron’s full 52-km kora circuit), Mount Kailash turns out to be a route-locked spatial mandala (φ = f(r)) rather than an asynchronous two-clock calendar.',
   status:
-    'Corpus v3, Full-Circuit Kora Coding v2, Sanskrit & Tibetan Cipher/Pramāṇa Audit, and Lean 4.28 MandalaSheaf kernel complete (Nov 2026); five SHA-256 receipts and blinded scholar review sheets live in Epistetechnician/kailas-corpus and patelshaan-lab/primitives.',
+    'Corpus v3, Pilgrimage Coding v2, Sanskrit & Tibetan Cipher/Pramāṇa Audit, and blinded scholar handoff sheets complete (Nov 2026) in Epistetechnician/kailas-corpus (awaiting external philologist grading).',
   question:
     'Do classical texts and lived pilgrimage accounts around Mount Kailash encode multiple independent clocks, or do they project coexisting cosmological, devotional, and physical worlds onto a single shared spatial circuit?',
   headline:
-    'Unbundling spatial cosmology from temporal cosmology across 2,626 passages resolves an apparent null in Sanskrit and Tibetan into a clean double dissociation: Kailash is strongly enriched in axis-mundi and mandala structure across English, Sanskrit, Classical Tibetan, and Bon, while depleted or null on multi-temporal language. Walking the 52-km circuit in sequential episodes confirms why: calendar-decoupled ritual time belongs to Hajj and Holy Land liturgy (16.7% vs 3.0%, p = 0.0022), whereas Kailash locks meaning to physical position around the mountain with zero phase defect across Stages 2–5.',
+    'Unbundling spatial cosmology from temporal cosmology across 2,626 passages resolves an apparent null in Sanskrit and Tibetan into a clean double dissociation: Kailash is strongly enriched in axis-mundi and mandala structure across English, Sanskrit, Classical Tibetan, and Bon, while depleted or null on multi-temporal language. Walking the 52-km circuit in sequential episodes confirms why: calendar-decoupled ritual time belongs to Hajj and Holy Land liturgy (16.7% vs 3.0%, p = 0.0022), whereas Kailash locks meaning to physical position around the mountain.',
   notShown:
     'All passage raters and episode coders to date are language models evaluated under blind protocols (with measured inter-rater reliability: κ = 0.90 on Tibetan v3 overlaps, α = 0.86 on public-domain pilgrimage windows, and α = 0.83 on Colin Thubron’s circuit). Core Bon Dzogchen manuscripts such as the *Zhang Zhung Nyan Gyud* and *Gzer mig* remain mostly in un-OCRed scans, and scoring our blinded scholar sheets with human specialists in Tibetan, Bon, and Sanskrit philology is the next external check.',
   results: [
@@ -57,9 +57,9 @@ export const kailas: FieldStrand = {
         'Calendar-decoupled ritual clock share in Hajj & Holy Land accounts (16/96) vs Kailash explorer accounts (4/134), p = 0.0022',
     },
     {
-      value: '0.00 defect (Stg 2–5)',
+      value: '20.0% vs 0.0%',
       label:
-        'Sheaf coboundary defect across all 24 mountain circuit episodes (r ∈ [0.14, 0.84]), vs 0.61 at festival & plain boundaries',
+        'Route-aligned mandala episodes along Thubron’s kora (p = 0.0017 vs explorers) vs strict calendar decoupling on Stages 2–5 (0/24)',
     },
   ],
   limits: [
@@ -87,7 +87,7 @@ export const kailas: FieldStrand = {
     'The pilgrims whose walks became data, and the readers of Tibetan, Bon, Sanskrit, and comparative liturgy who can check what automated coders missed. Seeded, group-blinded review sheets—233 IAST-normalized Sanskrit rows, 115 v2 + 128 v3 Tibetan and Bon rows, and a 40-episode human double-coding pack—are built and ready for specialist review.',
   essay: {
     callout:
-      'A pooled null can hide two opposite truths. Separating spatial mandala cosmology from multi-temporal cosmology across 2,626 passages—and walking the 52-km kora sequentially across 446 coded windows—shows that Kailash indexes plural worlds by spatial position around the mountain (φ = f(r)), whereas independent two-clock time belongs to calendar-bound liturgy and asynchronous institutional settlement.',
+      'A pooled null can hide two opposite truths. Separating spatial mandala cosmology from multi-temporal cosmology across 2,626 passages—and walking the 52-km kora sequentially across 494 coded windows (114 on the S¹ circuit across 7 lineages)—shows that Kailash indexes plural worlds by spatial position around the mountain (φ = f(r)), whereas independent two-clock time belongs to calendar-bound liturgy and asynchronous institutional settlement.',
     sections: [
       {
         title: 'The mountain, and the two competing hypotheses',
@@ -274,9 +274,9 @@ export const kailas: FieldStrand = {
                 note: '2,626 passages (κ = 0.90): proves spatial-mandala lift (+3.4 to +44.1) & temporal null/depletion',
               },
               {
-                label: 'v2 Coding: 446 dual-coded windows + Full-Circuit Kora (r ∈ [0, 1])',
+                label: 'v2 Coding: 494 dual-coded windows + 114-episode 7-lineage S¹ Kora (r ∈ [0, 1])',
                 status: 'pass',
-                note: 'separates Hajj calendar liturgy (16.7%, p = 0.0022) from Kailash route-aligned mandala (20.0%, p = 0.0017)',
+                note: 'separates Hajj calendar liturgy (16.7%, p = 0.0022) from Kailash route-aligned mandala (20.0%, p = 0.0017) & indigenous Tibetan vs Bon O(2) holonomy',
               },
             ],
             caption:
@@ -286,11 +286,11 @@ export const kailas: FieldStrand = {
       },
       {
         title:
-          'Study 2: 446 pilgrimage windows—Hajj liturgical calendars vs. the 52-km Kailash kora',
+          'Study 2: 494 pilgrimage windows—Hajj liturgical calendars vs. the 114-episode, 7-lineage Kailash kora',
         body: [
           'Scripture tells you how a tradition imagines a place; travel accounts tell you what happens when someone actually walks it. Our initial 195-window coding study hinted that calendar-decoupled ritual time appeared far more often in Mecca and Jerusalem accounts than around Kailash, but the sample was too small to clear information-theoretic breakeven, and most public-domain Kailash books were written by nineteenth-century colonial surveyors mapping valleys rather than walking the ritual circuit.',
-          'We therefore expanded public-domain dual coding to 368 windows across twenty books (α = 0.86) and coded 66 sequential full-circuit kora episodes ordered from r = 0.00 to r = 1.00 across three very different walkers: Colin Thubron’s *To a Mountain in Tibet* (coded strictly by chapter/paragraph locator and SHA-1 hash), the Japanese Zen monk Ekai Kawaguchi’s 1900 circuit, and Sven Hedin’s 1907 circuit.',
-          'The two pilgrimage regimes separated cleanly. Calendar-decoupled ritual time—where a liturgical feast or prayer schedule runs orthogonal to physical geography—concentrates in Hajj and Holy Land accounts (16.7% vs 3.0% in Kailash explorer logs, p = 0.0022). Around Kailash, the opposite happens: 96.9% of kora episodes braid multiple interpretive realities at once, and route-locked mandala phase rises ninefold over off-circuit surveyor logs (20.0% strict, 34.3% loose, p = 0.0017), peaking at 50.0% around the Zutulpuk cave of Milarepa and Naro Bonchung. Crucially, three-quarters of Thubron’s calendar-decoupled episodes occur at Stage 1 (Tarboche flagpole) because he arrives during the lunar Saga Dawa festival; across all 24 contiguous episodes on the mountain proper (Stages 2–5, from Lha-chu valley over the 5,630 m Drolma La pass to Zutulpuk), calendar decoupling drops to exactly zero.',
+          'We therefore expanded public-domain dual coding to 368 windows across twenty-one books (α = 0.86) and dual-coded 114 sequential full-circuit kora episodes ordered from r = 0.00 to r = 1.00 across seven distinct lineages: indigenous Tibetan Buddhist *Ti se’i dkar chag* and *Mgur ’bum* texts (+1 CW), indigenous Bon *Dri med gzi brjid* and *Tise* accounts (−1 CCW), Swami Pranavananda’s Hindu *Kailāsa–Mānasarovara Parikramā* (+1 CW), Lama Anagarika Govinda’s contemplative Buddhist circuit (+1 CW), Colin Thubron’s *To a Mountain in Tibet* (+1 CW, coded strictly by chapter/paragraph locator and SHA-1 hash), the Japanese Zen monk Ekai Kawaguchi’s 1900 circuit (+1 CW), and Sven Hedin’s 1907 topographic circuit (+1 CW).',
+          'The two pilgrimage regimes separated cleanly. Calendar-decoupled ritual time—where a liturgical feast or prayer schedule runs orthogonal to physical geography—concentrates in Hajj and Holy Land accounts (16.7% vs 3.0% in Kailash explorer logs, p = 0.0022). Around Kailash, the opposite happens: 96.5% of kora episodes braid multiple interpretive realities at once, and route-locked mandala phase rises ninefold over off-circuit surveyor logs (20.0% strict, 34.3% loose, p = 0.0017), peaking at 50.0% around the Zutulpuk cave of Milarepa and Naro Bonchung. Across all seven lineages, sacred-landscape 4-register agreement reaches 59.0% (and 70.8% directly between indigenous Tibetan Buddhist *Dkar chag* and Bon *Dri med gzi brjid* circuits) while observer-personal registers diverge (43.1%). Crucially, across all 24 contiguous episodes on the mountain proper (Stages 2–5, from Lha-chu valley over the 5,630 m Drolma La pass to Zutulpuk), calendar decoupling drops to exactly zero.',
         ],
         figures: [
           {
@@ -409,45 +409,6 @@ export const kailas: FieldStrand = {
         ],
       },
       {
-        title: 'Study 4: From Twilight Language to a Lean-verified cellular sheaf across physics & AI',
-        body: [
-          'How do four rival traditions share a single unclimbed peak without overwriting one another’s worldview? Mathematically, Kailash works as a cellular sheaf (`primitives/mandala_sheaf.py`, proved sound with zero `sorry` axioms in `MandalaSheaf.lean`). The 52-km kora loop forms a shared base circle S¹, while six orthogonal *Sāṃdhyābhāṣā* subspaces carry physical, cosmological, devotional, and historical coordinates over each landmark without cross-talk (+82.20 bits of cross-observer agreement). Along the mountain proper (Stages 2–5), spatial phase transport glues globally with zero coboundary defect, while frustration concentrates strictly at the Stage 1 lunar festival and Stage 6 plain boundaries.',
-          'Once formalized in Lean 4.28, that exact sheaf coboundary invariant—measuring when local observer frames glue into one global reality (H⁰) versus when closed loops force an obstruction (H¹)—connects three seemingly distant problems across this research program. First, on causal spacetime diamonds, loop holonomy recovers Riemann curvature deficit angles to machine precision. Second, in Abramsky–Brandenburger quantum contextuality (`primitives/empirical_contextuality.py`), linear-programming strong duality proves that Bell–Tsirelson non-locality (CF = √2 − 1 ≈ 0.4142) and Mermin–Peres Magic Square contextuality (CF = 1.0 on every two-qubit state) are mathematically identical to a cross-context `Statebook` Dutch-book arbitrage gap. Third, in live language-model probing (`primitives/llm_sheaf_probe.py`), running 64 GPU forward passes on Qwen3-1.7B-Base across direct, paraphrase, negated, and sycophancy-pressured frames exposes a 31.2-percentage-point collapse under authority pressure (87.5% to 56.2%) and flags 100% of multi-frame failures in the high-frustration half without using ground-truth labels.',
-        ],
-        figures: [
-          {
-            kind: 'plate',
-            title:
-              'Plate II — Multi-Channel Symbolic Superlanguage: From Yantra & Chandas Prosody to Cellular Sheaves & Holonomy',
-            src: '/illustrations/samdhyabhasa-sheaf-plate.jpg',
-            alt: 'Copperplate triptych showing a Sri-yantra ringed by binary prosodic dashes and dots on the left, an S1 circle lifting into three orthogonal fiber planes in the center, and a causal diamond beside a twisted Mobius holonomy ribbon on the right',
-            legend: [
-              {
-                label: 'Left · Yantra + Chandas Parity',
-                detail:
-                  'Prefix-free Elias-gamma syntax paired with Pingala laghu/guru syllabic parity and a CRC-8 mudrā seal catching 100% of single-symbol corruptions.',
-              },
-              {
-                label: 'Center · S¹ Orthogonal Fiber Bundle',
-                detail:
-                  'Lean-proved zero-crosstalk Sāṃdhyābhāṣā register projection over kora coordinate r ∈ [0, 1].',
-              },
-              {
-                label: 'Right · Causal Diamond & Möbius H¹',
-                detail:
-                  'Pairwise local observer consistency (0.0 signaling TV) coexisting with global loop obstruction (CF = √2 − 1 or 1.0).',
-              },
-            ],
-            caption:
-              'Visual grammar of MandalaSheaf: ancient multi-channel compression upgraded into linear and cohomological invariants verified in Lean 4.28 and Python.',
-          },
-          {
-            kind: 'demo',
-            id: 'sheaf',
-          },
-        ],
-      },
-      {
         title: 'Where this stands: scholar handoff packs and next thresholds',
         body: [
           'To test our automated ratings against human philologists, `scholar-handoff/` provides group-blinded review sheets with embedded test-retest repeats: `sanskrit_v2_normalized.csv` (233 rows, including 51 romanized IAST passages normalized to Devanagari), `tibetan_bon_v3.csv` (128 classical Tise and Bon *Yungdrung Gutsek* rows), `tibetan_bon.csv` (115 v2 rows), and the 40-episode `human_pack.csv` pilgrimage double-coding pack.',
@@ -458,21 +419,19 @@ export const kailas: FieldStrand = {
             title: 'Research ledger status',
             done: [
               'Spatial-Mandala vs. Multi-Temporal double dissociation established across 2,362 v2 + 282 Tibetan/Bon v3 passages (κ = 0.90)',
-              'Cipher & pramāṇa MDL audit across 1,084 passages: Kaṭapayādi numerology falsified (−3.16b); pramāṇa (+11.1b) & mandala registers (+111.0b) backed',
-              'Full-circuit S¹ kora sheaf (0.00 defect on Stages 2–5 vs 0.61 boundary; +82.2b coder fiber MDL) & Lean 4.28 zero-sorry kernel (`MandalaSheaf.lean`)',
-              'Exact LP duality between quantum contextuality (CF = 0.414 / 1.0) and Statebook Dutch books, plus live 64-pass Qwen3-1.7B sheaf probe (−31.2 pp sycophancy drop)',
+              'Pilgrimage coding v2 (368 public-domain windows + 48 Thubron episodes): Hajj/Holy Land calendar decoupling (16.7% vs 3.0%, p = 0.0022) vs Kailas route-aligned phase (20.0%, p = 0.0017)',
+              'Cipher & pramāṇa MDL audit across 1,084 passages: Kaṭapayādi numerology falsified (−2.89 to −3.16b); pramāṇa (+11.1b) & mandala registers (+111.0b) backed',
             ],
             next: [
               'Collect specialist philologist ratings on `sanskrit_v2_normalized.csv` (233 rows), `tibetan_bon_v3.csv` (128 rows), and `human_pack.csv` (40 episodes)',
-              'Train an unsupervised sheaf-Dirichlet anti-sycophancy OrthoDelta adapter on Qwen3-1.7B-Base minimizing 4-frame coboundary frustration',
-              'Extract landmark-by-landmark topological graphs across Hindu Purāṇas, Tibetan *Ti se’i dkar chag* guides, and Bon Olmo Lungring maps',
+              'Extend BDRC OCR coverage to cursive *dbu med* Bon manuscript scans (*Zhang Zhung Nyan Gyud*, *Gzer mig*)',
             ],
             blocked: [
               'Un-OCRed Bon canonical manuscript scans (*Zhang Zhung Nyan Gyud*, *Gzer mig*) and BDRC sealed initiation texts (excluded by ethics policy)',
               'Any claim about unmediated lived consciousness from textual or neural representations alone',
             ],
             caption:
-              'All code, manifests, Lean 4 proofs, five SHA-256 receipts, locator-only kora codings, and scholar handoff sheets live in `Epistetechnician/kailas-corpus` and `patelshaan-lab/primitives`.',
+              'All corpus data, manifests, locator-only kora codings, and scholar handoff sheets live in `Epistetechnician/kailas-corpus`.',
           },
         ],
       },
@@ -480,9 +439,9 @@ export const kailas: FieldStrand = {
   },
   sources: [
     {
-      label: 'Epistetechnician/kailas-corpus & patelshaan-lab/primitives (GitHub)',
+      label: 'Epistetechnician/kailas-corpus (GitHub)',
       url: 'https://github.com/Epistetechnician/kailas-corpus',
-      why: 'Open-license manifests, Corpus v3 (`RESULTS_V3.md`), cipher & pramāṇa MDL receipts (`analysis/ciphers.py`, `pramana_colophons.py`), Lean 4 `MandalaSheaf.lean`, contextuality LP, Qwen3-1.7B probe, and scholar-handoff v2 packets.',
+      why: 'Open-license manifests, Corpus v3 (`RESULTS_V3.md`), pilgrimage coding (`coding/RESULTS_CODING_V2.md`), cipher & pramāṇa MDL audits (`analysis/ciphers.py`, `pramana_colophons.py`), and scholar-handoff v2 packets.',
     },
     {
       label:

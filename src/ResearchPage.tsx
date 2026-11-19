@@ -66,7 +66,6 @@ function TopBar() {
           <a href="#/">Home</a>
           <a href="#frontiers" onClick={() => { window.location.hash = '#frontiers' }}>Frontiers</a>
           <a href="#/research">Research</a>
-          <a href="#/playbook">Playbook</a>
           <a href="https://github.com/Epistetechnician" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
       </header>
@@ -484,7 +483,18 @@ export function ResearchPage({ slug }: { slug: string }) {
         </h3>
         <p className="rp-links">
           {repo.docs.map((d) => (
-            <a key={d.label} href={d.path.startsWith('#') ? `${url}${d.path}` : `${url}/${d.path}`} target="_blank" rel="noreferrer">
+            <a
+              key={d.label}
+              href={
+                d.path.startsWith('http') || d.path.startsWith('/')
+                  ? d.path
+                  : d.path.startsWith('#')
+                    ? `${url}${d.path}`
+                    : `${url}/${d.path}`
+              }
+              target="_blank"
+              rel="noreferrer"
+            >
               {d.label}
             </a>
           ))}

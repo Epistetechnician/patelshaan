@@ -622,6 +622,9 @@ function LazyWalkthroughVideo({
   const [shouldLoad, setShouldLoad] = useState(
     () => typeof IntersectionObserver === 'undefined',
   )
+  const [isVisible, setIsVisible] = useState(
+    () => typeof IntersectionObserver === 'undefined',
+  )
 
   useEffect(() => {
     const el = videoNodeRef.current
@@ -635,21 +638,52 @@ function LazyWalkthroughVideo({
         if (entry.isIntersecting) {
           setShouldLoad(true)
         }
-        if (entry.intersectionRatio >= 0.15) {
-          void el.play().catch(() => undefined)
-        } else {
-          el.pause()
-        }
+        setIsVisible(entry.isIntersecting)
       },
       {
         rootMargin: '40% 0px',
-        threshold: [0, 0.15],
+        threshold: 0.01,
       },
     )
 
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    const el = videoNodeRef.current
+    if (!el || !shouldLoad) return
+
+    el.muted = true
+    el.defaultMuted = true
+    el.playsInline = true
+    el.setAttribute('muted', '')
+    el.setAttribute('playsinline', '')
+    el.setAttribute('webkit-playsinline', 'true')
+
+    const tryPlay = () => {
+      if (isVisible) {
+        void el.play().catch(() => undefined)
+      } else {
+        el.pause()
+      }
+    }
+
+    const onEnded = () => {
+      if (!isVisible) return
+      el.currentTime = 0
+      void el.play().catch(() => undefined)
+    }
+
+    el.addEventListener('canplay', tryPlay)
+    el.addEventListener('ended', onEnded)
+    tryPlay()
+
+    return () => {
+      el.removeEventListener('canplay', tryPlay)
+      el.removeEventListener('ended', onEnded)
+    }
+  }, [isVisible, shouldLoad, video.src])
 
   return (
     <figure className="work-reel" aria-label={`${title} walkthrough`}>
@@ -659,10 +693,11 @@ function LazyWalkthroughVideo({
           className="work-reel__video"
           src={shouldLoad ? video.src : undefined}
           poster={video.poster}
+          autoPlay={isVisible}
           muted
           loop
           playsInline
-          preload={shouldLoad ? 'metadata' : 'none'}
+          preload={shouldLoad ? 'auto' : 'none'}
         />
       </div>
       <figcaption className="work-reel__caption">{video.caption}</figcaption>
@@ -1058,8 +1093,8 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                Building verification &amp; formal containment infrastructure for
-                autonomous AI systems — alongside cryptography and market design.
+                Building provable trust for autonomous AI, cryptography, and
+                markets.
               </h1>
 
               <div className="hero__actions">
@@ -1118,8 +1153,8 @@ function App() {
 
             <div className="about-editorial">
               <blockquote className="about-pullquote">
-                “I like to think that our collective actions become notes in the
-                opening melody of the symphony of life.”
+                “Together, our actions compose the opening melody of life’s
+                symphony.”
               </blockquote>
 
               <div className="about-columns">

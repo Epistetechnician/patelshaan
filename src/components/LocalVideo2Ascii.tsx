@@ -10,18 +10,21 @@ import {
 } from 'react'
 
 const CHAR_WIDTH_RATIO = 0.6
-const ATLAS_CELL_W = 48
-const ATLAS_CELL_H = 80
+const ATLAS_CELL_W = 32
+const ATLAS_CELL_H = 56
 const OUTPUT_DPR_LIMIT = 2
 const CONTRAST_BOOST = 1.08
 const MAX_TRAIL_LENGTH = 16
 const MAX_RIPPLES = 6
 
-type VideoFrameCallback = (now: number, metadata: unknown) => void
-
-type VideoWithFrameCallback = HTMLVideoElement & {
-  requestVideoFrameCallback?: (callback: VideoFrameCallback) => number
-  cancelVideoFrameCallback?: (handle: number) => void
+function isCrossOriginSrc(src: string): boolean {
+  if (typeof window === 'undefined') return false
+  if (!/^https?:\/\//i.test(src)) return false
+  try {
+    return new URL(src, window.location.href).origin !== window.location.origin
+  } catch {
+    return false
+  }
 }
 
 export const ASCII_CHARSETS = {
@@ -435,7 +438,7 @@ function createGlResources(
   }
 
   gl.bindTexture(gl.TEXTURE_2D, videoTex)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
@@ -526,11 +529,13 @@ export default function LocalVideo2Ascii({
   const fallback2dRef = useRef(false)
 
   const animationFrameRef = useRef<number | null>(null)
-  const videoFrameCallbackRef = useRef<number | null>(null)
   const lastUploadedVideoTimeRef = useRef(-1)
   const hasUploadedTextureRef = useRef(false)
   const forceRedrawRef = useRef(true)
   const hasRenderedFrameRef = useRef(false)
+  const loadedSrcRef = useRef<string | null>(null)
+  const inFlightPlayRef = useRef(false)
+  const pauseRecoveryCountRef = useRef(0)
   const fpsWindowRef = useRef({ lastTimestamp: 0, frames: 0 })
 
   const mousePosRef = useRef<{ x: number; y: number }>({ x: -1, y: -1 })
@@ -540,7 +545,6 @@ export default function LocalVideo2Ascii({
 
   const [prevSrc, setPrevSrc] = useState(src)
   const [prevIsPlaying, setPrevIsPlaying] = useState(isPlaying)
-  const [isReady, setIsReady] = useState(false)
   const [fps, setFps] = useState(0)
   const [localPlaying, setLocalPlaying] = useState(isPlaying)
   const [isVisible, setIsVisible] = useState(
@@ -563,7 +567,6 @@ export default function LocalVideo2Ascii({
 
   if (prevSrc !== src) {
     setPrevSrc(src)
-    setIsReady(false)
     setFps(0)
     setIsVisible(priority)
     setShouldLoadVideo(priority)
@@ -594,6 +597,9 @@ export default function LocalVideo2Ascii({
     hasUploadedTextureRef.current = false
     forceRedrawRef.current = true
     hasRenderedFrameRef.current = false
+    loadedSrcRef.current = null
+    inFlightPlayRef.current = false
+    pauseRecoveryCountRef.current = 0
     fpsWindowRef.current = { lastTimestamp: 0, frames: 0 }
   }, [src])
 
@@ -652,14 +658,16 @@ export default function LocalVideo2Ascii({
 
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
-        const visible = Boolean(entry && entry.intersectionRatio >= 0.08)
+        const visible = Boolean(entry && entry.isIntersecting)
         setIsVisible(visible)
         if (visible) {
+          setShouldLoadVideo(true)
           forceRedrawRef.current = true
         }
       },
       {
-        threshold: [0, 0.08, 0.25],
+        rootMargin: '40px 0px',
+        threshold: 0.01,
       },
     )
 
@@ -794,7 +802,7 @@ export default function LocalVideo2Ascii({
       const container = containerRef.current
       const canvas = canvasRef.current
       const video = videoRef.current
-      if (!container || !canvas || !video || !isReady) {
+      if (!container || !canvas || !video) {
         return false
       }
 
@@ -865,11 +873,14 @@ export default function LocalVideo2Ascii({
           gl.activeTexture(gl.TEXTURE0)
           gl.bindTexture(gl.TEXTURE_2D, res.videoTex)
           if (videoAdvanced || !hasUploadedTextureRef.current) {
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)
-            gl.generateMipmap(gl.TEXTURE_2D)
-            lastUploadedVideoTimeRef.current = video.currentTime
-            hasUploadedTextureRef.current = true
+            try {
+              gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+              gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)
+              lastUploadedVideoTimeRef.current = video.currentTime
+              hasUploadedTextureRef.current = true
+            } catch {
+              return false
+            }
           }
 
           gl.activeTexture(gl.TEXTURE1)
@@ -962,7 +973,6 @@ export default function LocalVideo2Ascii({
       fitMode,
       focalY,
       highlight,
-      isReady,
       numColumns,
       rippleSpeed,
       syncToSegment,
@@ -971,42 +981,35 @@ export default function LocalVideo2Ascii({
     ],
   )
 
+  const drawFrameRef = useRef(drawFrame)
+  useEffect(() => {
+    drawFrameRef.current = drawFrame
+  }, [drawFrame])
+
+  const shouldPlayRef = useRef(shouldPlay)
+  const prefersReducedMotionRef = useRef(prefersReducedMotion)
+  useEffect(() => {
+    shouldPlayRef.current = shouldPlay
+    prefersReducedMotionRef.current = prefersReducedMotion
+  }, [prefersReducedMotion, shouldPlay])
+
   useEffect(() => {
     forceRedrawRef.current = true
-    if (isReady && (!shouldPlay || prefersReducedMotion)) {
+    if (!shouldPlay || prefersReducedMotion) {
       const id = window.requestAnimationFrame((ts) => {
-        drawFrame(ts)
+        drawFrameRef.current(ts)
       })
       return () => window.cancelAnimationFrame(id)
     }
-  }, [drawFrame, isReady, prefersReducedMotion, shouldPlay])
+  }, [drawFrame, prefersReducedMotion, shouldPlay])
 
-  // Load video when approaching viewport
+  // Main render loop (always rAF when visible/interactive — avoids iOS Safari rVFC stalls on loop/resume)
   useEffect(() => {
-    const video = videoRef.current
-    if (!video || !shouldLoadVideo) return
-
-    video.muted = true
-    video.defaultMuted = true
-    video.playsInline = true
-    video.setAttribute('muted', '')
-    video.setAttribute('playsinline', '')
-    video.setAttribute('webkit-playsinline', 'true')
-    video.load()
-  }, [shouldLoadVideo, src])
-
-  // Main render loop (uses rVFC when idle, upgrades to rAF during active touch/mouse ripples)
-  useEffect(() => {
-    const video = videoRef.current as VideoWithFrameCallback | null
-    if (!video || !isReady) return
-
+    if (!shouldLoadVideo) return
     const hasInteractiveFeatures = enableMouse || enableRipple
     if (!shouldPlay && !hasInteractiveFeatures) return
 
     let cancelled = false
-    window.requestAnimationFrame((ts) => {
-      if (!cancelled) drawFrame(ts)
-    })
 
     const updateFps = (timestamp: number) => {
       if (!showStats) return
@@ -1023,29 +1026,17 @@ export default function LocalVideo2Ascii({
       }
     }
 
-    if (hasInteractiveFeatures || !video.requestVideoFrameCallback) {
-      const tick = (timestamp: number) => {
-        if (cancelled) return
-        if (shouldPlay || timestamp < interactionActiveUntilRef.current || forceRedrawRef.current) {
-          if (drawFrame(timestamp)) {
-            updateFps(timestamp)
-          }
+    const tick = (timestamp: number) => {
+      if (cancelled) return
+      if (shouldPlay || timestamp < interactionActiveUntilRef.current || forceRedrawRef.current) {
+        if (drawFrameRef.current(timestamp)) {
+          updateFps(timestamp)
         }
-        animationFrameRef.current = window.requestAnimationFrame(tick)
       }
       animationFrameRef.current = window.requestAnimationFrame(tick)
-    } else {
-      const tickVideoFrame: VideoFrameCallback = (now) => {
-        if (cancelled) return
-        if (drawFrame(now)) {
-          updateFps(now)
-        }
-        if (video.requestVideoFrameCallback) {
-          videoFrameCallbackRef.current = video.requestVideoFrameCallback(tickVideoFrame)
-        }
-      }
-      videoFrameCallbackRef.current = video.requestVideoFrameCallback(tickVideoFrame)
     }
+
+    animationFrameRef.current = window.requestAnimationFrame(tick)
 
     return () => {
       cancelled = true
@@ -1053,19 +1044,31 @@ export default function LocalVideo2Ascii({
         window.cancelAnimationFrame(animationFrameRef.current)
         animationFrameRef.current = null
       }
-      if (video.cancelVideoFrameCallback && videoFrameCallbackRef.current !== null) {
-        video.cancelVideoFrameCallback(videoFrameCallbackRef.current)
-        videoFrameCallbackRef.current = null
-      }
     }
-  }, [drawFrame, enableMouse, enableRipple, isReady, shouldPlay, showStats])
+  }, [enableMouse, enableRipple, shouldLoadVideo, shouldPlay, showStats])
 
-  // Video readiness, iOS Low Power Mode fallback, and reduced-motion static frame
+  // Unified video loading, playback, looping, and iOS Safari / Low Power Mode recovery
   useEffect(() => {
     const video = videoRef.current
     if (!video || !shouldLoadVideo) return
 
+    let cancelled = false
+    let pauseRecoveryTimer: number | null = null
     let removeGestureFallback: (() => void) | null = null
+
+    const clearGestureFallback = () => {
+      removeGestureFallback?.()
+      removeGestureFallback = null
+    }
+
+    const configureInlineMuted = () => {
+      video.muted = true
+      video.defaultMuted = true
+      video.playsInline = true
+      video.setAttribute('muted', '')
+      video.setAttribute('playsinline', '')
+      video.setAttribute('webkit-playsinline', 'true')
+    }
 
     const seekForStaticFrame = () => {
       const target = segments[0]?.start ?? posterTime
@@ -1079,74 +1082,184 @@ export default function LocalVideo2Ascii({
           }
         }
       }
+      lastUploadedVideoTimeRef.current = -1
       forceRedrawRef.current = true
-      window.requestAnimationFrame((ts) => drawFrame(ts))
+      window.requestAnimationFrame((ts) => {
+        if (!cancelled) drawFrameRef.current(ts)
+      })
+    }
+
+    const attachGestureFallback = () => {
+      if (removeGestureFallback) return
+      const onGesture = () => {
+        if (cancelled || prefersReducedMotionRef.current) {
+          clearGestureFallback()
+          return
+        }
+        if (!shouldPlayRef.current) return
+        configureInlineMuted()
+        const p = video.play()
+        if (p !== undefined) {
+          p.then(() => {
+            clearGestureFallback()
+          }).catch(() => {
+            /* keep listener until a user gesture actually unlocks playback */
+          })
+        } else {
+          clearGestureFallback()
+        }
+      }
+      window.addEventListener('touchstart', onGesture, { passive: true })
+      window.addEventListener('pointerdown', onGesture, { passive: true })
+      window.addEventListener('click', onGesture, { passive: true })
+      removeGestureFallback = () => {
+        window.removeEventListener('touchstart', onGesture)
+        window.removeEventListener('pointerdown', onGesture)
+        window.removeEventListener('click', onGesture)
+      }
     }
 
     const attemptPlay = () => {
-      if (!shouldLoadVideo) return
+      if (cancelled) return
 
-      if (prefersReducedMotion || (!autoPlay && !shouldPlay)) {
+      if (prefersReducedMotionRef.current || (!autoPlay && !shouldPlayRef.current)) {
         video.pause()
         seekForStaticFrame()
         return
       }
 
-      if (!shouldPlay) return
+      if (!shouldPlayRef.current) return
 
-      video.muted = true
-      video.defaultMuted = true
-      video.playsInline = true
-      video.setAttribute('muted', '')
-      video.setAttribute('playsinline', '')
-      video.setAttribute('webkit-playsinline', 'true')
+      configureInlineMuted()
+
+      if (!video.paused && !video.ended) {
+        return
+      }
+
+      if (inFlightPlayRef.current) return
+      inFlightPlayRef.current = true
 
       const playPromise = video.play()
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // iOS Low Power Mode or strict autoplay gate: render crisp static ASCII immediately
-          seekForStaticFrame()
-          if (!removeGestureFallback) {
-            const onFirstGesture = () => {
-              removeGestureFallback?.()
-              removeGestureFallback = null
-              if (!prefersReducedMotion && shouldPlay) {
-                void video.play().catch(() => undefined)
-              }
+        playPromise
+          .then(() => {
+            inFlightPlayRef.current = false
+            pauseRecoveryCountRef.current = 0
+            clearGestureFallback()
+          })
+          .catch((error: unknown) => {
+            inFlightPlayRef.current = false
+            const name = error instanceof Error ? error.name : ''
+            // Do not seek/interrupt on AbortError (e.g. concurrent load or visibility toggle)
+            if (name === 'AbortError') return
+            // iOS Low Power Mode or autoplay gate: show static frame and wait for gesture
+            if (!hasRenderedFrameRef.current) {
+              seekForStaticFrame()
             }
-            window.addEventListener('touchstart', onFirstGesture, { passive: true, once: true })
-            window.addEventListener('pointerdown', onFirstGesture, { passive: true, once: true })
-            removeGestureFallback = () => {
-              window.removeEventListener('touchstart', onFirstGesture)
-              window.removeEventListener('pointerdown', onFirstGesture)
-            }
-          }
-        })
+            attachGestureFallback()
+          })
+      } else {
+        inFlightPlayRef.current = false
       }
+    }
+
+    configureInlineMuted()
+    if (loadedSrcRef.current !== src) {
+      loadedSrcRef.current = src
+      video.load()
     }
 
     const handleLoadedMetadata = () => {
       if (usesLoopWindow) {
         syncToSegment(video)
-      } else if (prefersReducedMotion) {
+      } else if (prefersReducedMotionRef.current) {
         seekForStaticFrame()
       }
     }
 
     const handleReady = () => {
-      setIsReady(true)
+      lastUploadedVideoTimeRef.current = -1
       forceRedrawRef.current = true
-      window.requestAnimationFrame((ts) => drawFrame(ts))
+      window.requestAnimationFrame((ts) => {
+        if (!cancelled) drawFrameRef.current(ts)
+      })
       attemptPlay()
     }
 
-    const handleSeeked = () => {
+    const handlePlaying = () => {
+      pauseRecoveryCountRef.current = 0
+      clearGestureFallback()
+      lastUploadedVideoTimeRef.current = -1
       forceRedrawRef.current = true
-      window.requestAnimationFrame((ts) => drawFrame(ts))
+      window.requestAnimationFrame((ts) => {
+        if (!cancelled) drawFrameRef.current(ts)
+      })
+    }
+
+    const handleTimeUpdate = () => {
+      if (!hasRenderedFrameRef.current) {
+        forceRedrawRef.current = true
+        window.requestAnimationFrame((ts) => {
+          if (!cancelled) drawFrameRef.current(ts)
+        })
+      }
+    }
+
+    const handleSeeked = () => {
+      lastUploadedVideoTimeRef.current = -1
+      forceRedrawRef.current = true
+      window.requestAnimationFrame((ts) => {
+        if (!cancelled) drawFrameRef.current(ts)
+      })
+    }
+
+    const handleEnded = () => {
+      if (!shouldPlayRef.current || prefersReducedMotionRef.current) return
+      try {
+        video.currentTime = usesLoopWindow ? (segments[0]?.start ?? 0) : 0
+      } catch {
+        /* ignore */
+      }
+      lastUploadedVideoTimeRef.current = -1
+      forceRedrawRef.current = true
+      attemptPlay()
+    }
+
+    const handleStalledOrSuspend = () => {
+      if (shouldPlayRef.current && video.paused && video.readyState >= 2) {
+        attemptPlay()
+      }
+    }
+
+    const handlePause = () => {
+      if (
+        cancelled ||
+        !shouldPlayRef.current ||
+        prefersReducedMotionRef.current ||
+        document.visibilityState !== 'visible' ||
+        video.ended ||
+        video.readyState < 2
+      ) {
+        return
+      }
+      // Recover from unexpected mobile Safari background/scroll pauses (bounded)
+      if (pauseRecoveryCountRef.current >= 4) return
+      pauseRecoveryCountRef.current += 1
+      if (pauseRecoveryTimer !== null) {
+        window.clearTimeout(pauseRecoveryTimer)
+      }
+      pauseRecoveryTimer = window.setTimeout(() => {
+        pauseRecoveryTimer = null
+        if (!cancelled && shouldPlayRef.current && video.paused) {
+          attemptPlay()
+        }
+      }, 220)
     }
 
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
+        pauseRecoveryCountRef.current = 0
+        lastUploadedVideoTimeRef.current = -1
         forceRedrawRef.current = true
         attemptPlay()
       }
@@ -1155,43 +1268,71 @@ export default function LocalVideo2Ascii({
     video.addEventListener('loadedmetadata', handleLoadedMetadata)
     video.addEventListener('loadeddata', handleReady)
     video.addEventListener('canplay', handleReady)
+    video.addEventListener('playing', handlePlaying)
+    video.addEventListener('timeupdate', handleTimeUpdate)
     video.addEventListener('seeked', handleSeeked)
+    video.addEventListener('ended', handleEnded)
+    video.addEventListener('stalled', handleStalledOrSuspend)
+    video.addEventListener('suspend', handleStalledOrSuspend)
+    video.addEventListener('pause', handlePause)
     document.addEventListener('visibilitychange', handleVisibility)
-    window.addEventListener('pageshow', attemptPlay)
+    window.addEventListener('pageshow', handleVisibility)
 
     if (video.readyState >= 2) {
       handleReady()
+    } else if (shouldPlayRef.current) {
+      attemptPlay()
     }
 
     return () => {
-      removeGestureFallback?.()
+      cancelled = true
+      if (pauseRecoveryTimer !== null) {
+        window.clearTimeout(pauseRecoveryTimer)
+      }
+      clearGestureFallback()
       video.removeEventListener('loadedmetadata', handleLoadedMetadata)
       video.removeEventListener('loadeddata', handleReady)
       video.removeEventListener('canplay', handleReady)
+      video.removeEventListener('playing', handlePlaying)
+      video.removeEventListener('timeupdate', handleTimeUpdate)
       video.removeEventListener('seeked', handleSeeked)
+      video.removeEventListener('ended', handleEnded)
+      video.removeEventListener('stalled', handleStalledOrSuspend)
+      video.removeEventListener('suspend', handleStalledOrSuspend)
+      video.removeEventListener('pause', handlePause)
       document.removeEventListener('visibilitychange', handleVisibility)
-      window.removeEventListener('pageshow', attemptPlay)
+      window.removeEventListener('pageshow', handleVisibility)
     }
   }, [
     autoPlay,
-    drawFrame,
     posterTime,
-    prefersReducedMotion,
     segments,
     shouldLoadVideo,
-    shouldPlay,
+    src,
     syncToSegment,
     usesLoopWindow,
   ])
 
-  // Play / pause sync on visibility toggle
+  // Play / pause sync on visibility or reduced-motion toggle
   useEffect(() => {
     const video = videoRef.current
     if (!video || !shouldLoadVideo) return
 
     if (shouldPlay) {
-      void video.play().catch(() => undefined)
-    } else {
+      if (video.paused && !inFlightPlayRef.current) {
+        inFlightPlayRef.current = true
+        const p = video.play()
+        if (p !== undefined) {
+          p.then(() => {
+            inFlightPlayRef.current = false
+          }).catch(() => {
+            inFlightPlayRef.current = false
+          })
+        } else {
+          inFlightPlayRef.current = false
+        }
+      }
+    } else if (!video.paused) {
       video.pause()
     }
   }, [shouldLoadVideo, shouldPlay])
@@ -1363,15 +1504,18 @@ export default function LocalVideo2Ascii({
           loop={!usesLoopWindow}
           preload={priority ? 'auto' : shouldLoadVideo ? 'auto' : 'none'}
           playsInline
-          crossOrigin="anonymous"
+          crossOrigin={isCrossOriginSrc(src) ? 'anonymous' : undefined}
           disablePictureInPicture
           aria-hidden="true"
           tabIndex={-1}
           style={{
             position: 'absolute',
-            width: 1,
-            height: 1,
-            opacity: 0,
+            top: 0,
+            left: 0,
+            width: 2,
+            height: 2,
+            opacity: 0.01,
+            zIndex: 0,
             pointerEvents: 'none',
           }}
         />

@@ -10,148 +10,157 @@
       <h1 class="article-title">What We Know and Still Don't: A Research Map</h1>
       <div class="article-content">
         <p>
-          This is the front door to a series of notes on six questions I have
-          spent the past year on: whether AI systems can keep learning without
-          losing themselves, what they represent inside, whether their agents can
-          be held to account, and whether the infrastructure beneath them can be
-          verified by the people who depend on it. I am publishing all of it,
-          including the dead ends, because most of what I learned is what did
-          not work, and that is the part other people most need.
+          Think of this essay as a walk through a cluttered workshop with all
+          the drawers left half open. Over the past year I have been orbiting
+          six tightly knotted questions—how an AI system keeps learning without
+          forgetting who it promised to be, what lives inside its weights, how
+          to hold an autonomous agent accountable, and how ordinary communities
+          might verify the compute and cryptography beneath them. I left the
+          shattered prototypes on the workbench alongside the pieces that held,
+          because the dead ends are usually the honest map the next person
+          actually needs.
         </p>
 
-        <h2>The one rule behind everything</h2>
+        <h2>Why the ceiling sits beside every bench</h2>
 
         <p>
-          Every project here follows a single discipline. A result is bound to an
-          exact state slice, a protocol, and a claim ceiling, from a design note
-          at the bottom to an independently reproduced result at the top. A
-          synthetic pass qualifies a harness and not a hypothesis. A local replay
-          is not independent evidence. A model may propose evidence, but it may
-          not approve it, widen its own capabilities, edit its own evaluator, or
-          promote its own update.
+          Working solo with powerful tools makes it dangerously easy to impress
+          yourself. Early on I realized I needed a house rule stronger than my
+          own optimism. Every experiment in this map binds its claim to an exact
+          state slice, a frozen protocol, and a ceiling—from a humble design
+          note at the bottom to an independently reproduced result at the top. A
+          clean pass on synthetic data qualifies a harness; it never proves a
+          hypothesis about the world. A replay on my own laptop is a sanity
+          check, never external replication. And while a model is welcome to
+          propose ideas or drafts, it never approves its own evidence, widens
+          its own permissions, edits its own judge, or promotes its own weights.
         </p>
 
         <p>
-          Nearly all the work sits at the lowest rung of that ladder: bounded,
-          local, and not independently replicated. When a post says "passed,"
-          read it with that ceiling attached. If you want the whole argument in
-          one place, the flagship essay in the systems section ties these notes
-          together.
+          Read everything in these notes with that gentle warning in mind: most
+          of the work still rests on the lower rungs—bounded, local, and
+          unreplicated by a second pair of hands. If you want the full
+          philosophical and empirical arc in one sitting, the flagship essay
+          <em>Evidence-Bounded Intelligence</em> gathers these six benches into
+          one continuous argument.
         </p>
 
-        <h2>The six directions</h2>
-
-        <ol>
-          <li>
-            <strong>Continual learning and alignment benchmarks.</strong> Can a
-            model keep its competence and its values as it keeps learning? A
-            synthetic harness passes, a matched-progress comparison fails, and
-            the real-model series mostly ends in "no candidate."
-          </li>
-          <li>
-            <strong>Hybrid synthetic-data systems.</strong> Synthetic data as a
-            provenance-bound factory that is never allowed to certify itself, and
-            the evaluation gates that make that enforceable.
-          </li>
-          <li>
-            <strong>Mechanistic interpretability and nonlinguistic
-            representations.</strong> One narrow measurement qualification, a
-            long run of terminal negatives, and a result about why raw
-            coordinates are the wrong unit for mechanism claims.
-          </li>
-          <li>
-            <strong>Verifiable AI agents.</strong> A kernel in which an untrusted
-            proposal acts only through evidence, admission, a single-use
-            capability, and a sandbox, with 279 passing tests and one
-            hardware-attested run.
-          </li>
-          <li>
-            <strong>MPC, zero-knowledge proofs, and post-quantum
-            cryptography.</strong> A semantic benchmark generator for ZK, a
-            formal-evidence ladder that refuses to over-claim, and the
-            quantum-circuit work behind ECDSA.fail. The thinnest area for built
-            results, and the post says so.
-          </li>
-          <li>
-            <strong>Decentralized compute and data infrastructure.</strong>
-            Outcome protocols, replay-safe settlement, tamper-evident run logs,
-            and data lineage as the primitives a community would need to verify
-            work it did not do itself.
-          </li>
-        </ol>
-
-        <h2>How the questions connect</h2>
+        <h2>Six rooms in the same house</h2>
 
         <p>
-          Intelligence and evolution questions (does it keep learning, what is it
-          representing) feed safety questions (does it still behave, and can we
-          tell). Safety questions become security questions the moment an agent
-          can act on someone's behalf, because then the issue is what an
-          untrusted proposal can cause and who can prove what happened. And
-          proofs are only as durable as the cryptography under them and as
-          independent as the infrastructure that checks them. Each layer borrows
-          the humility of the one before it.
+          At first these six directions felt like separate projects; slowly they
+          revealed themselves as adjoining rooms with the doors removed.
         </p>
 
-        <h2>What I would want a reader to take away</h2>
-
-        <ul>
-          <li>Terminal negative results were the main output. I kept them.</li>
-          <li>
-            Process and tooling failures cost more phases than science failures.
-            Recording them as stops, not results, kept the claims honest. One
-            interpretability lane, for instance, was blocked outright because a
-            pinned dependency had no build for the machine's architecture.
-          </li>
-          <li>
-            A fail-closed refusal to promote evidence is a feature, even when it
-            makes the headline smaller.
-          </li>
-          <li>
-            Narrow positive claims are the right kind to make. None of mine has
-            been promoted beyond its ceiling.
-          </li>
-          <li>
-            Measurement is usually the weakest link. Two graders disagreed by a
-            factor of three about how safe the same outputs were.
-          </li>
-        </ul>
-
-        <h2>November 2026 update: seven public additions</h2>
+        <p>
+          <strong>Continual learning and alignment benchmarks</strong> ask how
+          a living system stays faithful to its values while adapting. Here a
+          synthetic harness passed cleanly, a matched-progress check exposed an
+          illusion where "safer" simply meant "learned less," and most
+          real-model trials ended in honest <code>NoCandidate</code> stops.
+          Right beside it, <strong>hybrid synthetic-data systems</strong> treat
+          synthetic generators as provenance-bound factories kept on a short
+          leash—useful for coverage and rehearsal, yet strictly forbidden from
+          certifying themselves without real observations that can contradict
+          them.
+        </p>
 
         <p>
-          Since the initial map above was drafted, seven repositories advanced
-          the record with pre-registered runs and recomputable receipts:
-          <a href="#/research/holdout-ledger">Holdout Ledger</a> (59,200
-          confirmatory runs pricing adaptive holdout leakage in bits, 9/9
-          hypotheses passing, 0 certificate violations),
-          <a href="#/research/formasec">FormaSec</a> (Python, Rust, Kani, and
-          Lean 4 admission kernels agreeing across 600 structural cases with 0
-          unsafe admissions across 552 hostile proposals),
-          <a href="#/research/caduceus">Caduceus</a> (+0.245 Haiku and +0.305
-          Sonnet governed skill evolution),
-          <a href="#/research/playbox">Playbox</a> (multi-owner Biscuit rooms
-          and an H100 F3 pilot catching a planted dev-set memorizer),
+          Step into <strong>mechanistic interpretability and nonlinguistic
+          representations</strong> and the tone gets quieter still: one narrow
+          measurement qualification on Gemma 3, a long row of terminal negative
+          results where pre-committed stop rules prevented cherry-picking, and a
+          sobering permutation demonstration showing why raw neuron coordinates
+          cannot anchor causal identity. From understanding, the walk naturally
+          turns to action in <strong>verifiable AI agents</strong>—building a
+          small Rust control plane where an untrusted proposal earns every
+          action through evidence, deterministic admission, a single-use
+          capability, and a sandbox, backed by 279 passing tests and a single
+          hardware-attested TDX run.
+        </p>
+
+        <p>
+          Beneath agents sit the deeper foundations: <strong>MPC,
+          zero-knowledge proofs, and post-quantum cryptography</strong>, where
+          I have the least finished ground to claim and say so openly—a
+          semantics-first ZK benchmark generator, a formal-evidence ladder that
+          refuses to bluff, and the quantum-circuit bounds behind ECDSA.fail—and
+          finally <strong>decentralized compute and data
+          infrastructure</strong>, prototyping outcome protocols, replay-safe
+          settlement, tamper-evident run logs, and lineage envelopes so a
+          community can verify computation it never ran itself.
+        </p>
+
+        <p>
+          Notice how each room hands its unanswered tension to the next. Questions
+          about learning and internal representation feed straight into whether
+          safety holds tomorrow; the instant a system acts in the world, safety
+          becomes a question of bounded authority; and authority only endures as
+          long as the cryptography and shared infrastructure underneath it
+          cannot be quietly rewritten. Every layer borrows humility from the
+          layer before it.
+        </p>
+
+        <h2>What the work taught me to keep</h2>
+
+        <p>
+          Looking back over the year, five quiet habits outlasted every single
+          benchmark table. First, terminal negative results turned out to be
+          the primary harvest, and refusing to hide them made the rare positives
+          worth trusting. Second, infrastructure and tooling breakdowns cost
+          more phases than scientific hypotheses did—like an interpretability
+          lane halted outright because a pinned dependency lacked a build for
+          the host architecture—and logging them cleanly as stops rather than
+          scientific failures kept us from mistaking broken plumbing for a
+          refuted idea.
+        </p>
+
+        <p>
+          Third, a fail-closed refusal to promote weak evidence feels small in
+          a headline and priceless in a real system. Fourth, narrow claims
+          carry more dignity than inflated ones, because anyone can pick them
+          up without getting burned. And fifth, measurement itself is almost
+          always the softest board in the floor: watching two graders disagree
+          by more than a factor of three over the exact same model outputs cured
+          me of reading any single safety percentage at face value.
+        </p>
+
+        <h2>How the map grew in November 2026</h2>
+
+        <p>
+          Between the first sketch of this map and November 2026, seven public
+          repositories moved several of these questions onto pre-registered,
+          recomputable ground:
+          <a href="#/research/holdout-ledger">Holdout Ledger</a> priced
+          adaptive holdout leakage in bits across 59,200 confirmatory runs (9/9
+          hypotheses passing, 0 certificate violations);
+          <a href="#/research/formasec">FormaSec</a> aligned Python, Rust,
+          Kani, and Lean 4 admission kernels across 600 structural cases with 0
+          unsafe admissions in 552 hostile proposals;
+          <a href="#/research/caduceus">Caduceus</a> lifted governed agent
+          skill resolution by +0.245 on Haiku and +0.305 on Sonnet;
+          <a href="#/research/playbox">Playbox</a> paired multi-owner Biscuit
+          rooms with an H100 F3 pilot that caught a planted dev-set memorizer;
           <a href="#/research/mech-interp-unified">Mechanistic Interpretability
-          Unified</a> (Qwen3-1.7B R6 neuron replication at p = 0.000999, F2
-          planted-flaw audit showing 0/8 rules and 3/8 probe detection, plus
-          OLMo-2 / Tulu-3 J-space equivalence to norm-matched PCA),
+          Unified</a> replicated Qwen3-1.7B R6 agreement units (p = 0.000999)
+          while proving rules caught 0/8 planted flaws, probes caught 3/8, and
+          J-space tied norm-matched PCA across OLMo-2 and Tulu-3;
           <a href="#/research/temporal-grid-safety">Temporal Grid Safety</a>
-          (frozen discriminant adapters keeping 0.95 vs 0.27 held-out refusals
-          under OOD drift), and <a href="#/research/hsi-lab">HSI Lab</a>
-          (+0.640 typed codecs and +0.238 verified synthetic data vs −0.0025 at
-          7B code). All twelve repositories and the updated Kailas pilgrimage
-          study are indexed at <a href="#/research">#/research</a>.
+          showed frozen discriminant adapters holding 0.95 vs 0.27 refusals
+          under benign OOD drift after we caught our own attacker-rate confound;
+          and <a href="#/research/hsi-lab">HSI Lab</a> separated +0.640 typed
+          codecs and +0.238 verified synthetic gains from a −0.0025 null on 7B
+          code. All twelve repositories and the Mount Kailash corpus are now
+          browsable directly in the <a href="#/research">research monograph</a>.
         </p>
 
-        <h2>Where this stands</h2>
-
         <p>
-          Twelve research repositories and the Kailas corpus are now inspectable
-          directly from the research monograph. Nothing here is an official
-          external benchmark, a production claim, or an independent replication
-          unless a page states so explicitly. If you find an error, I would
-          rather hear it from you than discover it later.
+          Nothing on this map pretends to be an official external leaderboard,
+          a production certification, or an independent replication unless a
+          page explicitly documents that bar. Consider it an open field
+          notebook from one traveler to another—and if you spot a crack I
+          walked past, I would always rather hear it from you today than build
+          on top of it tomorrow.
         </p>
       </div>
     </article>

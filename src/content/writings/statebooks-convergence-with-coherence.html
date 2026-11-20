@@ -10,27 +10,30 @@
       <h1 class="article-title">Statebooks: Convergence with Coherence</h1>
       <div class="article-content">
         <p>
-          Finance is converging in surface area before it has converged in
-          meaning. A perpetual, an event contract, an option spread, and a
-          tokenized claim can all point at the same world while carrying
-          different observation rules, payoff shapes, collateral paths, default
-          regimes, and finality conditions. Seeing them beside one another is
-          useful. Treating them as interchangeable is how a legible interface
-          becomes a dangerous one.
+          Open a modern trading screen and the whole world seems to have moved
+          into one room: a perpetual swap, a binary event contract, a call
+          spread, and a tokenized claim all sit side by side, pulsing against
+          the same headline. Seeing them together feels thrilling, as though
+          fragmented markets were finally speaking one tongue. Yet financial
+          crises almost always begin inside that exact optical illusion—when
+          two contracts share a clean interface while quietly disagreeing about
+          how they observe the world, how they settle, who owns the collateral,
+          and what happens when something breaks at three in the morning.
         </p>
 
         <p>
-          A Statebook starts with a smaller ambition than an exchange, clearing
-          house, or universal oracle. It asks what each contract means in the
-          states where it pays, then retains the differences that remain. The
-          result is a coherence layer above federated books: a place to normalize
-          material terms, compare state-dependent payoffs, expose residual risk,
-          and report whether a proposed position is actually executable,
-          capital-recognized, settlement-compatible, adequately assured, and
-          recoverable.
+          Statebook grew out of wanting a quieter, more honest layer above
+          federated order books—neither an exchange nor a clearing house nor a
+          universal oracle, just a place that insists on asking what each
+          contract actually means in the exact states where it pays, and then
+          refuses to hide the leftover seam. By normalizing material terms,
+          comparing state-dependent payoffs, surfacing residual risk, and
+          reporting separately on execution, capital recognition, settlement,
+          assurance, and recovery, it aims to keep people from discovering too
+          late that a "hedged" portfolio was only hedged on a chart.
         </p>
 
-        <h2>Convergence begins with the terms</h2>
+        <h2>Every honest comparison begins inside the fine print</h2>
 
         <figure>
           <a href="/publications/source-terms-to-residual.svg" target="_blank" rel="noreferrer">
@@ -46,37 +49,44 @@
         </figure>
 
         <p>
-          The useful insight behind market convergence is that more risks can be
-          represented, traded, and composed. Compute capacity, power, model
-          performance, policy, data access, and infrastructure constraints are
-          becoming economically legible. But representation is only the first
-          step. A position still has to answer which exact conditions cause each
-          leg to pay, whether the comparison is exact or approximate, and whether
-          an apparent offset survives execution, margin, settlement, and recovery
-          failure.
+          There is something genuinely hopeful about how many real-world
+          constraints—compute capacity, electrical power, model benchmarks,
+          policy timelines, infrastructure bottlenecks—are becoming economically
+          legible. When risks can be priced and shared thoughtfully, builders
+          and communities gain ways to insure themselves against shocks they
+          used to absorb alone. Still, listing a contract is only the opening
+          sentence. Before anyone leans capital on a relationship between two
+          legs, they deserve to know which exact conditions trigger payment,
+          how wide the gap between approximate legs can stretch, and whether
+          that offset still stands during a margin call or oracle dispute.
         </p>
 
         <p>
-          This is why an event claim and a call spread cannot be called equivalent
-          merely because they share a reference. Settlement source, comparator,
-          observation window, payout, rounding, correction policy, dispute path,
-          and finality domain all belong to the contract's material identity. A
-          perpetual makes the point sharper: funding, marks, collateral,
-          liquidation, and exit timing make it a continuing hedge profile, not a
-          terminal claim with an omitted expiry. Statebook records those facts in
-          a StateKey and reports a bounded residual instead of forcing a false
-          identity.
+          Put an event claim next to a call spread referencing the exact same
+          underlying asset and the subtle divergences jump out immediately:
+          settlement source, comparator rule, observation window, payout
+          rounding, correction policy, dispute path, and finality domain all
+          belong to the contract’s real identity. A perpetual swap sharpens
+          the point further—funding rates, mark prices, liquidation engines,
+          and exit timing make it a living, path-dependent hedge profile rather
+          than a terminal claim with its expiry erased. Statebook captures
+          those material terms inside a canonical <code>StateKey</code> and
+          reports an explicit bounded residual rather than pretending two
+          cousins are twins.
         </p>
 
-        <h2>Coherence is a vector, not a green light</h2>
+        <h2>Why coherence has to be a vector</h2>
 
         <p>
-          A usable comparison must stay honest when one required condition is
-          absent. Statebook therefore treats semantic, payoff, execution,
-          capital, settlement, assurance, and recovery completeness as seven
-          typed reports. Each carries its own status, evidence references,
-          missing facts, and residuals. There is no aggregate <code>complete = true</code>
-          capable of hiding a failed layer behind strong performance elsewhere.
+          Anyone who has watched a complex system fail knows the danger of a
+          single green checkmark. Averaging seven vital signs into one bright
+          summary score is how a missing legal netting agreement or an illiquid
+          exit hides behind crisp math. Statebook therefore keeps seven
+          dimensions strictly separate—semantic, payoff, execution, capital,
+          settlement, assurance, and recovery completeness—each returning its
+          own typed report, evidence links, missing facts, and residuals, with
+          no aggregate <code>complete = true</code> allowed to paper over a
+          broken layer.
         </p>
 
         <figure>
@@ -93,25 +103,25 @@
         </figure>
 
         <p>
-          A relationship may be semantically clear while its residual remains
-          material. A residual may be bounded while market depth is insufficient.
-          Execution can be feasible while no governing margin regime recognizes
-          the legs as an offset. Even when models agree, current evidence,
-          operational reconciliation, legal entitlement, or recovery paths may
-          still be absent. Coherence is earned across the relevant conditions; it
-          is not implied by a shared ticker, correlation, or polished quote
-          screen.
+          In real markets, layers come apart all the time. Two instruments can
+          be semantically transparent while leaving a painful payoff gap; a
+          residual can stay tiny while order-book depth vanishes the instant
+          you try to size up; execution can clear in milliseconds while no
+          margin regime recognizes the pair as an offset. Keeping all seven
+          reports visible respects the operator’s intelligence, letting the
+          weakest real constraint govern what claim or action is actually
+          warranted.
         </p>
 
-        <h2>Keep the market fast where risk can still be contained</h2>
+        <h2>Respecting the difference between three clocks</h2>
 
         <p>
-          The other half of coherence is temporal. Execution finality, economic
-          settlement, and externalization finality are different clocks. A match
-          can be irrevocable inside a market engine before balances are
-          economically usable; a balance can update inside a recovery domain
-          before value has crossed an external boundary that is hard to stop or
-          reverse. Collapsing those clocks produces false confidence.
+          Markets also break along time. Inside modern venues, three distinct
+          clocks tick at very different speeds: execution finality inside a
+          matching engine, economic settlement inside a recovery domain, and
+          irreversible externalization once value crosses a boundary nobody can
+          call back. Treating the first clock as if it were the third is how
+          fast interfaces turn minor glitches into permanent losses.
         </p>
 
         <figure>
@@ -128,24 +138,24 @@
         </figure>
 
         <p>
-          The design does not make every market slower. It keeps valid internal
-          risk updates and genuinely all-or-none linked exchanges distinct from
-          unilateral externalization. On the irreversible edge, hard evidence
-          gates determine whether an action can proceed, exposure budgets
-          determine how much, risk clocks determine when, and a queue determines
-          what happens next. A favorable history or identity signal can reduce
-          friction only inside that envelope; it cannot compensate for an unknown
-          authorization, stale evidence, failed solvency check, or missing
-          reconciliation path.
+          Separating those clocks lets healthy internal risk updates and true
+          all-or-none linked exchanges stay nimble while reserving the heaviest
+          brakes for the irreversible edge. Right at that outer boundary, hard
+          evidence gates decide whether funds may cross, exposure budgets
+          decide how much, risk clocks decide when, and an explicit queue
+          tracks what waits next. Good reputation or clean past history can
+          ease friction inside those walls, yet it can never overrule stale
+          evidence, an unverified authorization, a failing solvency check, or a
+          missing reconciliation path.
         </p>
 
         <blockquote>
-          The point is not to make every market slower. It is to make the
+          The point is never to slow every market down—it is to make the
           irreversible edge of a system proportionate to the evidence that has
           actually arrived.
         </blockquote>
 
-        <h2>Economic offset is not capital or legal recognition</h2>
+        <h2>Where economics ends and law begins</h2>
 
         <figure>
           <a href="/publications/capital-legal-coherence.svg" target="_blank" rel="noreferrer">
@@ -161,18 +171,19 @@
         </figure>
 
         <p>
-          Two positions can have nearly opposite payoffs while still demanding
-          gross collateral. They may sit in different accounts, legal entities,
-          customer-protection regimes, currencies, default funds, jurisdictions,
-          or close-out netting sets. A Statebook can calculate an economic
-          residual; it cannot award margin relief. The relevant clearing or
-          margin authority must name the eligibility, model, stress scenarios,
-          haircuts, liquidation rules, and conditions under which recognition is
-          withdrawn. Technical confirmation likewise does not settle the separate
-          question of legal finality.
+          Software engineers—myself included—have a recurring blind spot around
+          law: when two payoffs cancel cleanly in Python, our minds want to
+          assume the risk is gone. Yet two perfectly offsetting positions
+          sitting in separate legal entities, currencies, customer-protection
+          regimes, default funds, or close-out netting sets can still demand
+          full gross collateral—and blow up separately during an insolvency. A
+          Statebook can measure an economic residual with clarity, while leaving
+          margin relief and legal finality squarely with the clearing
+          authorities, jurisdictions, and stress regimes that actually enforce
+          them.
         </p>
 
-        <h2>A semantic core, not a universal authority</h2>
+        <h2>Staying legible by refusing to become a king</h2>
 
         <figure>
           <a href="/publications/statebook-layer-map.svg" target="_blank" rel="noreferrer">
@@ -189,25 +200,25 @@
         </figure>
 
         <p>
-          The proposed architecture keeps its layers legible: declared source
-          terms and provenance; normalized contracts, StateKeys, and payoff
-          functions; residual and completeness analysis; assurance and recovery
-          policy; then separately governed execution, clearing, custody, pause,
-          signing, and settlement systems. HSAI can supply narrow evidence and
-          decision-envelope adapters. It does not turn an analysis result into
-          market authority.
+          Keeping the architecture modest is what keeps it trustworthy. Source
+          terms and provenance flow into normalized contracts,
+          <code>StateKeys</code>, and payoff functions; from there, residual
+          and completeness analysis feeds assurance and recovery policy, while
+          execution, clearing, custody, pause switches, signing, and settlement
+          remain separately governed systems with their own owners and threat
+          models. Even where HSAI supplies narrow evidence or decision-envelope
+          adapters, analysis never quietly graduates into unilateral market
+          authority.
         </p>
 
-        <h2>A bounded research direction</h2>
+        <h2>Starting honestly as a read-only lens</h2>
 
         <p>
-          This is architecture research, not a live trading product or a claim
-          that fragmented markets can be made complete by software alone. The
-          current Statebook work is deliberately bounded to publication, source
-          terms, synthetic fixtures, exact local analysis, and explicit
-          non-claims. It does not execute trades, recognize margin, hold
-          collateral, authorize a release, pause a venue, sign a transaction, or
-          settle value.
+          Right now, Statebook stands deliberately as architecture research and
+          local exact analysis over source terms and synthetic fixtures—with
+          explicit non-claims pinned right on the front door. It executes zero
+          trades, grants zero margin relief, holds zero collateral, signs zero
+          transactions, and pauses zero venues.
         </p>
 
         <figure>
@@ -225,15 +236,14 @@
         </figure>
 
         <p>
-          That limitation is not a footnote. It is the core design premise.
-          Coherence comes from retaining the distinctions that matter until the
-          relevant authority, evidence, and finality conditions can support a
-          stronger action. The first useful product is therefore read-only:
-          normalize a bounded source set, report exact or approximate residuals,
-          show all seven completeness dimensions, simulate policy, and export an
-          audit bundle. Any authority surface needs its own owner, threat model,
-          legal review, operational evidence, loss limits, and explicit
-          authorization.
+          That restraint belongs at the center of the whole idea. Markets earn
+          real coherence by keeping vital distinctions alive until evidence,
+          legal authority, and finality clocks genuinely support the next step.
+          Starting with a read-only coherence lens—normalizing bounded books,
+          measuring exact or approximate residuals, displaying all seven
+          completeness reports, simulating policy, and exporting checkable
+          audit bundles—lets the instrument earn trust long before anyone ever
+          wires it near live funds.
         </p>
 
         <p>

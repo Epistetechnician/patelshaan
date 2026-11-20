@@ -329,7 +329,7 @@ export const frontierPillars: FrontierPillar[] = [
       {
         kind: 'established',
         title: 'Confidential stablecoins & verifiable AI light-client stack',
-        metric: 'Halo Labs COO / Co-Founder · Phala & Fairblocks integrations',
+        metric: 'Halo Labs Co-Founder & Head of AI · Phala & Fairblocks integrations',
         detail:
           'Leading verifiable AI + TEE/ZK architecture (`halo-verus`), modular privacy research, and developer onboarding for confidential stablecoin rails.',
         artifact: 'Halo Labs · docs.halo-labs.xyz',

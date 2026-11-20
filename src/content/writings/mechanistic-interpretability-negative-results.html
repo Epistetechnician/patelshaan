@@ -10,138 +10,146 @@
       <h1 class="article-title">Interpretability: One Narrow Yes and Many Honest Noes</h1>
       <div class="article-content">
         <p>
-          If we want to know how a model arrives at an output, we have to read
-          its internal representations and test whether what we read is causal.
-          I tried, on real models, under gates committed in advance. The result is
-          one narrow positive and a long run of terminal negatives, and I think
-          the shape of that result is more useful than a cleaner story would be.
+          When you stare long enough at activation heatmaps and feature
+          dashboards, it becomes almost irresistibly easy to see faces in the
+          clouds. Humans are meaning-making creatures; hand us a glowing
+          cluster of neurons and three suggestive prompts, and our imagination
+          will happily draft a mechanism before the experiment even finishes.
+          Trying to build mechanistic interpretability on real models under
+          gates locked in advance turned out to be an exercise in resisting
+          that exact romance—and what came back was one quiet, narrow yes
+          surrounded by a long stretch of honest noes.
         </p>
 
-        <h2>The one positive</h2>
+        <h2>The one instrument that passed</h2>
 
         <p>
-          A Gemma 3 trace qualification passed. Pooled NMSE was 0.0457 against a
-          0.05 gate, and parity, repeatability, no-op, intervention reach, event
-          replay, and feature stability all passed. That is a measurement
-          qualification for a specific model, runtime, and set of learned
-          features. It shows the instrument is trustworthy on that stack. It is
-          not a causal graph and not evidence of introspection.
+          Our lone clean positive in this initial sequence was a Gemma 3 trace
+          qualification. Pooled NMSE landed at 0.0457 against a pre-committed
+          0.05 ceiling, with parity, repeatability, no-op stability,
+          intervention reach, event replay, and feature stability all passing.
+          Notice what that actually gives us—and what it refuses to promise. It
+          tells us our measuring probe behaves cleanly on one specific model,
+          one runtime, and one learned dictionary. It does not hand us a causal
+          circuit diagram or a window into machine introspection.
         </p>
 
-        <h2>The negatives, in order of how much they taught me</h2>
+        <h2>Learning to honor the stop sign</h2>
+
+        <p>
+          Every step that tried to cross from instrument qualification into
+          stronger causal claims ran straight into our pre-committed walls, and
+          watching those runs halt taught me more than a tidy triumph would
+          have:
+        </p>
 
         <ul>
           <li>
-            <strong>Causal feature effects (Gemma, V2).</strong> Tune sign
-            agreement was 0.75 against a 0.80 gate, and one Holm-corrected gate
-            failed. The held-out set was never opened, by design, so it could not
-            be spent on a method that had already failed its tuning check.
+            <strong>Gemma causal feature effects (V2).</strong> Tune sign
+            agreement came in at 0.75 against a locked 0.80 bar, alongside one
+            failed Holm-corrected gate. By design, the held-out split stayed
+            unopened—refusing to burn clean data trying to rescue a method that
+            had already stumbled on tune.
           </li>
           <li>
-            <strong>Astral V42 to V46 and V48.</strong> Target reliability,
+            <strong>Astral V42–V46 and V48.</strong> Target reliability,
             localization, measurement invariance, response-anchored and
-            answer-aligned targets, and cross-view transport all ended
-            NoCandidate. The program stopped instead of searching more layers,
-            wrappers, or corpora.
+            answer-aligned targets, and cross-view transport all closed
+            <code>NoCandidate</code>. Instead of poking extra layers, wrappers,
+            or corpora until something flickered green, the line stopped.
           </li>
           <li>
-            <strong>MLP-out qualification on GPT-2.</strong> Closed, and kept as
-            historical negative evidence. The follow-up on the residual stream
-            uses a fresh packet and corpus and does not reopen the failed slice.
+            <strong>GPT-2 MLP-out qualification.</strong> Closed cleanly and
+            archived as negative evidence; the residual-stream follow-up began
+            from a fresh packet and corpus without quietly reopening the failed
+            slice.
           </li>
         </ul>
 
         <p>
-          Stopping is the finding. With enough layers, wrappers, and corpora,
-          something will clear a threshold. Committing in advance to stop is what
-          keeps that something from being noise.
+          At first, closing six experiments in a row feels bleak. Then a deeper
+          clarity settles in: stopping <em>is</em> the scientific contribution.
+          Search across enough layers, prompt templates, and thresholds and
+          something will eventually cross a cutoff by sheer luck. Deciding in
+          advance when you will walk away is the only thing separating real
+          discovery from polished storytelling.
         </p>
 
-        <h2>A result about the unit of analysis</h2>
+        <h2>Neurons as costumes: the permutation shock</h2>
 
         <p>
-          The most surprising thing I found came from a different project, but it
-          bears directly on interpretability. A function-preserving permutation
-          of a GPT-2 MLP changed 100% of the selected parameter positions while
-          preserving the model's top-1 behavior, with a mean relative logit error
-          of 3e-7. The same-label ablation then looked unrelated to the original
-          (cosine similarity -0.983), while the inverse-mapped ablation matched
-          almost exactly (0.9999996).
-        </p>
-
-        <p>
-          The implication is that raw coordinates are not a stable identity for a
-          mechanism. A claim like "this neuron does X" is only meaningful relative
-          to a representation, and a feature that appears to move between
-          checkpoints may simply have been relabeled. I think many mechanism
-          claims need to be restated as claims about representation-relative
-          quantities, and that a permutation test should be a standard control.
-        </p>
-
-        <h2>Matching outputs is not matching mechanism</h2>
-
-        <p>
-          A second result points the same way. When I fit a replacement for an
-          MLP block, the fitted module matched values reasonably well (nRMSE
-          about 0.10 to 0.12) but missed local derivatives badly (Jacobian nRMSE
-          0.88 to 0.89), and the error stayed large even along the training
-          directions. A module can copy what another module outputs without
-          copying how the output would change if you pushed on it. Interventions,
-          fine-tuning, and distribution shift are all pushes, which is why the
-          derivative is the thing safety cares about.
+          The sharpest conceptual shift actually arrived from a neighboring
+          project, yet it cut straight through how I read every
+          interpretability paper afterward. Taking a GPT-2 MLP, I applied a
+          function-preserving permutation that relocated 100% of the selected
+          parameter positions while keeping top-1 model behavior virtually
+          identical (mean relative logit error of 3e-7). When I ran the
+          original ablation by raw coordinate label, the causal effect looked
+          utterly flipped (cosine −0.983); when I mapped the ablation through
+          the inverse permutation, agreement snapped right back to 0.9999996.
         </p>
 
         <p>
-          A related control: random and zero blocks retained 100% task accuracy
-          in one setting. If a null model passes your behavioral test, the test
-          is not measuring the mechanism you think it is.
+          Pause and feel what that means. Raw coordinates carry no intrinsic
+          identity. Saying "neuron 417 encodes concept X" only makes sense
+          inside a declared coordinate frame, and a feature that seems to
+          migrate or dissolve across training checkpoints may simply have
+          changed chairs. Every causal mechanism claim deserves to be framed as
+          a representation-relative statement—and a simple permutation check
+          ought to sit in every lab’s standard control kit.
         </p>
 
-        <h2>The harness is the contribution</h2>
+        <h2>Copying answers while missing how the surface bends</h2>
 
         <p>
-          The interpretability sandbox is a deterministic harness for the
-          interfaces this work needs: parity between native and instrumented
-          models, feature encoding and reconstruction, intervention reach,
-          checkpoint feature stability, causal scrubbing, circuit lineage with
-          hash-chained transitions, matched-data accounting for continual-learning
-          controllers, and custody gates that fail closed. Real execution is
-          disabled by default, aggregate-only, and closes on the first failed
+          A companion finding deepened that humility. When I fitted a learned
+          replacement for an MLP block, the substitute matched output values
+          fairly closely (nRMSE around 0.10 to 0.12) while missing local
+          derivatives dramatically (Jacobian nRMSE 0.88 to 0.89), even right
+          along the training directions. A module can echo what another module
+          says at rest without sharing how it responds when leaned on. Yet
+          interventions, fine-tuning, and real-world distribution shifts are
+          all pushes—which means local sensitivity is the exact quantity safety
+          actually depends on. And in another control, dropping in random and
+          zero blocks preserved 100% task accuracy, a blunt reminder that a
+          test a blank circuit passes isn’t measuring the mechanism you thought
+          it was.
+        </p>
+
+        <h2>Building a sandbox that refuses to flatter us</h2>
+
+        <p>
+          What remains reusable from all those stops is the deterministic
+          interpretability sandbox itself: native-versus-instrumented parity
+          checks, feature encoding and reconstruction, intervention reach,
+          checkpoint stability, causal scrubbing, hash-chained circuit lineage,
+          matched-data accounting for continual-learning controllers, and
+          fail-closed custody gates. Live model execution stays off by default,
+          outputs remain aggregate-only, and any run halts on the first failed
           fixed gate.
         </p>
 
-        <h2>Nonlinguistic representations</h2>
-
         <p>
-          Language is a poor probe for what a model represents, because the model
-          also learns to talk about itself in language, and its account of itself
-          is evidence about its training as much as about its internals. A
-          linguistics lab sits beside the interpretability work to test
-          representations and discovery evaluators that do not route through the
-          model's own explanations. Its gate model runs from pinned sources and
-          license custody through deterministic fixtures, semantic checks, and an
-          adversarial evaluator to an internal-pass receipt, and then to
-          qualification for external review. It is at internal-development-only
-          status, with no corpus, no weights, and no external verdict. I include
-          it to show the direction, not because it has a finding.
+          Alongside that sits an early linguistics lab built around a quiet
+          suspicion: asking a language model in English to explain its own mind
+          tells you as much about its post-training etiquette as about its
+          internals. That lane explores discovery evaluators that bypass verbal
+          self-explanation—running from pinned, license-checked sources through
+          deterministic fixtures and adversarial evaluators—though it remains
+          strictly internal development with no corpus, weights, or external
+          verdict yet. I mention it to share the direction of curiosity, not to
+          claim a result.
         </p>
 
-        <h2>Why this matters for safety</h2>
-
         <p>
-          Interpretability is only useful to safety if it survives contact with a
-          held-out test. If a method that finds a feature cannot predict what
-          happens when you intervene on it, you have a visualization, not a
-          safety tool. Most of the candidate methods I tried were still
-          visualizations when the held-out gate arrived.
-        </p>
-
-        <h2>What this does not establish</h2>
-
-        <p>
-          No causal self-model, no general interpretability method, and no
-          introspection claim. One instrument was qualified on one stack, and a
-          few controls are offered for other people to reuse.
+          In the end, interpretability earns a seat at the safety table only
+          when a discovered feature predicts what happens the moment you push
+          on it out of sample. Until it clears that held-out bar, it is a
+          beautiful visualization rather than a safety tool. We are leaving
+          this round with no causal self-model and no universal method—just one
+          qualified probe on one stack, a handful of sharpened controls, and a
+          healthier respect for how patiently reality makes us earn real
+          understanding.
         </p>
       </div>
     </article>

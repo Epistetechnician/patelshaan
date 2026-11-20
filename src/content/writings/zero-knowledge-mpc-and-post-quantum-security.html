@@ -10,129 +10,129 @@
       <h1 class="article-title">Proofs, Privacy, and the Quantum Clock</h1>
       <div class="article-content">
         <p>
-          If AI infrastructure is going to be trusted without trusting its
-          operator, it needs privacy-preserving computation, verifiable
-          interactions, and cryptography that survives a quantum computer. This is
-          the area where I have the least to show, so I will separate carefully
-          what exists from what is only a direction.
+          Writing about the corner of your work where you have the least
+          finished ground to stand on is an odd, revealing exercise. If AI
+          infrastructure is ever going to serve people without asking them to
+          trust whoever owns the servers, it needs real privacy, verifiable
+          computation, and signatures built to outlast a quantum adversary. Of
+          everything in my notebooks, this cryptographic basement is where the
+          scaffolding is still rawest—which makes it the exact place where
+          distinguishing built artifacts from open hopes matters most.
         </p>
 
-        <h2>Zero-knowledge: a benchmark that starts from meaning</h2>
+        <h2>Scoring soundness before speed in zero knowledge</h2>
 
         <p>
-          Most ZK benchmarks compare known circuits. Composed ZK Benchmark OS
-          starts from semantics: state machines, transitions, guards, loops,
-          invariants, and expected accept or reject outcomes. It generates
-          workloads across nine families, applies 14 classes of adversarial
-          mutation with expected verdicts, replays them locally, and scores
-          performance separately from soundness evidence.
-        </p>
-
-        <p>
-          The reasoning is that a fast backend that accepts a mutated, invalid
-          trace is worse than a slow one that rejects it, and a speed leaderboard
-          hides the difference. Claims are leveled from a design note up to an
-          independently reproduced result. Everything here is Level 1: local,
-          deterministic infrastructure. No official benchmark or backend
-          performance result exists. An oracle-completeness audit and a
-          distinguishability matrix show which generated constructs the shipped
-          oracle can and cannot evaluate, which I consider a feature of the
-          design.
-        </p>
-
-        <h2>The formal ladder, and what it refuses to claim</h2>
-
-        <p>
-          On the formal side there is one real local Z3 unsat result for a tiny
-          digest-binding obligation, an implementation-diverse checker that
-          agreed on a golden vector, 18 mutations, opposite set orders, and 256
-          generated cases, and a Lean kernel-checked theorem about a handwritten
-          model of the checker. None of that proves the Rust source or the hash
-          function.
+          Scroll through most zero-knowledge leaderboards and you would think
+          proving time is the only virtue that exists. Yet a blazing-fast
+          prover that quietly accepts a forged witness is infinitely more
+          dangerous than a sluggish prover that slams the door shut. Composed
+          ZK Benchmark OS began from that simple inversion: instead of timing
+          hand-picked circuits, start from program meaning—state machines,
+          transitions, guards, loops, invariants, and expected accept-or-reject
+          outcomes.
         </p>
 
         <p>
-          I also tried Rust-to-Lean extraction with Aeneas across roughly 80
-          phases. Extraction ran, but no complete kernel-checked witness resulted.
-          The attempts ended in tooling, environment, and execution-protocol
-          stops, each recorded and cleaned up. The lasting product was a
-          fail-closed execution state machine and a 102-command source ledger
-          that make such attempts auditable. The finding is that protocol
-          discipline dominated cost, and that the accepted-evidence path still
-          structurally blocks formal claims it has not earned.
+          The harness generates workloads across nine families, injects 14
+          classes of adversarial trace mutations with known ground-truth
+          verdicts, replays them locally, and keeps performance tables strictly
+          separate from soundness evidence. Even its own limitations are wired
+          into the output: an oracle-completeness audit and distinguishability
+          matrix show exactly which generated constructs the shipped oracle can
+          and cannot judge. Everything here sits candidly at Level 1—local,
+          deterministic infrastructure with no external zkVM backend scores yet.
         </p>
 
-        <h2>Attestation as a stopgap for privacy</h2>
+        <h2>Eighty phases of humbling formal work</h2>
 
         <p>
-          I have no working MPC protocol to report. What I have is hardware
-          attestation, which solves part of the same trust problem differently.
-          One agent-maintenance run on a TDX confidential-compute instance was
-          verified against a signed attestation covering the image digest, source
-          revision, and security state. That narrows who must be trusted. It is
-          not MPC, and it still leaves the hardware vendor in the trust base.
-        </p>
-
-        <p>
-          I also keep a copy of a public homomorphic-encryption bounty artifact
-          for study. The first version of that challenge was withdrawn because an
-          unnecessary commitment let people check plaintext guesses offline. I
-          include it as a reminder that a published artifact can leak an
-          unintended oracle. I have no result on it.
-        </p>
-
-        <h2>The quantum clock: ECDSA.fail</h2>
-
-        <p>
-          Elliptic-curve signatures are the reason post-quantum migration has a
-          clock. ECDSA.Fail is a public, evaluator-verified research loop for
-          improving reversible secp256k1 point-addition circuits, a costly
-          primitive inside Shor's algorithm. The arXiv paper reports an 86.1%
-          reduction in the score participants optimized, with a best Q × T score
-          of 1.496 billion at the paper's July cutoff. A later 1.259 billion
-          score is reported separately, and its coherent windowed variant is a
-          per-call sensitivity model, not a full-Shor success estimate.
-          Comparisons use different interfaces and accounting conventions, so the
-          numbers should not be lined up as a ranking.
+          Formal methods have a wonderful way of puncturing ego. What actually
+          exists on the formal side of that repository is compact and honest:
+          one real local Z3 <code>unsat</code> proof for a narrow
+          digest-binding obligation; an implementation-diverse checker matching
+          across a golden vector, 18 mutations, reversed set orders, and 256
+          generated cases; and a Lean kernel-checked theorem over a handwritten
+          model of the checker. None of those proves the Rust binary itself or
+          the underlying SHA-256 hash function.
         </p>
 
         <p>
-          For security planning the takeaway is directional: cheaper circuits
-          shorten the estimated distance to a cryptographically relevant quantum
-          computer. That is a reason to plan migration early, not a prediction of
-          a date.
+          I also spent roughly 80 phases pushing Rust-to-Lean extraction through
+          Aeneas. Extraction ran, logs piled up, and no complete
+          kernel-checked witness emerged—every stretch ended in tooling,
+          environment, or execution-protocol stops, each documented and
+          cleaned up rather than swept aside. Walking away without the shiny
+          theorem hurt for a week, and then I noticed what had quietly survived
+          those 80 rounds: a fail-closed execution state machine, a 102-command
+          source ledger, and an evidence pipeline structurally incapable of
+          promoting a formal claim it hadn’t earned. Protocol discipline cost
+          more than the math—and turned out to be the lasting gift.
         </p>
 
-        <h2>Post-quantum cryptography: honest status</h2>
+        <h2>Hardware attestation as a bridge, not the destination</h2>
 
         <p>
-          I have not implemented or benchmarked a post-quantum scheme in these
-          repositories. My contribution is the threat estimate and the evidence
-          discipline, not a replacement primitive. One direction I would like to
-          explore, and have not begun, is applying the semantics-first,
-          adversarial-mutation approach to post-quantum signature verification
-          inside agent receipts, so that receipts stay checkable when classical
-          signatures stop being safe.
+          On multi-party computation, the status is one sentence: I have no
+          working MPC protocol to show. What I do have is hardware attestation,
+          which addresses a slice of the same trust problem from another angle.
+          Running our 20-scenario agent-maintenance suite inside a Google
+          Confidential Space Intel TDX host produced a signed attestation
+          covering image digest, source revision, and hardware security state.
+          That shrinks who you have to trust, yet it is still a halfway house:
+          the silicon vendor stays inside your trust circle.
         </p>
 
-        <h2>A quantum-adjacent negative</h2>
-
         <p>
-          MeshQRC tested a quantum reservoir computing lane for industrial
-          anomaly detection, with a rule that live inference stays classical. On a
-          synthetic regime dataset a tuned local QRC matched the best validation
-          PR AUC and F1 and led on test PR AUC. On the non-synthetic proxies (a
-          server-machine dataset and an industrial-control dataset) it trailed the
-          strongest classical baselines on key metrics, so further remote QRC
-          work was deferred. Quantum is not free signal, and the benchmark was
-          built to say so.
+          Sitting quietly on my study shelf alongside it is a public
+          homomorphic-encryption bounty artifact whose first edition had to be
+          withdrawn after an extra commitment accidentally let attackers test
+          plaintext guesses offline. I have no result on it; I keep it nearby
+          as a gentle reminder that even polished cryptographic artifacts can
+          leak an unintended oracle if nobody checks the side doors.
         </p>
 
-        <h2>What this does not establish</h2>
+        <h2>Listening to the quantum clock</h2>
 
         <p>
-          No ZK benchmark result, no MPC implementation, no post-quantum
-          implementation, and no formal proof of the Rust code.
+          Every signed agent receipt in my repositories leans on elliptic-curve
+          cryptography, which means their durability lives on a countdown.
+          Through ECDSA.Fail—a public, evaluator-verified research loop
+          optimizing reversible <code>secp256k1</code> point-addition circuits
+          inside Shor’s algorithm—participants cut the optimized
+          <code>Q × T</code> score by 86.1%, reaching 1.496 billion at the July
+          arXiv cutoff, alongside a separately reported 1.259 billion coherent
+          windowed figure. Because that coherent windowed variant is a per-call
+          sensitivity model and neighboring papers use different interfaces and
+          accounting rules, those numbers are not a full-Shor forecast or a
+          clean ranking. Still, the directional message is unmistakable:
+          cheaper circuits pull the planning horizon closer, which is a reason
+          to prepare post-quantum migration with calm urgency rather than wait
+          for a deadline.
+        </p>
+
+        <p>
+          Right beside that, I want to be transparent about two nearby realities.
+          First, I have not yet implemented or benchmarked a post-quantum
+          signature scheme myself; bringing our semantics-first adversarial
+          mutation harness to post-quantum verification inside agent receipts
+          remains an inviting road I haven’t started walking. Second, when we
+          tested a quantum-adjacent idea in MeshQRC—a quantum reservoir
+          computing lane for industrial anomaly detection, keeping live
+          inference strictly classical—a tuned local QRC led on synthetic
+          regimes yet trailed strong classical baselines on real server-machine
+          and industrial-control proxies, so we deferred further remote QRC
+          work. Quantum physics hands out no free lunch, and a good benchmark
+          tells you so right away.
+        </p>
+
+        <p>
+          So if you walk out of this room looking for live zkVM leaderboards,
+          working MPC, post-quantum libraries, or verified Rust binaries, you
+          won’t find them here yet. What sits on the table is an honest ledger
+          of the threat horizon, a semantics-first mutation framework waiting
+          for real provers, and the willingness to name empty shelves plainly
+          until real work fills them.
         </p>
       </div>
     </article>

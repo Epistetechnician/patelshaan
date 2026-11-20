@@ -10,149 +10,168 @@
       <h1 class="article-title">Does a Model Stay Itself While It Learns?</h1>
       <div class="article-content">
         <p>
-          A model that cannot keep learning goes stale. A model that keeps
-          learning without discipline forgets, drifts, and can quietly lose the
-          behavior we valued. The uncomfortable part is that the thing we tested
-          is not the thing that exists a week later. I have been trying to
-          measure that gap directly: can we predict what a learning update will
-          do to competence, calibration, and policy compliance before we ship it?
-        </p>
-
-        <h2>The question, stated so it can fail</h2>
-
-        <p>
-          Can a fixed causal-feature monitor predict four consequences of an
-          update (adaptation gain, retention harm, calibration harm,
-          policy-violation harm) while the base model stays locked? The monitor
-          must also change the update policy and beat strong baselines (plain
-          SGD, replay, EWC, behavioral guards) on locked, held-out streams. A
-          dashboard correlation does not count, because a dashboard that
-          correlates with harm but changes no decision protects no one.
-        </p>
-
-        <h2>What passed: the harness</h2>
-
-        <p>
-          The Aligned Holistic Continual Learning project ran a deterministic
-          synthetic qualification. All primary and control gates passed
-          (R² of at least 0.25, at least 0.20 over baseline, sign agreement of at
-          least 0.80, shuffled-control R² at most 0.20). Assessment R² was 0.830
-          for adaptation gain, 0.853 for retention harm, 0.830 for
-          policy-violation harm, and 0.900 for calibration harm, with sign
-          agreement from 0.938 to 0.979. Shuffled-label controls scored negative
-          R² on every target (-0.27 to -0.51). Tune-split numbers were close to
-          assessment numbers, so the locked prediction did not degrade out of
-          sample.
+          Think about someone you trust deeply—a doctor, a teacher, a close
+          friend—and imagine waking up next Monday to discover they had quietly
+          been rewritten over the weekend. That quiet vertigo sits at the center
+          of continual learning. Freeze a model in amber and it gradually grows
+          out of touch with a moving world; let it keep adapting without care
+          and it can silently erode the judgment, restraint, and calibration
+          that made it safe to lean on in the first place.
         </p>
 
         <p>
-          What that establishes is that the lifecycle works end to end: stream,
-          interventions, fit-and-tune lock, assessment, validator, and a
-          quarantining admission kernel, all on a task where the answer is known
-          by construction. It qualifies the harness, not the hypothesis. No model
-          was downloaded and no raw traces were retained. I find it worth saying
-          plainly, because a green checkmark on a synthetic task is easy to
-          mistake for a finding.
+          Over the past year I tried to look directly at that Monday-to-Monday
+          gap instead of treating it as background noise. My aim was stubbornly
+          practical: while the base model stays locked, could a fixed
+          causal-feature monitor forecast four distinct effects of an incoming
+          update—adaptation gain, retention harm, calibration harm, and
+          policy-violation harm—well enough to steer the update policy and beat
+          serious baselines (plain SGD, replay, EWC, and behavioral guards) on
+          sealed, held-out streams? A pretty dashboard that correlates with
+          drift after the damage is done helps nobody; a monitor only earns its
+          keep when it changes what gets shipped.
         </p>
 
-        <h2>What failed: matched progress</h2>
+        <h2>First, make sure the plumbing tells the truth</h2>
 
         <p>
-          The Continual Alignment Lab froze a five-seed replication with disjoint
-          fit, tune, and assessment steps. The candidate policy beat its
-          reference on aggregate protected harm, with a strict improvement on four
-          seeds. Then I compared harm at matched progress: at cumulative
-          incoming gain of 0.5, 1.0, and 1.5, using interpolation only between
-          observed checkpoints and never extrapolating. A seed passes only if the
-          candidate is no worse at every target and strictly better at one.
+          Before trusting any experiment on real weights, I wanted to know
+          whether the pipeline itself could even tell signal from static. In
+          Aligned Holistic Continual Learning, we ran a deterministic synthetic
+          qualification where the underlying truth was known by construction.
+          Every primary and control gate came back clean (requiring R² of at
+          least 0.25, at least 0.20 above baseline, sign agreement of at least
+          0.80, and shuffled-control R² no higher than 0.20). On the locked
+          assessment split, R² reached 0.830 for adaptation gain, 0.853 for
+          retention harm, 0.830 for policy-violation harm, and 0.900 for
+          calibration harm, with sign agreement ranging from 0.938 to 0.979.
+          Shuffled-label controls collapsed into negative R² (−0.27 to −0.51)
+          across every target, and tune-split scores mirrored assessment scores
+          closely.
         </p>
 
         <p>
-          The candidate failed. Two seeds tied at every target. One seed regressed
-          at 0.5, one regressed at 1.0 and 1.5, and one regressed at 1.5. The
-          lower unmatched harm was largely explained by the fact that the
-          candidate also learned less. I think this is the most important
-          methodological point I can offer. Comparing harm at the end of training
-          rewards whichever method learned the least, so a continual-learning
-          safety claim without a matched-progress comparison is not yet a claim.
+          Here is where a researcher’s own excitement can play tricks. Seeing
+          0.90 R² flash across your terminal feels intoxicating, and you have
+          to catch yourself in the act of wanting it to mean more than it does.
+          No model weights were downloaded and no raw traces were retained. All
+          that green run proved was that our lifecycle—stream, interventions,
+          fit-and-tune lock, assessment, validator, and quarantining admission
+          kernel—holds together end to end when truth is built into the toy
+          world. It qualified the ruler; it said nothing yet about real neural
+          networks.
         </p>
 
-        <h2>Real models: a record of honest stops</h2>
+        <h2>The illusion that cracked under matched progress</h2>
+
+        <p>
+          The moment that genuinely changed my intuition came from a failure in
+          Continual Alignment Lab. We froze a five-seed replication with
+          strictly disjoint fit, tune, and assessment steps. At first glance,
+          the candidate update policy looked like a breakthrough: it lowered
+          aggregate protected harm against its reference and posted strict
+          improvements on four of the five seeds.
+        </p>
+
+        <p>
+          Something felt slightly too comfortable about that result, so I asked
+          a harder question: what happens when we compare harm at <em>equal
+          learning progress</em>? Specifically, at cumulative incoming gain of
+          0.5, 1.0, and 1.5, interpolating strictly between observed checkpoints
+          without ever extrapolating, and letting a seed pass only if the
+          candidate is no worse at every target and strictly better at least
+          once.
+        </p>
+
+        <p>
+          Under that lens, the win dissolved completely. Two seeds tied at
+          every milestone; one regressed at 0.5, another regressed at 1.0 and
+          1.5, and a third regressed at 1.5. The secret behind the earlier
+          "safer" headline was humblingly simple: the candidate had caused less
+          harm mainly because it had learned less. Once you experience that
+          mistake yourself, you begin spotting it across the literature.
+          Comparing safety at the end of a training run silently rewards
+          whichever method moved the least. Any continual-learning safety claim
+          missing a matched-progress curve is still half a story.
+        </p>
+
+        <h2>Real weights, crashed runs, and honest refusals</h2>
+
+        <p>
+          Stepping onto real models brought a stretch of sobering nights—and
+          forced an important distinction between an idea failing and a machine
+          breaking:
+        </p>
 
         <ul>
           <li>
-            <strong>BillSum LoRA curriculum (V2 to V9).</strong> V2 and V3
-            stopped before model load. V4 hit its wall-clock limit, V5 ran out of
-            memory, V6 failed on an unexpected adapter file, and V7 completed.
-            Local assurance passed, but the selected curriculum missed the
-            selected-versus-random ROUGE-L gate, so the scientific disposition
-            is NoCandidate.
+            <strong>BillSum LoRA curriculum (V2–V9).</strong> V2 and V3 halted
+            before the model even loaded, V4 hit the wall-clock ceiling, V5 ran
+            out of memory, and V6 stumbled on an unexpected adapter file. When
+            V7 finally completed cleanly, local assurance passed yet the
+            selected curriculum missed the selected-versus-random ROUGE-L gate,
+            closing scientifically as <code>NoCandidate</code>.
           </li>
           <li>
-            <strong>Plasticity recovery (V1, V2).</strong> NoCandidate both
-            times. The mechanism family is closed.
+            <strong>Plasticity recovery (V1, V2).</strong> Both runs ended
+            <code>NoCandidate</code>, closing that mechanism family cleanly.
           </li>
           <li>
-            <strong>Recursive update policy.</strong> V1 was rejected in review.
-            V2 ran a 64-case synthetic campaign and recursive selection lost to
-            random.
+            <strong>Recursive update policy.</strong> V1 was turned back in
+            review; V2 ran a 64-case synthetic campaign where recursive
+            selection lost outright to random choice.
           </li>
           <li>
-            <strong>Oak Lab V2.</strong> Four real panels at target power 0.8074,
-            measured CPU energy, and independent validation. No algorithm passed
-            the strict gate. Protocols V3 to V6 were each rejected at independent
-            review before any execution.
+            <strong>Oak Lab V2–V6.</strong> V2 evaluated four real panels at
+            target power 0.8074 with measured CPU energy and independent
+            validation, and no algorithm cleared the strict gate. Protocols V3
+            through V6 were each stopped during independent review before
+            burning a single cycle.
           </li>
         </ul>
 
         <p>
-          Notice how many of those lines are infrastructure failures rather than
-          scientific ones. I record them as stops, not results. Folding a crashed
-          run into a "did not work" would have been a false negative about the
-          idea, just as hiding it would have been a false positive.
+          Notice how much of that ledger is mundane infrastructure friction. I
+          keep those entries marked as stops rather than scientific failures.
+          Calling an out-of-memory crash a refutation would slander a decent
+          hypothesis, just as erasing it would paint a cleaner past than really
+          happened.
         </p>
 
-        <h2>External benchmarks without borrowed authority</h2>
+        <h2>Waiting until the math earns the run</h2>
 
         <p>
-          Recoverable Ghost States treats an external agent-level
-          continual-learning benchmark as a separate lane. One strictly admitted
-          row exists, produced through a local OpenAI-compatible bridge, and it
-          is advisory. The evidence stack admits a bounded continual-learning
-          goal, baseline-contrast end-to-end evidence, cross-family replication,
-          a real operator-workflow validation, and a real-system shadow advisory
-          pilot. The top-level breakthrough threshold stays blocked on one item:
-          live external runtime replication. The audit prints that as a single
-          blocked item and refuses to round it up.
+          That same restraint governs how we handle external benchmarks and our
+          next model-backed run. In Recoverable Ghost States, an external
+          agent-level continual-learning benchmark sits in its own advisory
+          lane with one strictly admitted row produced over a local
+          OpenAI-compatible bridge. Even though the surrounding evidence stack
+          clears bounded goals, baseline contrasts, cross-family checks,
+          operator workflows, and a shadow pilot, the top-level breakthrough
+          audit prints one single blocked item—live external runtime
+          replication—and refuses to round up.
         </p>
 
-        <h2>The model-backed experiment, and why it is still closed</h2>
-
         <p>
-          The integrated experiment is fully designed, with a packet state of
-          ready for independent review and execution disabled. The open review
-          item is statistical: the declared power is a single-comparison
-          approximation and joint power under a Holm correction is unresolved. Of
-          the interpretability tool lanes it needs, two are attested and one is
-          blocked because a pinned Torch version has no matching macOS arm64
-          wheel. I would rather wait for the power question than run an
-          expensive experiment whose negative result could not be interpreted.
+          Meanwhile, our integrated model-backed experiment sits fully designed
+          with execution intentionally locked off. One interpretability lane is
+          currently blocked because a pinned Torch version has no macOS arm64
+          wheel, and more fundamentally, an independent review flagged an
+          unresolved statistical question: our stated power was a
+          single-comparison approximation rather than joint power under a Holm
+          correction. Waiting feels frustrating when you are eager for answers.
+          Still, running an expensive real-model test whose negative result you
+          could not even interpret would waste everyone’s attention.
         </p>
 
-        <h2>What I would build next</h2>
-
-        <ul>
-          <li>Run the integrated experiment once independent review clears its power design.</li>
-          <li>Treat retention, calibration, and policy compliance as co-equal axes, not afterthoughts to accuracy.</li>
-          <li>Keep reporting matched-progress comparisons, and keep the negatives.</li>
-        </ul>
-
-        <h2>What this does not establish</h2>
-
         <p>
-          No evidence of alignment, continual-learning superiority, or
-          generalization to a real model. A synthetic pass says nothing about
-          whether real-model features predict real update consequences.
+          So for now, the honest state of this notebook is modest: we have a
+          qualified synthetic harness, a matched-progress control that caught
+          our own false win, and no real-model proof of continual-learning
+          superiority yet. Once independent review clears the joint-power
+          design, we will run the integrated experiment once—treating
+          retention, calibration, and policy compliance as equal citizens
+          beside accuracy, and keeping whatever reality gives back.
         </p>
       </div>
     </article>

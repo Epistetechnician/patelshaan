@@ -135,7 +135,7 @@ export const kailas: FieldStrand = {
         title: 'Study 1A: Self-caught aggregation cancellation across 2,362 passages',
         body: [
           'We first assembled an open-license corpus across more than fifteen languages—including 1,459 Sanskrit works, 206 CC0 Tibetan and Bon canonical texts, and 51 pre-1928 travel accounts—after catching and retracting an early multilingual-embedding false positive whose top hits were matching literary genre rather than cosmology. Blind raters then scored 2,362 deduplicated 120-token passages on a three-point rubric alongside six specific tags: cyclic cosmic ages (a), rebirth cycles (b), coexisting realms (c), time deities (d), spatial axis-mundi or mandala geometry (e), and bardo or non-linear time (f).',
-          'Our first aggregation script (`analyze2.py`) collapsed all six tags into a single binary score and threw away the category column. That produced a puzzling null in Sanskrit (−3.39 per 100) and a noisy, underpowered positive in Tibetan (+6.11). When we decomposed the exact same 2,362 blind ratings into spatial mandala structure (e) versus multi-temporal concepts (a, b, d, f) using document-clustered bootstrap intervals (`analyze_v3.py`), the reason jumped out immediately: across English, Sanskrit, and Tibetan, Kailash passages are significantly enriched in spatial mandala geometry and significantly depleted in multi-temporal language. Summing the two had cancelled both signals.',
+          'Our first aggregation script (`analyze2.py`) collapsed all six tags into a single binary score and threw away the category column. That produced a puzzling null in Sanskrit (−3.39 per 100) and a noisy, underpowered positive in Tibetan (+6.11). When we decomposed the exact same 2,362 blind ratings into spatial mandala structure (e) versus multi-temporal concepts (a, b, d, f) using document-clustered bootstrap intervals (`analyze_v3.py`), the reason jumped out immediately: across English, Sanskrit, and Tibetan, Kailash passages are significantly enriched in spatial mandala geometry and significantly depleted in multi-temporal language. Summing the two had canceled both signals.',
         ],
         figures: [
           {
@@ -187,7 +187,7 @@ export const kailas: FieldStrand = {
               ],
             ],
             caption:
-              'In Sanskrit and Tibetan, positive spatial-mandala enrichment (+3.38, +14.74) and negative multi-temporal depletion (−8.43, −4.59) cancelled when summed in Corpus v2.',
+              'In Sanskrit and Tibetan, positive spatial-mandala enrichment (+3.38, +14.74) and negative multi-temporal depletion (−8.43, −4.59) canceled when summed in Corpus v2.',
           },
         ],
       },
@@ -266,7 +266,7 @@ export const kailas: FieldStrand = {
               {
                 label: 'v2: Pooled blind passage score (a–f lumped)',
                 status: 'fail',
-                note: 'caught Simpson cancellation: positive spatial (e) cancelled negative temporal (a,b,d,f)',
+                note: 'caught Simpson cancellation: positive spatial (e) canceled negative temporal (a,b,d,f)',
               },
               {
                 label: 'v3: Category-decomposed + Classical Tibetan/Bon recovery',

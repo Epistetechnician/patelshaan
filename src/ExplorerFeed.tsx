@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import ParetoChart from './ParetoChart'
 import { WikiChip } from './WikiDrawer'
+import { RichText } from './components/RichText'
 import { frontierPillars } from './frontiers'
 
 const LazyDemo = lazy(() =>
@@ -496,7 +497,7 @@ export function ExplorerFeed({
       <div className="pinned-duo" aria-label="Pinned flagship publications">
         <article className="pinned-card">
           <div className="pinned-card__top">
-            <span className="pinned-card__kicker">Position Paper · Programme Spine</span>
+            <span className="pinned-card__kicker">Position Paper · Research Spine</span>
             <span className="pinned-card__stat">15.4% vs 53.6% grader split</span>
           </div>
           <h3>Evidence-Bounded Intelligence</h3>
@@ -597,11 +598,11 @@ export function ExplorerFeed({
                   <span className="horizon-mini__domain">{h.domain}</span>
                   <span className="horizon-mini__target">{h.horizon}</span>
                 </div>
-                <h3>{h.title}</h3>
-                <p className="horizon-mini__threshold">{h.unlock}</p>
+                <h3><RichText text={h.title} /></h3>
+                <p className="horizon-mini__threshold"><RichText text={h.unlock} /></p>
                 <p className="horizon-mini__gap">
                   <span>Blocking — </span>
-                  {h.bottleneck}
+                  <RichText text={h.bottleneck} />
                 </p>
               </article>
             ))}
@@ -697,15 +698,15 @@ export function ExplorerFeed({
                     <div className="dispatch-digest">
                       <div className="dispatch-digest__col">
                         <h4>Established in artifacts</h4>
-                        <p>{item.whatHeld}</p>
+                        <p><RichText text={item.whatHeld} /></p>
                       </div>
                       <div className="dispatch-digest__col is-ceiling">
                         <h4>Scope ceiling</h4>
-                        <p>{item.ceiling}</p>
+                        <p><RichText text={item.ceiling} /></p>
                       </div>
                       <div className="dispatch-digest__col">
                         <h4>Next falsifiable threshold</h4>
-                        <p>{item.nextStep}</p>
+                        <p><RichText text={item.nextStep} /></p>
                       </div>
                     </div>
 

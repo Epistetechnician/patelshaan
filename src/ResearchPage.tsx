@@ -97,7 +97,7 @@ function People({ text }: { text: string }) {
   return (
     <p className="rp-people">
       <span>Who is on the other end</span>
-      {text}
+      <RichText text={text} />
     </p>
   )
 }
@@ -184,7 +184,7 @@ export function ResearchIndex({ thread }: { thread?: string }) {
       <TopBar />
       <h1>Research</h1>
       <p className="rp-lede">
-        Twelve research repositories and one multilingual field study, read as a single programme: how do you know that
+        Twelve research repositories and one multilingual field study, read as a single line of inquiry: how do you know that
         an empirical claim about a model, an improvement an agent made to itself, or a coordination promise between
         strangers is real? Every page reports its positive findings, its nulls and self-caught confounds, how to
         recompute or run the artifact, and what it does not yet show.
@@ -266,7 +266,7 @@ export function ResearchIndex({ thread }: { thread?: string }) {
             </h4>
             <p className="rp-thread__q">{t.question}</p>
             {t.essay.map((p) => (
-              <p key={p.slice(0, 40)}>{p}</p>
+              <p key={p.slice(0, 40)}><RichText text={p} /></p>
             ))}
             {t.inquiries.length ? (
               <p className="rp-thread__runs">
@@ -416,7 +416,7 @@ export function ResearchPage({ slug }: { slug: string }) {
       {essay.voice ? (
         <div className="rp-voice">
           {essay.voice.map((v) => (
-            <p key={v.slice(0, 30)}>{v}</p>
+            <p key={v.slice(0, 30)}><RichText text={v} /></p>
           ))}
         </div>
       ) : null}

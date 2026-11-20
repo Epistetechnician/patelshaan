@@ -6,6 +6,7 @@ html.paper { color-scheme: light; }
   --good: #3d7a5a; --bad: #a4453a; --warn: #8a6d2f;
   max-width: 46rem; margin: 0 auto; padding: 1.2rem 1.25rem 6rem;
   color: var(--ink); background: var(--paper);
+  overflow-x: clip;
   font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, 'Iowan Old Style', Georgia, serif;
   font-size: 1.05rem; line-height: 1.7;
 }
@@ -189,8 +190,8 @@ html.paper { color-scheme: light; }
 .rv-fill { position: absolute; top: 0; bottom: 0; background: #3fa593; transition: all 0.3s; } .rv-fill.neg { background: #e08a7a; }
 .rv-gate { color: #8d9aa8; font-size: 0.74rem; margin: 0; }
 
-@media (min-width: 900px) { .arch { margin-left: -5rem; margin-right: -5rem; } }
-@media (min-width: 900px) { .arch figcaption { padding: 0 5rem; } }
+@media (min-width: 1040px) { .arch { margin-left: -5rem; margin-right: -5rem; } }
+@media (min-width: 1040px) { .arch figcaption { padding: 0 5rem; } }
 
 /* ---------- humanities layer: lineage, commonplace book, field study ---------- */
 .rp-chips { display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; margin: 0 0 1.2rem !important; }

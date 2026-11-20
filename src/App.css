@@ -57,24 +57,24 @@
 }
 
 .text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+  display: inline;
   padding: 0;
   border: none;
-  border-bottom: 1px solid rgba(240, 237, 230, 0.28);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
   font-size: 0.86rem;
-  line-height: 1.4;
-  padding-bottom: 0.1rem;
-  transition: border-color 160ms ease, color 160ms ease;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-decoration-color: rgba(240, 237, 230, 0.3);
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 160ms ease, color 160ms ease;
 }
 
 .text-link:hover {
   color: var(--accent);
-  border-bottom-color: var(--accent);
+  text-decoration-color: var(--accent);
 }
 
 a:focus-visible,
@@ -496,6 +496,7 @@ button:focus-visible {
 .about-editorial {
   display: grid;
   gap: 2.25rem;
+  min-width: 0;
 }
 
 .about-pullquote {
@@ -510,15 +511,15 @@ button:focus-visible {
 
 .about-columns {
   display: grid;
-  gap: 1.35rem;
+  gap: 1.5rem;
   border-top: 1px solid var(--rule);
-  padding-top: 1.5rem;
+  padding-top: 1.6rem;
 }
 
 .about-column {
   display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: 7.75rem minmax(0, 1fr);
+  gap: 0.65rem 1.35rem;
   align-items: baseline;
 }
 
@@ -530,19 +531,32 @@ button:focus-visible {
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  min-width: 0;
+}
+
+.about-column__content {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+  min-width: 0;
+}
+
+.about-column__chip {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .about-column p {
   margin: 0;
   color: var(--ink-secondary);
   font-size: 0.96rem;
-  line-height: 1.65;
+  line-height: 1.66;
 }
 
 .about-colophon {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.25rem;
+  gap: 1.25rem 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--rule);
 }
@@ -551,7 +565,8 @@ button:focus-visible {
   display: grid;
   align-content: start;
   justify-items: start;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .about-colophon__item > span {
@@ -745,7 +760,7 @@ button:focus-visible {
   font-size: 0.84rem;
 }
 
-/* ---------- 03 — Research Programme (Frontiers Sheet) ---------- */
+/* ---------- 03 — Research Program (Frontiers Sheet) ---------- */
 
 .frontier-index {
   display: flex;
@@ -1319,6 +1334,8 @@ button:focus-visible {
 }
 
 .reader-modal__back {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: 0.3rem 0;
   border: none;
   background: transparent;
@@ -1332,9 +1349,12 @@ button:focus-visible {
 }
 
 .reader-modal__meta-top {
+  min-width: 0;
+  text-align: right;
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 0.7rem;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1376,49 +1396,109 @@ button:focus-visible {
   max-width: 40rem;
   margin-inline: auto;
   color: rgba(240, 237, 230, 0.9);
-  font-size: 1.02rem;
-  line-height: 1.78;
-  overflow-wrap: anywhere;
+  font-size: 1.03rem;
+  line-height: 1.82;
+  overflow-wrap: break-word;
+  font-kerning: normal;
 }
 
 .reader-modal__prose h2,
 .reader-modal__prose h3 {
-  margin: 2.25rem 0 0.85rem;
+  margin: 2.5rem 0 0.9rem;
   font-family: var(--font-serif);
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
   color: var(--ink);
+  text-wrap: balance;
 }
 
 .reader-modal__prose h2 {
-  font-size: 1.5rem;
+  font-size: 1.52rem;
+  padding-top: 0.25rem;
 }
 
 .reader-modal__prose h3 {
   font-size: 1.22rem;
+  color: rgba(240, 237, 230, 0.95);
 }
 
 .reader-modal__prose p,
 .reader-modal__prose ul,
 .reader-modal__prose ol,
 .reader-modal__prose blockquote {
-  margin: 0 0 1.15rem;
-  color: rgba(232, 229, 221, 0.86);
+  margin: 0 0 1.25rem;
+  color: rgba(232, 229, 221, 0.88);
+}
+
+.reader-modal__prose ul,
+.reader-modal__prose ol {
+  padding-left: 1.35rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.reader-modal__prose li {
+  padding-left: 0.15rem;
+}
+
+.reader-modal__prose li::marker {
+  color: var(--ink-muted);
+}
+
+.reader-modal__prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.reader-modal__prose em {
+  color: rgba(240, 237, 230, 0.95);
+}
+
+.reader-modal__prose code {
+  font-family: var(--font-mono);
+  font-size: 0.83em;
+  color: var(--accent);
+  background: rgba(240, 237, 230, 0.06);
+  border: 1px solid rgba(240, 237, 230, 0.09);
+  border-radius: 3px;
+  padding: 0.08em 0.34em;
+  overflow-wrap: anywhere;
+}
+
+.reader-modal__prose sup {
+  font-size: 0.72em;
+  line-height: 0;
 }
 
 .reader-modal__prose a {
   color: var(--accent);
   text-decoration: underline;
-  text-decoration-color: rgba(223, 208, 178, 0.4);
-  text-underline-offset: 0.16em;
+  text-decoration-color: rgba(223, 208, 178, 0.42);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 150ms ease, color 150ms ease;
+}
+
+.reader-modal__prose a:hover {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
 }
 
 .reader-modal__prose blockquote {
-  padding-left: 1.15rem;
-  border-left: 1.5px solid var(--rule-strong);
+  margin: 1.65rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-left: 1.5px solid rgba(223, 208, 178, 0.45);
   font-family: var(--font-serif);
   font-style: italic;
+  font-size: 1.08rem;
+  line-height: 1.65;
   color: var(--ink);
+}
+
+.reader-modal__prose hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2.25rem 0;
 }
 
 .reader-modal__prose figure {
@@ -2025,9 +2105,11 @@ button:focus-visible {
 .wiki-chip {
   display: inline-flex;
   align-items: baseline;
+  flex-wrap: nowrap;
   gap: 0.08rem;
-  padding: 0.08rem 0.34rem;
-  border: 1px solid rgba(240, 237, 230, 0.11);
+  max-width: 100%;
+  padding: 0.12rem 0.42rem;
+  border: 1px solid rgba(240, 237, 230, 0.12);
   border-radius: 4px;
   background: rgba(240, 237, 230, 0.03);
   color: var(--ink-secondary);
@@ -2035,12 +2117,18 @@ button:focus-visible {
   font-size: 0.71rem;
   line-height: 1.4;
   letter-spacing: 0.01em;
+  text-align: left;
   cursor: pointer;
-  white-space: nowrap;
   transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
 }
 
+.wiki-chip__label {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
 .wiki-chip__br {
+  flex: 0 0 auto;
   color: rgba(223, 208, 178, 0.45);
   font-size: 0.66rem;
 }
@@ -2055,7 +2143,7 @@ button:focus-visible {
   color: var(--accent);
 }
 
-/* ---------- Hero Entry Trails & About Column Head ---------- */
+/* ---------- Hero Entry Trails ---------- */
 
 .hero__trails {
   display: flex;
@@ -2072,17 +2160,6 @@ button:focus-visible {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-right: 0.2rem;
-}
-
-.about-column__head {
-  display: grid;
-  gap: 0.42rem;
-  justify-items: start;
-  align-content: start;
-}
-
-.about-column {
-  grid-template-columns: 9.25rem minmax(0, 1fr);
 }
 
 /* ---------- 02 — Selected Work Chapter Stage ---------- */
@@ -2375,6 +2452,7 @@ button:focus-visible {
   display: grid;
   gap: 0.28rem;
   align-content: start;
+  min-width: 0;
 }
 
 .dispatch-status {
@@ -2444,6 +2522,7 @@ button:focus-visible {
 
 .dispatch-card__right {
   text-align: right;
+  min-width: 0;
 }
 
 .dispatch-metric {
@@ -2506,7 +2585,8 @@ button:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  flex: 1;
+  flex: 1 1 12rem;
+  min-width: 0;
 }
 
 .dispatch-card__quicklinks {
@@ -2568,6 +2648,22 @@ button:focus-visible {
   color: var(--ink-secondary);
   font-size: 0.86rem;
   line-height: 1.58;
+  overflow-wrap: break-word;
+}
+
+.dispatch-digest__col code,
+.horizon-mini code,
+.wiki-drawer__prose code,
+.wiki-drawer__subtitle code,
+.wiki-drawer__ceiling code,
+.wiki-drawer__stats dd code {
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  color: var(--accent);
+  background: rgba(240, 237, 230, 0.06);
+  border-radius: 3px;
+  padding: 0.06em 0.3em;
+  overflow-wrap: anywhere;
 }
 
 .feed-repro {
@@ -2577,10 +2673,12 @@ button:focus-visible {
   padding: 0.58rem 0.85rem;
   border: 1px solid var(--rule);
   background: #0a0b0d;
+  min-width: 0;
 }
 
 .feed-repro code {
   flex: 1;
+  min-width: 0;
   overflow-x: auto;
   white-space: nowrap;
   color: var(--ink-secondary);
@@ -3478,14 +3576,7 @@ button:focus-visible {
 
   .about-column {
     grid-template-columns: 1fr;
-  }
-
-  .about-column__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    gap: 0.4rem;
   }
 
   .dispatch-card__summary {

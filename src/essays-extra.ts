@@ -186,7 +186,7 @@ const extras: Record<string, Extra> = {
       title: 'Separating benign drift from white-box attackers',
       body: [
         'Conflating accidental fine-tuning drift with a white-box weight attacker makes every defense look either miraculous (on weak attackers) or useless (against 64-step LoRA removal).',
-        'Stating both halves cleanly—slow grids do not stop a fair attacker, while frozen discriminant adapters preserve refusals through benign OOD drift across three 7B–8B families—tells builders where the primitive actually belongs:托管 fine-tuning APIs and continual domain adaptation.',
+        'Stating both halves cleanly—slow grids do not stop a fair attacker, while frozen discriminant adapters preserve refusals through benign OOD drift across three 7B–8B families—tells builders where the primitive actually belongs: hosted fine-tuning APIs and continual domain adaptation.',
       ],
     },
     roadmap: {
@@ -343,6 +343,33 @@ const extras: Record<string, Extra> = {
   },
 }
 
+const roadmapIntros: Record<string, string> = {
+  'holdout-ledger':
+    'The math held cleanly in simulation; the real test starts the moment a live coding agent tries to outsmart the MDL gate on an unfamiliar benchmark.',
+  caduceus:
+    'The hard part of governed skill growth is keeping the guardrails light enough that people leave them turned on. That is where the next iteration lives.',
+  'hsi-lab':
+    'Knowing where synthetic self-training stops working is half the map. The next stretch tests whether scheduled consolidation can cross the 7B boundary without a growing replay archive.',
+  playbox:
+    'The rooms and receipts exist; now they need to survive a long multi-agent run across machines owned by people who genuinely do not share keys.',
+  formasec:
+    'Once a kernel is small enough to hold in one mind, the remaining question is social as much as technical: will a second pair of hands replay it and find what we missed?',
+  'mech-interp-unified':
+    'Every flaw we planted taught us a blind spot in our own tools. Turning that private calibration notebook into a shared, out-of-sample suite is what comes next.',
+  'temporal-grid-safety':
+    'After catching our own confound, every step forward has to earn its keep across more seeds, full-weight updates, and benign-helpfulness checks side by side.',
+  'aligned-holistic-continual-learning':
+    'Waiting on a statistical power review feels slow, yet running an uncalibrated experiment is slower still. The harness stays sealed until the math earns the run.',
+  'theseus-lab':
+    'The narrow positive taught us how much coverage matters; the failures taught us to watch the derivatives. Both now shape the next frozen protocol.',
+  'security-alignment-os':
+    'A control plane earns trust when someone you did not coordinate with runs it on hardware you do not control and watches it hold.',
+  'composed-zk-benchmark-os':
+    'Semantics-first testing only changes the field once real zkVM provers run through the same fourteen mutations and publish where they crack.',
+  hyperintel:
+    'Offline verification moves the proof out of the operator’s hands; the open chapter is pairing those receipts with live incentives and closing the two ignored concurrency tests.',
+}
+
 export function getEssay(slug: string): Essay {
   const base = essays[slug]
   const x = extras[slug]
@@ -354,7 +381,7 @@ export function getEssay(slug: string): Essay {
   sections.splice(sections.length - 1 > 2 ? 2 : sections.length, 0, x.context)
   sections.push({
     title: 'Where this goes',
-    body: ['This is the part I care about most. A result matters less than whether the next one is better than the last.'],
+    body: [roadmapIntros[slug] ?? 'What sits ahead is narrower than a manifesto: the specific checks that could overturn or confirm what held so far.'],
     figures: [x.roadmap],
   })
   return { ...base, voice: x.voice, sources: x.sources, sections }

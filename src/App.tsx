@@ -342,7 +342,7 @@ const experienceCards: ExperienceCard[] = [
     shortTab: 'Halo Labs',
     eyebrow: '2025 — 2026',
     title: 'Halo Labs',
-    role: 'Co-Founder & COO',
+    role: 'Co-Founder & Head of AI',
     summary:
       'Leading research on a confidential stablecoin network and verifiable AI inside trusted execution environments, alongside documentation, developer onboarding, and ecosystem partnerships.',
     details: [
@@ -1160,11 +1160,13 @@ function App() {
               <div className="about-columns">
                 {foundations.map((item) => (
                   <div key={item.label} className="about-column">
-                    <div className="about-column__head">
-                      <h3>{item.label}</h3>
-                      <WikiChip id={item.wikiId} onOpen={openWiki} />
+                    <h3>{item.label}</h3>
+                    <div className="about-column__content">
+                      <p>{item.body}</p>
+                      <div className="about-column__chip">
+                        <WikiChip id={item.wikiId} onOpen={openWiki} />
+                      </div>
                     </div>
-                    <p>{item.body}</p>
                   </div>
                 ))}
               </div>
@@ -1204,7 +1206,7 @@ function App() {
           <div className="ed-section__head ed-section__head--split">
             <div>
               <p className="ed-eyebrow">02 — Selected Work</p>
-              <h2>Operatorship, engineering, and stewardship.</h2>
+              <h2>Leadership, engineering, and stewardship.</h2>
             </div>
 
             <div className="work-switcher" role="tablist" aria-label="Selected work chapters">

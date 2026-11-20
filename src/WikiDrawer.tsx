@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { RichText } from './components/RichText'
 import { kailas } from './field'
 import {
   essayNotes,
@@ -48,7 +49,7 @@ type ConceptSpec = {
 const CONCEPT_NODES: Record<string, ConceptSpec> = {
   'evidence-bounded': {
     id: 'evidence-bounded',
-    eyebrow: 'Position Paper · Programme Spine',
+    eyebrow: 'Position Paper · Research Spine',
     title: 'Evidence-Bounded Intelligence',
     badge: 'Thesis',
     subtitle:
@@ -444,7 +445,7 @@ export function WikiDrawer({
               {node.badge ? <span className="wiki-drawer__badge">{node.badge}</span> : null}
             </div>
             <h2 id="wiki-drawer-title">{node.title}</h2>
-            <p className="wiki-drawer__subtitle">{node.subtitle}</p>
+            <p className="wiki-drawer__subtitle"><RichText text={node.subtitle} /></p>
           </header>
 
           {node.stats?.length ? (
@@ -452,7 +453,7 @@ export function WikiDrawer({
               {node.stats.map((s) => (
                 <div key={s.label}>
                   <dt>{s.value}</dt>
-                  <dd>{s.label}</dd>
+                  <dd><RichText text={s.label} /></dd>
                 </div>
               ))}
             </dl>
@@ -460,14 +461,14 @@ export function WikiDrawer({
 
           <div className="wiki-drawer__prose">
             {node.body.map((p, idx) => (
-              <p key={idx}>{p}</p>
+              <p key={idx}><RichText text={p} /></p>
             ))}
           </div>
 
           {node.ceiling ? (
             <div className="wiki-drawer__ceiling">
               <span>Scope ceiling — </span>
-              {node.ceiling}
+              <RichText text={node.ceiling} />
             </div>
           ) : null}
 

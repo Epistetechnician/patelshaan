@@ -1,0 +1,283 @@
+{
+  "kv_30b": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+    "gpu": "H100",
+    "corpus_tokens": 111316,
+    "arms": [
+      {
+        "id": "indep/full+cache",
+        "n": 128,
+        "acc": 0.9141,
+        "ttft_p50": 5.143,
+        "turns_per_min": 365.4,
+        "usd_per_1k": 0.197,
+        "cached_frac": 1.0
+      },
+      {
+        "id": "indep/rag+cache",
+        "n": 128,
+        "acc": 1.0,
+        "ttft_p50": 0.316,
+        "turns_per_min": 2634.6,
+        "usd_per_1k": 0.025,
+        "cached_frac": 0.091
+      },
+      {
+        "id": "indep/hybrid+cache",
+        "n": 128,
+        "acc": 0.9922,
+        "ttft_p50": 0.122,
+        "turns_per_min": 2636.4,
+        "usd_per_1k": 0.025,
+        "cached_frac": 0.765
+      },
+      {
+        "id": "indep/hybrid10+cache",
+        "n": 128,
+        "acc": 1.0,
+        "ttft_p50": 0.145,
+        "turns_per_min": 4792.9,
+        "usd_per_1k": 0.014,
+        "cached_frac": 0.787
+      },
+      {
+        "id": "team/rag+cache",
+        "n": 1024,
+        "acc": 1.0,
+        "ttft_p50": 0.178,
+        "turns_per_min": 10017.9,
+        "usd_per_1k": 0.007,
+        "cached_frac": 0.826
+      },
+      {
+        "id": "team/hybrid+cache",
+        "n": 1024,
+        "acc": 1.0,
+        "ttft_p50": 0.328,
+        "turns_per_min": 9064.2,
+        "usd_per_1k": 0.007,
+        "cached_frac": 0.997
+      },
+      {
+        "id": "team/hybrid10+cache",
+        "n": 1024,
+        "acc": 0.9951,
+        "ttft_p50": 0.166,
+        "turns_per_min": 14412.8,
+        "usd_per_1k": 0.005,
+        "cached_frac": 0.995
+      },
+      {
+        "id": "indep/full-nocache",
+        "n": 32,
+        "acc": 0.9062,
+        "ttft_p50": 161.944,
+        "turns_per_min": 6.3,
+        "usd_per_1k": 11.521,
+        "cached_frac": 0.0
+      },
+      {
+        "id": "indep/rag-nocache",
+        "n": 128,
+        "acc": 1.0,
+        "ttft_p50": 0.39,
+        "turns_per_min": 2425.0,
+        "usd_per_1k": 0.027,
+        "cached_frac": 0.0
+      },
+      {
+        "id": "indep/hybrid-nocache",
+        "n": 128,
+        "acc": 0.9922,
+        "ttft_p50": 1.275,
+        "turns_per_min": 817.6,
+        "usd_per_1k": 0.081,
+        "cached_frac": 0.0
+      },
+      {
+        "id": "indep/hybrid10-nocache",
+        "n": 128,
+        "acc": 1.0,
+        "ttft_p50": 0.394,
+        "turns_per_min": 1921.7,
+        "usd_per_1k": 0.034,
+        "cached_frac": 0.0
+      },
+      {
+        "id": "team/rag-nocache",
+        "n": 1024,
+        "acc": 1.0,
+        "ttft_p50": 0.358,
+        "turns_per_min": 3346.4,
+        "usd_per_1k": 0.02,
+        "cached_frac": 0.0
+      },
+      {
+        "id": "team/hybrid10-nocache",
+        "n": 1024,
+        "acc": 0.9971,
+        "ttft_p50": 0.902,
+        "turns_per_min": 2092.5,
+        "usd_per_1k": 0.032,
+        "cached_frac": 0.0
+      }
+    ]
+  },
+  "e8_sweep": {
+    "chance": 0.2,
+    "pairs": [
+      {
+        "pair": "qwen3->smollm2",
+        "k16": 0.2,
+        "k32": 0.225,
+        "k128": 0.7,
+        "cos128": 0.9246
+      },
+      {
+        "pair": "pythia->smollm2",
+        "k16": 0.2,
+        "k32": 0.325,
+        "k128": 0.575,
+        "cos128": 0.9297
+      },
+      {
+        "pair": "gpt2m->smollm2",
+        "k16": 0.2,
+        "k32": 0.325,
+        "k128": 0.65,
+        "cos128": 0.9316
+      },
+      {
+        "pair": "tinyllama->smollm2",
+        "k16": 0.15,
+        "k32": 0.375,
+        "k128": 0.575,
+        "cos128": 0.9263
+      },
+      {
+        "pair": "smollm2->qwen3",
+        "k16": 0.225,
+        "k32": 0.35,
+        "k128": 0.625,
+        "cos128": 0.8788
+      },
+      {
+        "pair": "pythia->qwen3",
+        "k16": 0.3,
+        "k32": 0.275,
+        "k128": 0.475,
+        "cos128": 0.8826
+      },
+      {
+        "pair": "gpt2m->qwen3",
+        "k16": 0.35,
+        "k32": 0.525,
+        "k128": 0.475,
+        "cos128": 0.8844
+      },
+      {
+        "pair": "tinyllama->qwen3",
+        "k16": 0.3,
+        "k32": 0.4,
+        "k128": 0.5,
+        "cos128": 0.8856
+      },
+      {
+        "pair": "smollm2->pythia",
+        "k16": 0.25,
+        "k32": 0.3,
+        "k128": 0.625,
+        "cos128": 0.8957
+      },
+      {
+        "pair": "qwen3->pythia",
+        "k16": 0.15,
+        "k32": 0.425,
+        "k128": 0.55,
+        "cos128": 0.8948
+      },
+      {
+        "pair": "gpt2m->pythia",
+        "k16": 0.325,
+        "k32": 0.425,
+        "k128": 0.425,
+        "cos128": 0.9051
+      },
+      {
+        "pair": "tinyllama->pythia",
+        "k16": 0.225,
+        "k32": 0.275,
+        "k128": 0.45,
+        "cos128": 0.898
+      },
+      {
+        "pair": "smollm2->gpt2m",
+        "k16": 0.375,
+        "k32": 0.25,
+        "k128": 0.65,
+        "cos128": 0.9064
+      },
+      {
+        "pair": "qwen3->gpt2m",
+        "k16": 0.225,
+        "k32": 0.425,
+        "k128": 0.575,
+        "cos128": 0.9042
+      },
+      {
+        "pair": "pythia->gpt2m",
+        "k16": 0.3,
+        "k32": 0.55,
+        "k128": 0.675,
+        "cos128": 0.9136
+      },
+      {
+        "pair": "tinyllama->gpt2m",
+        "k16": 0.375,
+        "k32": 0.45,
+        "k128": 0.575,
+        "cos128": 0.9091
+      },
+      {
+        "pair": "smollm2->tinyllama",
+        "k16": 0.075,
+        "k32": 0.125,
+        "k128": 0.1,
+        "cos128": 0.8659
+      },
+      {
+        "pair": "qwen3->tinyllama",
+        "k16": 0.125,
+        "k32": 0.125,
+        "k128": 0.175,
+        "cos128": 0.8729
+      },
+      {
+        "pair": "pythia->tinyllama",
+        "k16": 0.15,
+        "k32": 0.175,
+        "k128": 0.3,
+        "cos128": 0.8736
+      },
+      {
+        "pair": "gpt2m->tinyllama",
+        "k16": 0.15,
+        "k32": 0.2,
+        "k128": 0.225,
+        "cos128": 0.8748
+      }
+    ]
+  },
+  "sources": [
+    {
+      "path": "modal/shaan-66074/playbox-telepathy-bench/kv_30b.json",
+      "scope": "archive",
+      "sha256": "399633d82885d2b9c6b75ec6556dcb4521d95ba8961f695367712845f7d06504"
+    },
+    {
+      "path": "modal/epistetechnician/playbox-e8/e8_sweep.json",
+      "scope": "archive",
+      "sha256": "f4a2785d452711320290d0dc715afffab443cbb7318d1baf19c9b564fd476196"
+    }
+  ]
+}

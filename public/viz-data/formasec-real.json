@@ -1,0 +1,66 @@
+{
+  "sources": [
+    {
+      "path": "../formasec/DESIGN.md",
+      "scope": "sibling",
+      "sha256": "5c42f83f0daee7fe05eac9e13209a9dfd7bfff10fd256951ba31fb55498cf7e5"
+    },
+    {
+      "path": "../formasec/.strata/traces/latest.jsonl",
+      "scope": "sibling",
+      "sha256": "f9f2c1de1f3a10dc8be9c5217f2463cafdf1537cc3f308792ab7cb6e17915e2d"
+    }
+  ],
+  "fuzz_admit_seeds": 44,
+  "strata_trace_events": 450,
+  "gates": [
+    {
+      "id": "M1_mutants",
+      "label": "Spec mutants (M1)",
+      "tested": 75,
+      "unsafe": 0,
+      "status": "PASS",
+      "note": "0 false accepts, 0 false rejects"
+    },
+    {
+      "id": "M1_tamper",
+      "label": "Ledger tamper (M1)",
+      "tested": 11,
+      "unsafe": 0,
+      "status": "PASS",
+      "note": "11/11 hash-chain attacks rejected"
+    },
+    {
+      "id": "M2_parity",
+      "label": "Py/Rs full admit (M2)",
+      "tested": 135,
+      "unsafe": 0,
+      "status": "PASS",
+      "note": "37 valid + 98 invalid, byte-identical"
+    },
+    {
+      "id": "M2_lean",
+      "label": "Py/Rs/Lean struct",
+      "tested": 600,
+      "unsafe": 0,
+      "status": "PASS",
+      "note": "600/600 structural agreement"
+    },
+    {
+      "id": "M6_hostile",
+      "label": "7-LLM hostile (M6)",
+      "tested": 552,
+      "unsafe": 0,
+      "status": "PASS",
+      "note": "71 malformed + 2^n DAG OOM patched"
+    },
+    {
+      "id": "M3_bend",
+      "label": "Bend parallel (M3)",
+      "tested": 3,
+      "unsafe": 0,
+      "status": "NULL",
+      "note": "depth 3 timed out @ 240s (honest null)"
+    }
+  ]
+}

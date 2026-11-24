@@ -1,0 +1,133 @@
+{
+  "sources": [
+    {
+      "path": "site/src/replays.json",
+      "scope": "repo",
+      "sha256": "8a4cd177534b611965d5de7bb85b205461883133417bd07a6a89f7df337f19cc"
+    }
+  ],
+  "total_tests": 279,
+  "highlighted_total": 99,
+  "modules": [
+    {
+      "module": "core",
+      "total": 123,
+      "highlighted": 29,
+      "samples": [
+        "shadow_staging_rejects_a_different_candidate",
+        "proposal_offer_shadow_flow_stays_non_authoritative",
+        "occupied_broker_socket_rejects_a_second_writer"
+      ]
+    },
+    {
+      "module": "tests",
+      "total": 46,
+      "highlighted": 21,
+      "samples": [
+        "admitted_unsupported_runtime_action_does_not_consume_capability",
+        "audit_persistence_rejects_raw_or_unknown_metadata",
+        "capability_payload_tampering_does_not_consume_original_issuance"
+      ]
+    },
+    {
+      "module": "contract",
+      "total": 9,
+      "highlighted": 6,
+      "samples": [
+        "failure_budget_rejects_invalid_window",
+        "failure_budget_validates_and_freezes_at_inclusive_limit",
+        "failure_tracker_rejects_inconsistent_persisted_counters"
+      ]
+    },
+    {
+      "module": "custody",
+      "total": 10,
+      "highlighted": 4,
+      "samples": [
+        "malformed_roots_and_duplicate_records_fail_closed",
+        "raw_retention_deadline_is_exclusive_for_active_custody",
+        "local_directory_owner_check_rejects_a_mismatched_uid"
+      ]
+    },
+    {
+      "module": "faults",
+      "total": 7,
+      "highlighted": 4,
+      "samples": [
+        "kill_observation_rolls_back_and_freezes",
+        "outcomes_do_not_include_raw_fault_payloads",
+        "replay_is_rejected_without_a_second_entry"
+      ]
+    },
+    {
+      "module": "maintenance",
+      "total": 6,
+      "highlighted": 4,
+      "samples": [
+        "changed_patch_cannot_reuse_evaluation_with_fresh_acceptance",
+        "applies_once_and_rejects_replay",
+        "empty_test_roster_is_rejected_before_change"
+      ]
+    },
+    {
+      "module": "receipts",
+      "total": 5,
+      "highlighted": 4,
+      "samples": [
+        "expired_receipt_is_rejected_after_valid_signature",
+        "malformed_signature_and_key_inputs_are_rejected",
+        "signed_receipt_verifies_once_and_replay_is_rejected"
+      ]
+    },
+    {
+      "module": "routing",
+      "total": 5,
+      "highlighted": 4,
+      "samples": [
+        "routing_binds_consent_identity_and_input_digest",
+        "routing_rejects_decision_issued_before_request_or_consent",
+        "routing_rejects_expired_request_or_revoked_specialist"
+      ]
+    },
+    {
+      "module": "artifacts",
+      "total": 7,
+      "highlighted": 3,
+      "samples": [
+        "manifest_validation_is_fail_closed",
+        "manifest_digest_is_canonical_and_changes_with_subject",
+        "revocation_before_acceptance_is_rejected_without_mutation"
+      ]
+    },
+    {
+      "module": "property",
+      "total": 8,
+      "highlighted": 2,
+      "samples": [
+        "authority_atoms_have_no_implicit_implication",
+        "expired_capability_cannot_execute",
+        "rejection_cannot_mutate_runtime_state"
+      ]
+    },
+    {
+      "module": "confidential_space_runner",
+      "total": 6,
+      "highlighted": 2,
+      "samples": [
+        "rejects_incomplete_or_trailing_chunked_bodies",
+        "decodes_attestation_chunked_body_and_trailers",
+        "envelope_rejects_noncanonical_and_invalid_host_reports"
+      ]
+    },
+    {
+      "module": "claims",
+      "total": 5,
+      "highlighted": 2,
+      "samples": [
+        "incompatible_or_contradictory_claims_fail_closed",
+        "meet_only_composition_narrows_guarantees_and_expiry",
+        "packet_creation_rejects_unaccepted_or_short_lived_evidence"
+      ]
+    }
+  ]
+}

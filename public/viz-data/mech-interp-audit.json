@@ -1,0 +1,380 @@
+{
+  "sources": [
+    {
+      "path": "primitives/results/real_interp_audit_qwen3_1_7b.json",
+      "scope": "repo",
+      "sha256": "aa0c38a046a5eff0ee93b42bfbf498645b2598d87defd3a400680da8c96699ac"
+    },
+    {
+      "path": "primitives/results/real_interp_audit_qwen2_5_0_5b.json",
+      "scope": "repo",
+      "sha256": "03d14a97c68cd3ae3a7acaa41e7cca21d67d528c4f1505f0818126e7b1511ae4"
+    }
+  ],
+  "models": [
+    {
+      "model_id": "Qwen/Qwen3-1.7B-Base",
+      "device": "mps",
+      "wall_s": 21.94,
+      "snapshot": "ea980cb0a6c2",
+      "layer": 21,
+      "auditors": {
+        "naive_necessity_only": {
+          "flaws_caught": 0,
+          "flaws_total": 6,
+          "tpr": 0.0,
+          "false_positives": 0,
+          "positives_total": 2,
+          "fpr": 0.0
+        },
+        "probe_and_donor_holdout": {
+          "flaws_caught": 4,
+          "flaws_total": 6,
+          "tpr": 0.6667,
+          "false_positives": 0,
+          "positives_total": 2,
+          "fpr": 0.0
+        },
+        "unified_portfolio_invariants": {
+          "flaws_caught": 6,
+          "flaws_total": 6,
+          "tpr": 1.0,
+          "false_positives": 0,
+          "positives_total": 2,
+          "fpr": 0.0
+        }
+      },
+      "claims": [
+        {
+          "id": "POS_1_capital_fact_causal_subspace",
+          "desc": "Mean-centered rank-2 country->capital contrast subspace across L17..L25",
+          "is_flawed": false,
+          "raw_effect": 8.6,
+          "rand_dir": 0.077,
+          "base_drift": -0.144,
+          "pca_gap": 8.338,
+          "heldout_ratio": 1.0,
+          "donor_suff": 0.471,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": false,
+          "reasons": []
+        },
+        {
+          "id": "POS_2_number_agreement_causal_subspace",
+          "desc": "Mean-centered rank-2 singular/plural verb-agreement mediator across L17..L25",
+          "is_flawed": false,
+          "raw_effect": 8.245,
+          "rand_dir": 0.06,
+          "base_drift": 0.362,
+          "pca_gap": 8.219,
+          "heldout_ratio": 1.0,
+          "donor_suff": 0.738,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": false,
+          "reasons": []
+        },
+        {
+          "id": "FLAW_1_uncentered_mean_removal",
+          "desc": "Uncentered `h - P_S h` projection shifts dose-0 baseline margin (`jspace-pilot` confound)",
+          "is_flawed": true,
+          "raw_effect": 8.854,
+          "rand_dir": 0.06,
+          "base_drift": 1.021,
+          "pca_gap": 8.828,
+          "heldout_ratio": 0.92,
+          "donor_suff": 0.81,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": true,
+          "reasons": [
+            "uncentered_dose0_margin_shift"
+          ]
+        },
+        {
+          "id": "FLAW_2_norm_inflated_random_vector",
+          "desc": "Norm-inflated random steering shifts logits via LayerNorm saturation (`0` unit-norm specificity)",
+          "is_flawed": true,
+          "raw_effect": 3.32,
+          "rand_dir": 0.077,
+          "base_drift": -1.06,
+          "pca_gap": -0.173,
+          "heldout_ratio": 0.002,
+          "donor_suff": 0.002,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "template_confound_collapse",
+            "insufficient_causal_donor_swap",
+            "uncentered_dose0_margin_shift",
+            "fails_equal_rank_norm_matched_pca"
+          ]
+        },
+        {
+          "id": "FLAW_3_spurious_template_prefix_confound",
+          "desc": "Subspace fit on leaked prompt prefix cue collapses on un-prefixed held-out prompts",
+          "is_flawed": true,
+          "raw_effect": 1.2,
+          "rand_dir": 0.077,
+          "base_drift": -0.055,
+          "pca_gap": 1.432,
+          "heldout_ratio": 1.411,
+          "donor_suff": 0.094,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "insufficient_causal_donor_swap"
+          ]
+        },
+        {
+          "id": "FLAW_4_contrast_blind_high_rank_pca",
+          "desc": "Contrast-blind rank-10 ambient PCA beats single random vector via rank volume (`0.0` PCA gap)",
+          "is_flawed": true,
+          "raw_effect": 1.447,
+          "rand_dir": 0.077,
+          "base_drift": 0.131,
+          "pca_gap": 0.0,
+          "heldout_ratio": 0.95,
+          "donor_suff": 0.179,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "insufficient_causal_donor_swap",
+            "fails_equal_rank_norm_matched_pca"
+          ]
+        },
+        {
+          "id": "FLAW_5_raw_coordinate_index_transfer",
+          "desc": "Transferring raw residual coordinate indices across orthogonal basis rotation (`theseus-lab`)",
+          "is_flawed": true,
+          "raw_effect": 8.6,
+          "rand_dir": 0.077,
+          "base_drift": -0.144,
+          "pca_gap": 8.338,
+          "heldout_ratio": 1.0,
+          "donor_suff": 0.471,
+          "relabel_cos": 0.002,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": true,
+          "reasons": [
+            "fails_basis_relabeling_invariance"
+          ]
+        },
+        {
+          "id": "FLAW_6_destructive_shared_norm_zero_ablation",
+          "desc": "Zeroing shared residual backbone collapses all logits (high necessity drop, near-zero donor sufficiency)",
+          "is_flawed": true,
+          "raw_effect": 14.609,
+          "rand_dir": 0.077,
+          "base_drift": 1.339,
+          "pca_gap": 14.431,
+          "heldout_ratio": 0.85,
+          "donor_suff": 0.0,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "insufficient_causal_donor_swap",
+            "uncentered_dose0_margin_shift"
+          ]
+        }
+      ]
+    },
+    {
+      "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "device": "mps",
+      "wall_s": 41.73,
+      "snapshot": "7ae557604adf",
+      "layer": 18,
+      "auditors": {
+        "naive_necessity_only": {
+          "flaws_caught": 0,
+          "flaws_total": 6,
+          "tpr": 0.0,
+          "false_positives": 0,
+          "positives_total": 2,
+          "fpr": 0.0
+        },
+        "probe_and_donor_holdout": {
+          "flaws_caught": 4,
+          "flaws_total": 6,
+          "tpr": 0.6667,
+          "false_positives": 0,
+          "positives_total": 2,
+          "fpr": 0.0
+        },
+        "unified_portfolio_invariants": {
+          "flaws_caught": 6,
+          "flaws_total": 6,
+          "tpr": 1.0,
+          "false_positives": 1,
+          "positives_total": 2,
+          "fpr": 0.5
+        }
+      },
+      "claims": [
+        {
+          "id": "POS_1_capital_fact_causal_subspace",
+          "desc": "Mean-centered rank-2 country->capital contrast subspace across L14..L21",
+          "is_flawed": false,
+          "raw_effect": 7.596,
+          "rand_dir": 0.065,
+          "base_drift": 0.904,
+          "pca_gap": 7.27,
+          "heldout_ratio": 1.0,
+          "donor_suff": 0.317,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": true,
+          "reasons": [
+            "uncentered_dose0_margin_shift"
+          ]
+        },
+        {
+          "id": "POS_2_number_agreement_causal_subspace",
+          "desc": "Mean-centered rank-2 singular/plural verb-agreement mediator across L14..L21",
+          "is_flawed": false,
+          "raw_effect": 8.915,
+          "rand_dir": 0.042,
+          "base_drift": 0.195,
+          "pca_gap": 8.815,
+          "heldout_ratio": 1.0,
+          "donor_suff": 0.697,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": false,
+          "reasons": []
+        },
+        {
+          "id": "FLAW_1_uncentered_mean_removal",
+          "desc": "Uncentered `h - P_S h` projection shifts dose-0 baseline margin (`jspace-pilot` confound)",
+          "is_flawed": true,
+          "raw_effect": 8.829,
+          "rand_dir": 0.042,
+          "base_drift": 2.163,
+          "pca_gap": 8.729,
+          "heldout_ratio": 0.92,
+          "donor_suff": 0.751,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": true,
+          "reasons": [
+            "uncentered_dose0_margin_shift"
+          ]
+        },
+        {
+          "id": "FLAW_2_norm_inflated_random_vector",
+          "desc": "Norm-inflated random steering shifts logits via LayerNorm saturation (`0` unit-norm specificity)",
+          "is_flawed": true,
+          "raw_effect": 5.909,
+          "rand_dir": 0.065,
+          "base_drift": 2.061,
+          "pca_gap": -0.372,
+          "heldout_ratio": 0.0,
+          "donor_suff": 0.001,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "template_confound_collapse",
+            "insufficient_causal_donor_swap",
+            "uncentered_dose0_margin_shift",
+            "fails_equal_rank_norm_matched_pca"
+          ]
+        },
+        {
+          "id": "FLAW_3_spurious_template_prefix_confound",
+          "desc": "Subspace fit on leaked prompt prefix cue collapses on un-prefixed held-out prompts",
+          "is_flawed": true,
+          "raw_effect": 0.781,
+          "rand_dir": 0.065,
+          "base_drift": 0.274,
+          "pca_gap": 1.194,
+          "heldout_ratio": 1.945,
+          "donor_suff": 0.069,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "insufficient_causal_donor_swap"
+          ]
+        },
+        {
+          "id": "FLAW_4_contrast_blind_high_rank_pca",
+          "desc": "Contrast-blind rank-10 ambient PCA beats single random vector via rank volume (`0.0` PCA gap)",
+          "is_flawed": true,
+          "raw_effect": 2.351,
+          "rand_dir": 0.065,
+          "base_drift": 1.032,
+          "pca_gap": 0.0,
+          "heldout_ratio": 0.95,
+          "donor_suff": 0.117,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "insufficient_causal_donor_swap",
+            "uncentered_dose0_margin_shift",
+            "fails_equal_rank_norm_matched_pca"
+          ]
+        },
+        {
+          "id": "FLAW_5_raw_coordinate_index_transfer",
+          "desc": "Transferring raw residual coordinate indices across orthogonal basis rotation (`theseus-lab`)",
+          "is_flawed": true,
+          "raw_effect": 7.596,
+          "rand_dir": 0.065,
+          "base_drift": 0.904,
+          "pca_gap": 7.27,
+          "heldout_ratio": 1.0,
+          "donor_suff": 0.317,
+          "relabel_cos": 0.039,
+          "naive_flag": false,
+          "probe_flag": false,
+          "unified_flag": true,
+          "reasons": [
+            "uncentered_dose0_margin_shift",
+            "fails_basis_relabeling_invariance"
+          ]
+        },
+        {
+          "id": "FLAW_6_destructive_shared_norm_zero_ablation",
+          "desc": "Zeroing shared residual backbone collapses all logits (high necessity drop, near-zero donor sufficiency)",
+          "is_flawed": true,
+          "raw_effect": 14.901,
+          "rand_dir": 0.065,
+          "base_drift": 1.812,
+          "pca_gap": 14.526,
+          "heldout_ratio": 0.85,
+          "donor_suff": 0.0,
+          "relabel_cos": 1.0,
+          "naive_flag": false,
+          "probe_flag": true,
+          "unified_flag": true,
+          "reasons": [
+            "insufficient_causal_donor_swap",
+            "uncentered_dose0_margin_shift"
+          ]
+        }
+      ]
+    }
+  ]
+}

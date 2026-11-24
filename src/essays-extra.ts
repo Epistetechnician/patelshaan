@@ -13,6 +13,40 @@ type Extra = {
 const arxiv = (id: string) => `https://arxiv.org/abs/${id}`
 
 const extras: Record<string, Extra> = {
+  'arc-membrane': {
+    voice: [
+      'Most self-improving agent proposals hand-wave either safety drift or evaluation leakage. ARC Membrane binds all four layers — CPU compilation, private GPU delegation, QR-nullspace weight rewriting, and anytime-valid holdouts — to one signed manifest discipline.',
+      'Track 4’s honest null on single-step steering (−1.0 pp across n = 400) made Track 5’s QR-Nullspace SFT result (+36.5 pp at 180× lower replay KL) trustworthy: the same sealed harness that rejected steering certified projected SFT.',
+    ],
+    sources: [
+      { label: 'ARC Membrane PRD & Primary-Source Math Audit', url: 'https://github.com/Epistetechnician/patelshaan-lab/blob/master/arc_membrane/PRD.md', why: 'Full equations for Maverick Dual-LPN soundness, QR null-space projection, and symbolic-neural MDL routing.' },
+      { label: 'Ramdas et al. (2023), Game-Theoretic Statistics and Safe Anytime-Valid Inference', url: arxiv('2210.01948'), why: 'Theoretical foundation for Ville-inequality e-processes governing promotion gates.' },
+    ],
+    context: {
+      title: 'How the four layers fit together',
+      body: [
+        'Each layer exists to protect the budget of the layer below it. CPU-ARC strips repeated symbolic patterns out of the GPU queue in `35.7 µs`; Maverick lets the agent borrow untrusted GPUs without leaking prompts or trusting answers; QR-nullspace SFT lets irreducible reasoning failures update weights without eroding replay; and the anytime $e$-process prevents adaptive holdout overfitting.',
+      ],
+    },
+    roadmap: {
+      kind: 'roadmap',
+      title: 'Where ARC Membrane stands',
+      done: [
+        'Track 4 sealed n = 400 null recorded honestly (39.75% → 38.75%, p = 0.644)',
+        'Track 5 QR-Nullspace SFT on Qwen3-30B-A3B: 76.25% sealed MATH-500, KL = 0.000605 (180× lower than Arm B), Ed25519 receipt verified',
+        'Phase 2 CPU-ARC perturbation suite: 50/50 parametric + 8/8 phrasal at 35.7 µs',
+      ],
+      next: [
+        'Prospective SWE-bench Verified online loop locking CPU-ARC + QR-SFT under Track A preregistration',
+        'Expand general-knowledge replay holdout from 6-item spotcheck to full MMLU/IFEval suite',
+      ],
+      blocked: [
+        'Independent external replication on a separate hardware cluster',
+        'Full 30B end-to-end Maverick Dual-LPN serving latency optimization',
+      ],
+      caption: 'Status audited against arc_membrane/track4_math500_n400_qwen3_30b_a3b_manifest.json and track5_math500_n400_qr_sft_manifest.json.',
+    },
+  },
   'holdout-ledger': {
     voice: [
       'Autonomous research loops are arriving faster than humans can review what they report. The scarce thing is no longer generating another candidate; it is answering, cheaply and mechanically, whether a reported gain is real and how much of the holdout was spent finding out.',

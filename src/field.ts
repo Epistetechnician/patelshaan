@@ -334,6 +334,16 @@ export const kailas: FieldStrand = {
               'On the Kailash circuit, interpretive phase is a function of spatial position r (φ = f(r)); in Hajj and Holy Land accounts, an external liturgical calendar runs orthogonal to the road (φ ≠ f(r)).',
           },
           {
+            kind: 'terminal',
+            title: '$ python3 kailas-corpus/coding/remediate_kora_v3.py',
+            output: `[corpora]    thubron=48  indigenous=48  cross_tradition=30  total_coded=126
+[quarantine] invalidated_audit_rows=24  quarantine_invariant=HELD
+[thubron]    circuit_aligned=20.0% strict (34.3% loose, p=0.0017)  stages_2_to_5_decoupled=0/24
+[mdl]        kailas_region (n=134): +2.028 bits (2-clock wins)
+[mdl]        hajj_holyland (n=96):  -1.397 bits (1-clock liturgical wins)`,
+            caption: 'Deterministic remediation and Rissanen Two-Clock MDL output matching `kailas-corpus/coding/results_coding_v3.json` and `primitives/results/two_clock_mdl.json`.',
+          },
+          {
             kind: 'demo',
             id: 'kora',
           },
@@ -432,6 +442,27 @@ export const kailas: FieldStrand = {
             ],
             caption:
               'All corpus data, manifests, locator-only kora codings, and scholar handoff sheets live in `Epistetechnician/kailas-corpus`.',
+          },
+          {
+            kind: 'film',
+            title: '3D Mount Kailas topology, clockwise/counter-clockwise kora circuits, and Two-Clock MDL',
+            src: '/viz-media/kailas-mandala-3d.mp4',
+            scriptPath: 'viz/manimgx/kailas_mandala_3d.py',
+            caption:
+              'ManimGX 3D render from `site/public/viz-data/kailas-two-clock.json`: $\\Delta\\mathrm{MDL}_{\\text{Kailas}} = +2.03\\text{ bits}$ vs. $\\Delta\\mathrm{MDL}_{\\text{Hajj/Holy Land}} = -1.40\\text{ bits}$, with Dolma La ($r=0.56$, 5,630 m) and zero calendar decoupling across kora stages 2–5.',
+          },
+          {
+            kind: 'table',
+            title: 'Two-Clock Rissanen MDL & Tier-1 Quarantine Audit (results_coding_v3.json)',
+            head: ['Corpus / Pilgrimage Slice', 'n', '1-Clock Bits', '2-Clock Bits', 'Δ MDL Bits', 'Regime Verdict'],
+            rows: [
+              ['Kailas region (v2 expanded)', '134', '118.88', '116.85', '+2.03 bits', '2-clock / spatial-mandala'],
+              ['Hajj & Holy Land liturgical subset', '96', '97.63', '99.03', '−1.40 bits', '1-clock liturgical calendar'],
+              ['All comparison pilgrimages', '61', '63.75', '64.87', '−1.12 bits', '1-clock sufficient'],
+              ['Thubron full kora (stages 2–5)', '24', '—', '—', '0/24 decoupled', 'route-locked φ = f(r)'],
+              ['Quarantined Waddell/Strachey/Wilson', '24', 'isolated', '0 in Tiers 1–2', 'verified=true', 'audit remediated'],
+            ],
+            caption: 'Recomputed directly from `primitives/results/two_clock_mdl.json` (`sha256: 9348f14d...`) and `kailas-corpus/coding/results_coding_v3.json`.',
           },
         ],
       },

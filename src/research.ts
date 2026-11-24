@@ -49,6 +49,67 @@ export const repoUrl = (repo: string) => `${GH}/${repo}`
 
 export const researchRepos: ResearchRepo[] = [
   {
+    slug: 'arc-membrane',
+    category: 'evaluation',
+    name: 'ARC Membrane (Sovereign Self-Compiling Stack)',
+    repo: 'patelshaan-lab',
+    releaseLabel: 'Track 5 (Ed25519 receipt pinned)',
+    tagline:
+      'QR-nullspace projected MoE self-rewriting, Dual-LPN private delegation, and CPU-ARC trace compilation unified under anytime-valid holdouts.',
+    question:
+      'Can an agent compile recurring reasoning traces to microsecond CPU code, offload private inference to untrusted GPUs with linear-code soundness, and consolidate irreducible failures directly into MoE weights without drifting protected replay distributions?',
+    headline:
+      'On sealed MATH-500 (n = 400, Qwen3-30B-A3B on A100-80GB), Track 4 single-step steering yields an honest null (−1.0 pp, p = 0.644), whereas Track 5 QR-Nullspace Projected SFT across 844 orthogonal bases lifts accuracy from 39.75% to 76.25% (+36.5 pp, cut rate 79.5% → 11.75%) while holding replay KL at 0.000605 — 180× lower drift than unprojected SFT (0.1088).',
+    notShown:
+      'Local single-A100 study without independent external replication yet; general-knowledge spotcheck uses 6 holdout items (6/6), and full multi-day autonomous online consolidation over open-ended SWE tasks remains prospective.',
+    results: [
+      { value: '76.25%', label: 'sealed MATH-500 accuracy (n = 400, +36.5 pp over 39.75% base)' },
+      { value: '180×', label: 'lower replay KL drift via QR-nullspace projection (0.000605 vs 0.1088)' },
+      { value: '1.06×10⁻⁸', label: 'max QR orthogonality residual across 844 MoE expert bases' },
+      { value: '35.7 µs', label: 'CPU-ARC specialized execution (50/50 parametric + 8/8 phrasal pass)' },
+    ],
+    install: [
+      {
+        label: 'Git',
+        note: 'Python 3.11+ & Rust toolchain for Maverick codec + QR-SFT verification scripts',
+        command: `git clone ${GH}/patelshaan-lab.git && cd patelshaan-lab/arc_membrane`,
+      },
+      {
+        label: 'Verify Track 5',
+        note: 'Recomputes Ed25519 signature, split disjointness, and per-level metrics offline',
+        command: 'python3 arc_membrane/verify_track5_n400.py',
+      },
+    ],
+    reproduce:
+      'python3 arc_membrane/verify_math500_n400.py && python3 arc_membrane/verify_track5_n400.py',
+    usage: [
+      {
+        title: 'Verify the Track 5 Ed25519 receipt and n = 400 split integrity',
+        note: 'Checks payload SHA-256, zero UID overlap with dev-100, and Arm C summary counts.',
+        code: 'python3 arc_membrane/verify_track5_n400.py',
+      },
+      {
+        title: 'Project a weight delta strictly orthogonal to replay basis Q',
+        note: 'Right-projection protects input activations; left-projection protects output discriminants.',
+        code: `import torch
+
+Q, _ = torch.linalg.qr(replay_basis)          # orthonormal protected basis
+delta_perp = delta_w - (delta_w @ Q) @ Q.T    # ||delta_perp @ Q|| ~ 1e-8`,
+      },
+    ],
+    limits: [
+      'Track 4 one-step activation steering was a verified null on sealed n = 400 (38.75% vs 39.75% base, McNemar p = 0.644) and is kept on the record alongside Track 5.',
+      'Arm B unprojected SFT was evaluated on the 100-problem holdout slice (82% acc, KL = 0.1088) while Arm C ran the full sealed n = 400 split (76.25% acc, KL = 0.000605).',
+      'Maverick Dual-LPN benchmarks cover SmolLM2-135M locally and GCP WAN latency; full 30B production cryptographic serving is future work.',
+    ],
+    docs: [
+      { label: 'PRD.md (Math & Protocol Audit)', path: 'blob/master/arc_membrane/PRD.md' },
+      { label: 'Track 5 Manifest (n=400, Ed25519)', path: 'blob/master/arc_membrane/track5_math500_n400_qr_sft_manifest.json' },
+      { label: 'Track 4 Null Manifest (n=400)', path: 'blob/master/arc_membrane/track4_math500_n400_qwen3_30b_a3b_manifest.json' },
+      { label: 'Phase 2 CPU-ARC Manifest', path: 'blob/master/arc_membrane/phase2_cpu_arc_manifest.json' },
+    ],
+  },
+  {
     slug: 'holdout-ledger',
     category: 'evaluation',
     name: 'Holdout Ledger',

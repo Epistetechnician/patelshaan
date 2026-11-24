@@ -1603,8 +1603,8 @@ button:focus-visible {
 
 .terminal-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(2rem, 4.5vw, 4rem);
+  grid-template-columns: minmax(0, 1.48fr) minmax(0, 0.88fr);
+  gap: clamp(1.75rem, 3.8vw, 3.25rem);
   align-items: start;
 }
 
@@ -3605,5 +3605,411 @@ button:focus-visible {
   .wiki-drawer {
     width: 100vw;
     border-left: none;
+  }
+}
+
+
+/* ---------- Live RPi5 Sandboxed Ether Terminal & Multidimensional ASCII Portals ---------- */
+
+.ether-terminal {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule-strong);
+  background: #060708;
+  min-width: 0;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.ether-terminal.is-expanded {
+  position: fixed;
+  inset: 0.75rem;
+  z-index: 120;
+  border-color: rgba(223, 208, 178, 0.35);
+  box-shadow: 0 0 0 9999px rgba(4, 5, 7, 0.86);
+}
+
+.ether-terminal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0.95rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(240, 237, 230, 0.025);
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ether-terminal__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.ether-terminal__title {
+  color: var(--ink-muted);
+}
+
+.ether-status-pill {
+  padding: 0.16rem 0.52rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.ether-status-pill.is-live {
+  color: #7ed6a8;
+  border-color: rgba(126, 214, 168, 0.4);
+  background: rgba(126, 214, 168, 0.08);
+}
+
+.ether-status-pill.is-connecting {
+  color: #84cce0;
+  border-color: rgba(132, 204, 224, 0.4);
+  background: rgba(132, 204, 224, 0.08);
+}
+
+.ether-status-pill.is-fallback {
+  color: var(--accent);
+  border-color: rgba(223, 208, 178, 0.3);
+  background: rgba(223, 208, 178, 0.06);
+}
+
+.ether-status-pill:hover {
+  border-color: var(--accent);
+}
+
+.ether-terminal__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ether-head-btn {
+  padding: 0.22rem 0.55rem;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+}
+
+.ether-head-btn:hover {
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+
+.ether-head-btn.is-accent {
+  color: var(--accent);
+  border-color: rgba(223, 208, 178, 0.45);
+  background: rgba(223, 208, 178, 0.08);
+}
+
+.ether-endpoint-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(223, 208, 178, 0.04);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.ether-endpoint-bar label {
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.66rem;
+  flex-shrink: 0;
+}
+
+.ether-endpoint-bar input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid var(--rule);
+  background: #0a0b0d;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.ether-endpoint-bar input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ether-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  padding: 0.58rem 0.95rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(240, 237, 230, 0.015);
+}
+
+.ether-chips__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.34rem;
+}
+
+.terminal-prompt-chip--world {
+  border-color: rgba(132, 204, 224, 0.24);
+  color: rgba(196, 226, 236, 0.85);
+}
+
+.terminal-prompt-chip--world:hover {
+  border-color: rgba(132, 204, 224, 0.6);
+  color: #eef9ff;
+}
+
+.terminal-prompt-chip--world.is-active {
+  border-color: rgba(126, 214, 168, 0.65);
+  background: rgba(126, 214, 168, 0.12);
+  color: #aef2ce;
+}
+
+.ether-scroll {
+  height: 24.5rem;
+  overflow-y: auto;
+  padding: 1rem 1.05rem;
+  cursor: text;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(223, 208, 178, 0.22) transparent;
+}
+
+.ether-terminal.is-expanded .ether-scroll {
+  flex: 1 1 auto;
+  height: auto;
+}
+
+.ether-line {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.81rem;
+  line-height: 1.62;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #dcd8ce;
+}
+
+.ether-line--cmd {
+  color: #f4f1ea;
+  margin-top: 0.35rem;
+}
+
+.ether-prompt-tag {
+  color: #7ed6a8;
+  user-select: none;
+}
+
+.ether-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.58rem 0.95rem;
+  border-top: 1px solid var(--rule);
+  background: rgba(240, 237, 230, 0.025);
+}
+
+.ether-input-bar__prompt {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  user-select: none;
+}
+
+.ether-input-bar__field {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #f4f1ea;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.ether-input-bar__field::placeholder {
+  color: rgba(176, 171, 160, 0.5);
+}
+
+.ether-input-bar__field:focus {
+  outline: none;
+}
+
+.ether-input-bar__send {
+  flex-shrink: 0;
+  padding: 0.24rem 0.62rem;
+  border: 1px solid rgba(223, 208, 178, 0.35);
+  background: rgba(223, 208, 178, 0.08);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.ether-input-bar__send:hover {
+  background: rgba(223, 208, 178, 0.16);
+  border-color: var(--accent);
+}
+
+/* High-Resolution Multidimensional ASCII / Braille Portal Viewport */
+
+.ether-portal {
+  position: relative;
+  height: 24.5rem;
+  background: #040507;
+  overflow: hidden;
+  user-select: none;
+}
+
+.ether-terminal.is-expanded .ether-portal {
+  flex: 1 1 auto;
+  height: auto;
+}
+
+.ether-portal__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.ether-portal__canvas:active {
+  cursor: grabbing;
+}
+
+.ether-portal__hud {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  pointer-events: none;
+  font-family: var(--font-mono);
+}
+
+.ether-portal__hud--top {
+  top: 0.65rem;
+}
+
+.ether-portal__hud--top > div {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(223, 208, 178, 0.22);
+  background: rgba(6, 7, 10, 0.74);
+  backdrop-filter: blur(6px);
+}
+
+.ether-portal__kicker {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.ether-portal__hud--top strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #f4f1ea;
+}
+
+.ether-portal__telemetry {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.67rem;
+  color: #84cce0;
+  line-height: 1.4;
+}
+
+.ether-portal__hud--bottom {
+  bottom: 0.65rem;
+  align-items: center;
+}
+
+.ether-portal__caption {
+  padding: 0.25rem 0.55rem;
+  background: rgba(6, 7, 10, 0.74);
+  border: 1px solid rgba(240, 237, 230, 0.12);
+  color: var(--ink-muted);
+  font-size: 0.66rem;
+  backdrop-filter: blur(6px);
+}
+
+.ether-portal__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  pointer-events: auto;
+}
+
+.ether-hud-btn,
+.ether-portal__hud-restore {
+  padding: 0.22rem 0.5rem;
+  border: 1px solid rgba(223, 208, 178, 0.28);
+  background: rgba(6, 7, 10, 0.8);
+  color: #e8e2d5;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.ether-hud-btn:hover,
+.ether-portal__hud-restore:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ether-portal__hud-restore {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.65rem;
+}
+
+@media (max-width: 720px) {
+  .ether-terminal.is-expanded {
+    inset: 0;
+  }
+
+  .ether-scroll,
+  .ether-portal {
+    height: 22rem;
+  }
+
+  .ether-portal__telemetry {
+    align-items: flex-start;
+  }
+
+  .ether-input-bar__prompt {
+    display: none;
   }
 }

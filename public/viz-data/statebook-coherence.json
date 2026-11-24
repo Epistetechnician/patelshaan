@@ -1,0 +1,27 @@
+{
+  "sources": [
+    {
+      "path": "primitives/results/statebook_live_receipt.json",
+      "scope": "repo",
+      "sha256": "5aa93fdbc2ba64fd86d0c090443274d7ed5658a9d8deb704e9cfc2eec531017a"
+    }
+  ],
+  "body": {
+    "schema": "statebook.coherence.receipt.v1",
+    "snapshot_source": "polymarket_gamma_live:2026-11-18T20:29:47Z",
+    "n_events": 13,
+    "n_contracts": 188,
+    "quotes_sha256": "27f8dedeffb34a6177ed449f76f1a10969a4554ddf1b1d107bab114bce759dd3",
+    "seven_reports": {
+      "r1_no_arb_partition_max_abs": 0.06300000000000006,
+      "r1b_executable_dutch_book_max": 0.039000000000000035,
+      "r2_tail_coherence_mean_spread": 0.0015915032679738564,
+      "r3_calendar_monotonicity_max_inversion": 0.0,
+      "r4_book_vs_trade_max_divergence": 0.0005,
+      "r5_finality_exposure_p95_hours": 2.5,
+      "r6_liquidity_weighted_half_spread_bps": 5.042245657680019,
+      "r7_crowding_volume_hhi": 0.010566130068313386
+    }
+  },
+  "body_sha256": "fd01e3ddd5d733aa01e3bf32c99e48aaef3dc55bead86d0736ad968ef167318d"
+}

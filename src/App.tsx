@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ExplorerFeed } from './ExplorerFeed'
 import { WikiChip, WikiDrawer } from './WikiDrawer'
+import { EtherTerminal } from './components/EtherTerminal'
 import Video2Ascii from './components/LocalVideo2Ascii'
 import { WorkList } from './components/WorkList'
 import { getField } from './field'
@@ -92,57 +93,6 @@ const cliCommands = [
   },
 ]
 
-const terminalSamples = [
-  {
-    id: 'containment',
-    chip: 'formal containment',
-    prompt: 'How do you keep untrusted agent proposers from executing unsafe actions?',
-    body: `FormaSec pairs untrusted LLM/enumerator search with a tiny
-deterministic kernel verified across Python, Kani-checked Rust,
-and Lean 4 (600/600 structural agreements, 135/135 byte-exact
-receipts, 0/552 hostile admissions) before Linux Landlock runs.
-
-sources: formasec · security-alignment-os (20/20 TDX scenarios)
-ceiling: MachineAttestedReproduction (independent second host pending)`,
-  },
-  {
-    id: 'holdout',
-    chip: 'holdout certificates',
-    prompt: 'How do you keep RSI loops from overfitting their judge?',
-    body: `Holdout Ledger prices every verdict bit released by a sealed
-holdout against patch description length (MDL): 0 / 59,200 false
-certificates across 9/9 pre-registered simulated hypotheses (where
-zero-bit Wald bounds fail 100% under attack).
-
-sources: holdout-ledger (PREREG_COMMIT) · Evidence-Bounded AI
-ceiling: simulation-only; prospective SWE-bench run preregistered`,
-  },
-  {
-    id: 'nulls',
-    chip: 'honest nulls',
-    prompt: 'Which negative results changed your architecture?',
-    body: `1) v16 safety eval-rate confound inflated 60% gain to 95%.
-2) Norm-matched PCA tied J-space geometry on 7B–8B models.
-3) Caduceus phrase tripwire held 41% of benign skills (kept off).
-4) Kailash pooled 2-clock null split into spatial φ = f(r) mandala.
-
-sources: temporal-grid-safety · mech-interp-unified · kailas-corpus
-mode: grounded corpus (offline-capable)`,
-  },
-  {
-    id: 'commons',
-    chip: 'public goods',
-    prompt: 'How do you think about public goods?',
-    body: `Gitcoin mattered because it turned caring about public goods
-into allocative power. Durable funding needs a stack: quadratic
-matching, retroactive rewards, delegated domain judgment, and
-visible Ostrom-style governance rules.
-
-sources: Gitcoin & Public Goods · Sacred Economics
-mode: grounded corpus (offline-capable)`,
-  },
-]
-
 type ExperienceVideo = {
   src: string
   poster?: string
@@ -201,15 +151,17 @@ type YouTubePlayer = {
   getPlayerState: () => number
   pauseVideo: () => void
   playVideo: () => void
+  unMute?: () => void
 }
 
 type YouTubeNamespace = {
   Player: new (
-    elementId: string,
+    element: string | HTMLElement,
     options: {
       videoId: string
       playerVars: Record<string, number | string>
       events: {
+        onAutoplayBlocked?: () => void
         onError: () => void
         onReady: (event: { target: YouTubePlayer }) => void
         onStateChange: (event: { data: number }) => void
@@ -228,48 +180,77 @@ declare global {
 const landingMusicVideoId = 'oe8kgXNqLFI'
 
 function AmbientSoundControl() {
+  const playerHostRef = useRef<HTMLDivElement | null>(null)
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
-  const pendingPlayRef = useRef(false)
-  const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('idle')
+  const readyRef = useRef(false)
+  const userPausedRef = useRef(false)
+  const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('loading')
 
-  useEffect(() => {
-    return () => {
-      playerRef.current?.destroy()
-      playerRef.current = null
+  const startPlayer = useCallback((host: HTMLDivElement, isDisposed: () => boolean) => {
+    let autoplayCheckTimer: number | undefined
+    let readyTimeoutTimer: number | undefined
+
+    const clearTimers = () => {
+      if (autoplayCheckTimer !== undefined) {
+        window.clearTimeout(autoplayCheckTimer)
+        autoplayCheckTimer = undefined
+      }
+      if (readyTimeoutTimer !== undefined) {
+        window.clearTimeout(readyTimeoutTimer)
+        readyTimeoutTimer = undefined
+      }
     }
-  }, [])
-
-  const initAndPlay = useCallback(() => {
-    setPlayback('loading')
-    pendingPlayRef.current = true
 
     const createPlayer = () => {
-      if (!window.YT || playerRef.current) {
-        if (playerRef.current && pendingPlayRef.current) {
-          pendingPlayRef.current = false
-          playerRef.current.playVideo()
-        }
+      if (isDisposed() || !window.YT?.Player || playerRef.current) {
         return
       }
 
-      playerRef.current = new window.YT.Player('landing-music-player', {
+      const mountNode = document.createElement('div')
+      mountNode.id = 'landing-music-player'
+      host.replaceChildren(mountNode)
+
+      playerRef.current = new window.YT.Player(mountNode, {
         videoId: landingMusicVideoId,
         playerVars: {
           autoplay: 1,
           controls: 0,
+          enablejsapi: 1,
           loop: 1,
+          origin: window.location.origin,
           playlist: landingMusicVideoId,
           playsinline: 1,
           rel: 0,
         },
         events: {
           onReady: ({ target }) => {
-            if (pendingPlayRef.current) {
-              pendingPlayRef.current = false
+            if (isDisposed()) return
+            readyRef.current = true
+            if (readyTimeoutTimer !== undefined) {
+              window.clearTimeout(readyTimeoutTimer)
+              readyTimeoutTimer = undefined
+            }
+            if (!userPausedRef.current) {
+              target.unMute?.()
               target.playVideo()
+              autoplayCheckTimer = window.setTimeout(() => {
+                if (isDisposed() || playerRef.current !== target) return
+                const state = target.getPlayerState?.()
+                if (state !== 1 && state !== 3) {
+                  setPlayback((curr) => (curr === 'loading' ? 'paused' : curr))
+                }
+              }, 1200)
+            } else {
+              setPlayback('paused')
             }
           },
+          onAutoplayBlocked: () => {
+            if (isDisposed()) return
+            setPlayback((curr) => (curr === 'loading' ? 'paused' : curr))
+          },
           onStateChange: ({ data }) => {
+            if (isDisposed()) return
             if (data === 1) {
               setPlayback('playing')
             } else if (data === 2 || data === 0) {
@@ -277,50 +258,136 @@ function AmbientSoundControl() {
             }
           },
           onError: () => {
-            pendingPlayRef.current = false
+            if (isDisposed()) return
+            clearTimers()
             setPlayback('idle')
           },
         },
       })
     }
 
-    if (window.YT) {
+    readyTimeoutTimer = window.setTimeout(() => {
+      if (!isDisposed() && !readyRef.current) {
+        setPlayback((curr) => (curr === 'loading' ? 'idle' : curr))
+      }
+    }, 6000)
+
+    if (window.YT?.Player) {
       createPlayer()
-      return
+      return clearTimers
     }
 
-    window.onYouTubeIframeAPIReady = createPlayer
+    const handleApiReady = () => {
+      createPlayer()
+    }
+    window.onYouTubeIframeAPIReady = handleApiReady
+
     if (!document.getElementById('youtube-iframe-api')) {
       const script = document.createElement('script')
       script.id = 'youtube-iframe-api'
       script.src = 'https://www.youtube.com/iframe_api'
+      script.onerror = () => {
+        script.remove()
+        if (!isDisposed()) {
+          clearTimers()
+          setPlayback('idle')
+        }
+      }
       document.head.appendChild(script)
+    }
+
+    return () => {
+      clearTimers()
+      if (window.onYouTubeIframeAPIReady === handleApiReady) {
+        window.onYouTubeIframeAPIReady = undefined
+      }
     }
   }, [])
 
+  useEffect(() => {
+    const host = playerHostRef.current
+    if (!host) return
+
+    let disposed = false
+    const cleanupStart = startPlayer(host, () => disposed)
+
+    return () => {
+      disposed = true
+      cleanupStart()
+      readyRef.current = false
+      playerRef.current?.destroy()
+      playerRef.current = null
+      host.replaceChildren()
+    }
+  }, [startPlayer])
+
+  useEffect(() => {
+    if (playback === 'playing') return
+
+    const unlockPlayback = (event: Event) => {
+      if (userPausedRef.current) return
+      if (event.target instanceof Node && buttonRef.current?.contains(event.target)) {
+        return
+      }
+      if (
+        event instanceof KeyboardEvent &&
+        (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta')
+      ) {
+        return
+      }
+      const player = playerRef.current
+      if (!player || !readyRef.current) return
+      const state = player.getPlayerState?.()
+      if (state === 1 || state === 3) return
+      player.unMute?.()
+      player.playVideo()
+    }
+
+    const opts: AddEventListenerOptions = { capture: true, passive: true }
+    window.addEventListener('pointerdown', unlockPlayback, opts)
+    window.addEventListener('touchend', unlockPlayback, opts)
+    window.addEventListener('click', unlockPlayback, opts)
+    window.addEventListener('keydown', unlockPlayback, opts)
+
+    return () => {
+      window.removeEventListener('pointerdown', unlockPlayback, opts)
+      window.removeEventListener('touchend', unlockPlayback, opts)
+      window.removeEventListener('click', unlockPlayback, opts)
+      window.removeEventListener('keydown', unlockPlayback, opts)
+    }
+  }, [playback])
+
   const toggleSound = () => {
     const player = playerRef.current
-    if (!player) {
-      initAndPlay()
+    if (!player || !readyRef.current) {
+      userPausedRef.current = false
+      const host = playerHostRef.current
+      if (!player && host) {
+        setPlayback('loading')
+        startPlayer(host, () => playerHostRef.current !== host)
+      }
       return
     }
 
     if (playback === 'playing') {
+      userPausedRef.current = true
       player.pauseVideo()
       setPlayback('paused')
     } else {
+      userPausedRef.current = false
+      player.unMute?.()
       player.playVideo()
     }
   }
 
   return (
     <div className="sound-toggle">
-      <div id="landing-music-player" className="sound-toggle__player" />
+      <div ref={playerHostRef} className="sound-toggle__player" />
       <button
+        ref={buttonRef}
         type="button"
         className={`sound-toggle__btn${playback === 'playing' ? ' is-playing' : ''}`}
         onClick={toggleSound}
-        disabled={playback === 'loading'}
         aria-pressed={playback === 'playing'}
         aria-label={playback === 'playing' ? 'Mute ambient audio' : 'Play ambient audio'}
       >
@@ -510,6 +577,7 @@ const writingModules = import.meta.glob('./content/writings/*.html', {
 }) as Record<string, string>
 
 const writingOrder = [
+  'epistemic-engineering-vision-paper',
   'approaching-breakthroughs-across-systems',
   'evidence-bounded-intelligence',
   'statebooks-convergence-with-coherence',
@@ -530,6 +598,7 @@ const writingOrder = [
 ]
 
 const featuredWritingSlugs = new Set([
+  'epistemic-engineering-vision-paper',
   'approaching-breakthroughs-across-systems',
   'evidence-bounded-intelligence',
   'statebooks-convergence-with-coherence',
@@ -539,6 +608,7 @@ const featuredWritingSlugs = new Set([
 ])
 
 const writingCategoryBySlug: Record<string, Exclude<WritingCategory, 'all' | 'featured'>> = {
+  'epistemic-engineering-vision-paper': 'ai',
   'approaching-breakthroughs-across-systems': 'ai',
   'evidence-bounded-intelligence': 'ai',
   'statebooks-convergence-with-coherence': 'markets',
@@ -948,7 +1018,6 @@ function App() {
   const [workIdx, setWorkIdx] = useState(0)
   const [writingCat, setWritingCat] = useState<WritingCategory>('featured')
   const [cliTab, setCliTab] = useState(0)
-  const [sampleIdx, setSampleIdx] = useState(0)
 
   const [wikiTrail, setWikiTrail] = useState<string[]>([])
   const [focusedDispatchRequest, setFocusedDispatchRequest] = useState<{
@@ -1058,7 +1127,6 @@ function App() {
   }, [writingCat])
 
   const activeCli = cliCommands[cliTab] ?? cliCommands[0]
-  const activeSample = terminalSamples[sampleIdx] ?? terminalSamples[0]
 
   return (
     <div className="page-shell" id="top">
@@ -1432,46 +1500,24 @@ function App() {
         <section className="ed-section" id="install">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">05 — Terminal Companion</p>
-              <h2>An inspectable CLI archive.</h2>
+              <p className="ed-eyebrow">05 — Live Sandboxed Terminal</p>
+              <h2>Talk to the personal model &amp; step through the ether.</h2>
             </div>
 
             <div className="ed-lead">
               <p>
-                <code>spatel</code> packages my CV, essays, and working notes into
-                a portable Rust binary with an interactive TUI, retrieved Q&amp;A,
-                and an optional local <code>qwen2.5:0.5b</code> Ollama persona
-                that degrades cleanly offline.
+                A zero-shell-escape terminal bridged from my{' '}
+                <code>Raspberry Pi 5</code> running <code>shaanpatel-cv-pico</code>{' '}
+                (with an instant in-browser grounded fallback). Ask about any
+                paper or confound in real time, run live <code>eprocess</code> &amp;{' '}
+                <code>psychohistory</code> tools, or launch high-resolution 2×4
+                Braille/ASCII portals from human psychohistory to universal history.
               </p>
             </div>
           </div>
 
           <div className="terminal-layout">
-            <div className="terminal-transcript" aria-label="Interactive sample spatel session">
-              <div className="terminal-transcript__head">
-                <span>spatel — grounded session</span>
-                <span>rust + local rag</span>
-              </div>
-              <div className="terminal-prompts" role="tablist" aria-label="Sample questions">
-                {terminalSamples.map((s, idx) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={sampleIdx === idx}
-                    className={`terminal-prompt-chip${sampleIdx === idx ? ' is-active' : ''}`}
-                    onClick={() => setSampleIdx(idx)}
-                  >
-                    {s.chip}
-                  </button>
-                ))}
-              </div>
-              <pre>{`$ spatel --ask "${activeSample.prompt}"
-
-${activeSample.body}
-
-[/] live prompt   [tab] history   [q] quit`}</pre>
-            </div>
+            <EtherTerminal />
 
             <div className="terminal-controls">
               <div className="cli-tabs" role="tablist" aria-label="spatel commands">
@@ -1504,12 +1550,15 @@ ${activeSample.body}
 
               <dl className="terminal-specs">
                 <div>
-                  <dt>Corpus</dt>
-                  <dd>CV entries, research ceilings, and essay-grounded notes.</dd>
+                  <dt>RPi5 Sandbox</dt>
+                  <dd>
+                    Zero-shell container (<code>--read-only</code>, <code>--cap-drop=ALL</code>) streaming{' '}
+                    <code>shaanpatel-cv-pico</code> over WSS.
+                  </dd>
                 </div>
                 <div>
-                  <dt>Fallback</dt>
-                  <dd>Synthesizes directly from embedded passages when Ollama is absent.</dd>
+                  <dt>Ether Portals</dt>
+                  <dd>8 high-resolution interactive Braille/ASCII worlds from Psychohistory to Universal History.</dd>
                 </div>
               </dl>
             </div>

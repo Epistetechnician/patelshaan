@@ -1,0 +1,123 @@
+{
+  "sources": [
+    {
+      "path": "site/src/replays.json",
+      "scope": "repo",
+      "sha256": "8a4cd177534b611965d5de7bb85b205461883133417bd07a6a89f7df337f19cc"
+    }
+  ],
+  "workload_families": 9,
+  "mutation_classes": 14,
+  "total_tests": 1107,
+  "highlighted_total": 478,
+  "modules": [
+    {
+      "module": "core",
+      "total": 1064,
+      "highlighted": 463,
+      "samples": [
+        "contract_distinguishes_expected_from_captured_artifacts",
+        "default_contract_declares_required_formats_requirements_and_paths",
+        "contract_validation_warns_on_captured_artifacts_and_rejects_unsafe_uri"
+      ]
+    },
+    {
+      "module": "formal",
+      "total": 15,
+      "highlighted": 3,
+      "samples": [
+        "invariant_weakening_maps_to_invariant_scope",
+        "invalid_unroll_bounds_maps_to_loop_bound_scope",
+        "every_mutation_class_has_a_profile"
+      ]
+    },
+    {
+      "module": "experiment_packet",
+      "total": 3,
+      "highlighted": 3,
+      "samples": [
+        "write_rejects_dangling_leaf_symlink_before_following_it",
+        "write_rejects_symlinked_intermediate_directory",
+        "write_rejects_existing_leaf_symlink_without_mutating_target"
+      ]
+    },
+    {
+      "module": "evidence",
+      "total": 3,
+      "highlighted": 2,
+      "samples": [
+        "claim_boundary_ordering_is_monotonic",
+        "write_relative_bytes_rejects_symlinked_declared_destination",
+        "write_relative_bytes_rejects_symlinked_declared_destination"
+      ]
+    },
+    {
+      "module": "scoring",
+      "total": 5,
+      "highlighted": 1,
+      "samples": [
+        "axis_severity_returns_documented_values",
+        "matrix_has_one_cell_per_backend_outcome_variant",
+        "reject_plus_accepted_is_unsound_acceptance_candidate"
+      ]
+    },
+    {
+      "module": "experiment_observability",
+      "total": 3,
+      "highlighted": 1,
+      "samples": [
+        "artifact_policy_binds_scope_and_provenance_for_references",
+        "artifact_policy_rejects_invalid_scope_and_report_binding"
+      ]
+    },
+    {
+      "module": "audit_index",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "write_relative_bytes_rejects_symlinked_declared_destination"
+      ]
+    },
+    {
+      "module": "report_bundle",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "write_relative_bytes_rejects_symlinked_declared_destination"
+      ]
+    },
+    {
+      "module": "local_benchmark_artifact",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "write_relative_bytes_rejects_symlinked_declared_destination"
+      ]
+    },
+    {
+      "module": "adapters",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "read_pack_json_rejects_unsafe_relative_paths_before_filesystem_read"
+      ]
+    },
+    {
+      "module": "local_artifact_campaign",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "write_relative_bytes_rejects_symlinked_declared_destination"
+      ]
+    },
+    {
+      "module": "dsl",
+      "total": 8,
+      "highlighted": 0,
+      "samples": [
+        "empty_machine_is_not_fully_executable",
+        "executable_transition_guard_is_labeled_executable"
+      ]
+    }
+  ]
+}

@@ -797,27 +797,27 @@ function KailasKoraMandalaDemo() {
         )}
 
         {/* Right telemetry panel */}
-        <line x1={292} y1={22} x2={292} y2={266} stroke="#dde1e6" strokeWidth="1" />
-        <text x={312} y={38} fontSize="11" fontFamily="SF Mono, monospace" fontWeight="700" fill="#2f5d7e">
+        <line x1={292} y1={22} x2={292} y2={266} stroke="var(--gray-200)" strokeWidth="1" />
+        <text x={312} y={38} fontSize="11" fontFamily="SF Mono, monospace" fontWeight="700" fill="var(--line)">
           {st.stage}
         </text>
-        <text x={312} y={59} fontSize="10.2" fontFamily="SF Mono, monospace" fill="#6c7580">
+        <text x={312} y={59} fontSize="10.2" fontFamily="SF Mono, monospace" fill="var(--color-link)">
           Coordinate r = {st.r.toFixed(2)} · Elevation {st.elev} · Kailas coding v2
         </text>
-        <text x={312} y={80} fontSize="10.2" fontFamily="SF Mono, monospace" fill={st.core ? '#3d7a5a' : '#a4453a'}>
+        <text x={312} y={80} fontSize="10.2" fontFamily="SF Mono, monospace" fill={st.core ? 'var(--good)' : 'var(--bad)'}>
           Clock regime: {st.clock}
         </text>
-        <text x={312} y={101} fontSize="10.2" fontFamily="SF Mono, monospace" fill={dirMode === 'ccw' ? '#a4453a' : '#3d7a5a'}>
+        <text x={312} y={101} fontSize="10.2" fontFamily="SF Mono, monospace" fill={dirMode === 'ccw' ? 'var(--bad)' : 'var(--good)'}>
           {dirMode === 'cw'
             ? 'Stages 2–5 (r ∈ [0.14, 0.84]): 0/24 strict calendar decoupling'
             : 'Clockwise Buddhist vs. Counter-Clockwise Bon circuit alignment'}
         </text>
-        <text x={312} y={121} fontSize="9.8" fontFamily="SF Mono, monospace" fill="#5a6570">
+        <text x={312} y={121} fontSize="9.8" fontFamily="SF Mono, monospace" fill="var(--color-link)">
           {dirMode === 'cw'
             ? 'Thubron full kora: 20.0% strict route-aligned mandala (p = 0.0017).'
             : '70.8% indigenous sacred-landscape 4-register overlap across circuits.'}
         </text>
-        <text x={312} y={145} fontSize="10" fontFamily="SF Mono, monospace" fill="#4a6b8a">
+        <text x={312} y={145} fontSize="10" fontFamily="SF Mono, monospace" fill="var(--line)">
           ACTIVE INTERPRETIVE REGISTERS AT STAGE:
         </text>
         {ALL_KORA_REGS.map((reg, k) => {
@@ -831,8 +831,9 @@ function KailasKoraMandalaDemo() {
                 y={ry}
                 width={108}
                 height={24}
-                fill={on ? '#dde8f2' : '#fdfcfa'}
-                stroke={on ? '#4d7596' : '#d2dbe4'}
+                rx={3}
+                fill={on ? 'var(--gray-100)' : 'var(--body-background)'}
+                stroke={on ? 'var(--line)' : 'var(--gray-200)'}
                 strokeWidth="1.1"
               />
               <text
@@ -841,14 +842,14 @@ function KailasKoraMandalaDemo() {
                 textAnchor="middle"
                 fontSize="9.8"
                 fontFamily="SF Mono, monospace"
-                fill={on ? '#1f3d5a' : '#8d9aa8'}
+                fill={on ? 'var(--body-font-color)' : 'var(--color-link)'}
               >
                 {on ? `✓ ${reg}` : reg}
               </text>
             </g>
           )
         })}
-        <text x={312} y={248} fontSize="10.2" fontStyle="italic" fill="#5a6570">
+        <text x={312} y={248} fontSize="10.2" fontStyle="italic" fill="var(--color-link)">
           {st.note.slice(0, 68)}{st.note.length > 68 ? '…' : ''}
         </text>
       </svg>

@@ -1,8 +1,55 @@
+import { useState } from 'react'
 import { Demo } from './Demos'
+import { ManimFilm } from './components/ManimFilm'
 import { RichText } from './components/RichText'
 import type { Figure } from './essays'
+import { PostAnimCanvas } from './viz/ResearchAnims'
 
 const chipLabel = { pass: 'pass', fail: 'fail', stop: 'stop', open: 'open' }
+
+function SnippetFigure({
+  kind,
+  title,
+  lang,
+  content,
+  caption,
+}: {
+  kind: 'code' | 'terminal'
+  title: string
+  lang?: string
+  content: string
+  caption: string
+}) {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(content)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1400)
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+  return (
+    <figure className={`ef ef-snippet ef-snippet--${kind}`}>
+      <div className="ef-snippet__head">
+        <span>
+          <span className="demo-tag">{kind === 'terminal' ? 'output' : lang ?? 'code'}</span>
+          {title}
+        </span>
+        <button type="button" onClick={copy}>
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <pre>
+        <code>{content}</code>
+      </pre>
+      <figcaption>
+        <RichText text={caption} />
+      </figcaption>
+    </figure>
+  )
+}
 
 export function EssayFigure({ fig }: { fig: Figure }) {
   switch (fig.kind) {
@@ -10,6 +57,29 @@ export function EssayFigure({ fig }: { fig: Figure }) {
       return null
     case 'demo':
       return <Demo id={fig.id} />
+    case 'anim':
+      return <PostAnimCanvas id={fig.id} variant="inline" />
+    case 'film':
+      return <ManimFilm film={fig} />
+    case 'code':
+      return (
+        <SnippetFigure
+          kind="code"
+          title={fig.title}
+          lang={fig.lang}
+          content={fig.code}
+          caption={fig.caption}
+        />
+      )
+    case 'terminal':
+      return (
+        <SnippetFigure
+          kind="terminal"
+          title={fig.title}
+          content={fig.output}
+          caption={fig.caption}
+        />
+      )
     case 'plate':
       return (
         <figure className="ef ef-plate">

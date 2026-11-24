@@ -1,103 +1,193 @@
+import { useEffect, useId, useRef, useState } from 'react'
 import { archs } from './arch'
+import { RichText } from './components/RichText'
 
-const CW = 210
-const GAP = 46
-const BH = 60
-const BG = 26
-const TOP = 56
-const X0 = 14
+type MermaidApi = {
+  initialize: (config: Record<string, unknown>) => void
+  render: (id: string, definition: string) => Promise<{ svg: string }>
+}
+
+declare global {
+  interface Window {
+    mermaid?: MermaidApi
+  }
+}
+
+let mermaidLoader: Promise<MermaidApi> | null = null
+
+function loadMermaid(): Promise<MermaidApi> {
+  if (typeof window !== 'undefined' && window.mermaid) {
+    return Promise.resolve(window.mermaid)
+  }
+  if (!mermaidLoader) {
+    mermaidLoader = new Promise<MermaidApi>((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = '/vendor/mermaid.min.js'
+      script.async = true
+      script.onload = () => {
+        if (window.mermaid) resolve(window.mermaid)
+        else reject(new Error('Mermaid failed to initialize'))
+      }
+      script.onerror = () => reject(new Error('Failed to load /vendor/mermaid.min.js'))
+      document.head.appendChild(script)
+    })
+  }
+  return mermaidLoader
+}
+
+function useIsLightMode(): boolean {
+  const [light, setLight] = useState(() =>
+    typeof document !== 'undefined' ? document.documentElement.classList.contains('light-mode') : false,
+  )
+  useEffect(() => {
+    const sync = () => setLight(document.documentElement.classList.contains('light-mode'))
+    sync()
+    const mo = new MutationObserver(sync)
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => mo.disconnect()
+  }, [])
+  return light
+}
 
 export function ArchDiagram({ slug }: { slug: string }) {
   const spec = archs[slug]
-  if (!spec) return null
-  const pos: Record<string, { x: number; y: number; col: number }> = {}
-  let maxRows = 0
-  spec.cols.forEach((c, ci) => {
-    maxRows = Math.max(maxRows, c.boxes.length)
-    c.boxes.forEach((b, bi) => {
-      pos[b.id] = { x: X0 + ci * (CW + GAP) + 14, y: TOP + bi * (BH + BG), col: ci }
-    })
-  })
-  const bw = CW - 28
-  const colH = TOP + maxRows * (BH + BG) - BG + 22
-  const W = X0 * 2 + spec.cols.length * CW + (spec.cols.length - 1) * GAP
-  const railY = colH + 36
-  const botY = railY + 28
-  const H = botY + BH + 24
-  const bottomW = Math.min(290, (W - 80) / spec.bottom.length)
-  const bottomX = (i: number) => W / 2 - (spec.bottom.length * bottomW + (spec.bottom.length - 1) * 40) / 2 + i * (bottomW + 40)
+  const light = useIsLightMode()
+  const rawId = useId().replace(/[^a-zA-Z0-9]/g, '')
+  const [svg, setSvg] = useState<string>('')
+  const [err, setErr] = useState<string>('')
+  const seqRef = useRef(0)
 
-  const arrow = (a: string, b: string) => {
-    const p = pos[a]
-    const q = pos[b]
-    if (p.col === q.col) {
-      const x = p.x + bw / 2
-      return { d: `M${x},${p.y + BH} L${x},${q.y - 1}`, head: [x, q.y - 1, 'down'] as const }
+  useEffect(() => {
+    if (!spec) return
+    let alive = true
+    const renderId = `mmd-${rawId}-${++seqRef.current}`
+
+    loadMermaid()
+      .then(async (mermaid) => {
+        if (!alive) return
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'loose',
+          theme: 'base',
+          fontFamily: 'ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+            nodeSpacing: 32,
+            rankSpacing: 40,
+            padding: 16,
+            wrappingWidth: 220,
+          },
+          sequence: {
+            useMaxWidth: true,
+            actorMargin: 36,
+            boxMargin: 10,
+            messageMargin: 34,
+            mirrorActors: false,
+            wrap: true,
+          },
+          themeVariables: light
+            ? {
+                background: '#ffffff',
+                primaryColor: '#f6f8fa',
+                primaryTextColor: '#1f2328',
+                primaryBorderColor: '#4d7596',
+                secondaryColor: '#f6f5f0',
+                secondaryTextColor: '#1f2328',
+                secondaryBorderColor: '#c98b1e',
+                tertiaryColor: '#faf9f7',
+                tertiaryTextColor: '#1f2328',
+                tertiaryBorderColor: '#d8d4cc',
+                lineColor: '#5b8aa6',
+                textColor: '#1f2328',
+                mainBkg: '#f6f8fa',
+                nodeBorder: '#4d7596',
+                clusterBkg: '#faf9f7',
+                clusterBorder: '#d0d7de',
+                actorBkg: '#f6f8fa',
+                actorBorder: '#4d7596',
+                actorTextColor: '#1f2328',
+                actorLineColor: '#8c959f',
+                signalColor: '#4d7596',
+                signalTextColor: '#1f2328',
+                noteBkgColor: '#f6f8fa',
+                noteBorderColor: '#d0d7de',
+                noteTextColor: '#1f2328',
+                labelBoxBkgColor: '#ffffff',
+                labelBoxBorderColor: '#d0d7de',
+                labelTextColor: '#1f2328',
+                edgeLabelBackground: '#ffffff',
+                fontSize: '13.5px',
+              }
+            : {
+                background: '#141414',
+                primaryColor: '#1c2128',
+                primaryTextColor: '#f0f3f6',
+                primaryBorderColor: '#5b8aa6',
+                secondaryColor: '#221f1a',
+                secondaryTextColor: '#f0f3f6',
+                secondaryBorderColor: '#e0a83f',
+                tertiaryColor: '#181818',
+                tertiaryTextColor: '#e6edf3',
+                tertiaryBorderColor: '#30363d',
+                lineColor: '#6ca2c2',
+                textColor: '#f0f3f6',
+                mainBkg: '#1c2128',
+                nodeBorder: '#5b8aa6',
+                clusterBkg: '#171a1f',
+                clusterBorder: '#30363d',
+                actorBkg: '#1c2128',
+                actorBorder: '#5b8aa6',
+                actorTextColor: '#f0f3f6',
+                actorLineColor: '#484f58',
+                signalColor: '#6ca2c2',
+                signalTextColor: '#f0f3f6',
+                noteBkgColor: '#1c2128',
+                noteBorderColor: '#30363d',
+                noteTextColor: '#e6edf3',
+                labelBoxBkgColor: '#161b22',
+                labelBoxBorderColor: '#30363d',
+                labelTextColor: '#e6edf3',
+                edgeLabelBackground: '#141414',
+                fontSize: '13.5px',
+              },
+        })
+        const out = await mermaid.render(renderId, spec.diagram)
+        if (alive) {
+          setSvg(out.svg)
+          setErr('')
+        }
+      })
+      .catch((e: unknown) => {
+        if (alive) setErr(e instanceof Error ? e.message : 'Diagram render error')
+      })
+
+    return () => {
+      alive = false
     }
-    const x1 = p.x + bw
-    const y1 = p.y + BH / 2
-    const x2 = q.x
-    const y2 = q.y + BH / 2
-    const mx = (x1 + x2) / 2
-    return { d: `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2 - 1},${y2}`, head: [x2 - 1, y2, 'right'] as const }
-  }
-  const head = (x: number, y: number, dir: 'down' | 'right' | 'left') =>
-    dir === 'down' ? `${x - 4},${y - 8} ${x + 4},${y - 8} ${x},${y}` : dir === 'right' ? `${x - 8},${y - 4} ${x - 8},${y + 4} ${x},${y}` : `${x + 8},${y - 4} ${x + 8},${y + 4} ${x},${y}`
+  }, [spec, light, rawId])
+
+  if (!spec) return null
 
   return (
-    <figure className="arch">
-      <div className="arch-scroll">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Architecture diagram">
-        {spec.cols.map((c, ci) => {
-          const x = X0 + ci * (CW + GAP)
-          return (
-            <g key={c.title}>
-              <rect x={x} y={8} width={CW} height={colH - 8} fill="none" stroke="#7d9db8" strokeWidth="1.4" strokeDasharray={c.dashed ? '6 5' : undefined} />
-              <text x={x + 14} y={36} className="arch-title">{c.title}</text>
-              <line x1={x + CW / 2} y1={colH} x2={x + CW / 2} y2={railY} stroke="#7d9db8" strokeWidth="1.3" />
-            </g>
-          )
-        })}
-        <line x1={X0 + CW / 2} y1={railY} x2={X0 + (spec.cols.length - 1) * (CW + GAP) + CW / 2} y2={railY} stroke="#7d9db8" strokeWidth="1.3" />
-        <line x1={W / 2} y1={railY} x2={W / 2} y2={botY - 1} stroke="#2f5d7e" strokeWidth="1.6" />
-        <polygon points={head(W / 2, botY - 1, 'down')} fill="#2f5d7e" />
-        {spec.links.map(([a, b]) => {
-          const ar = arrow(a, b)
-          return (
-            <g key={a + b}>
-              <path d={ar.d} fill="none" stroke="#2f5d7e" strokeWidth="1.6" />
-              <polygon points={head(ar.head[0], ar.head[1], ar.head[2])} fill="#2f5d7e" />
-            </g>
-          )
-        })}
-        {spec.cols.flatMap((c) =>
-          c.boxes.map((b) => {
-            const p = pos[b.id]
-            return (
-              <g key={b.id}>
-                <rect x={p.x} y={p.y} width={bw} height={BH} fill="#fdfcfa" stroke={b.soft ? '#7d9db8' : '#4d7596'} strokeWidth="1.4" />
-                <text x={p.x + bw / 2} y={p.y + (b.sub ? 26 : 36)} textAnchor="middle" className={b.soft ? 'arch-box soft' : 'arch-box'}>{b.label}</text>
-                {b.sub ? <text x={p.x + bw / 2} y={p.y + 46} textAnchor="middle" className="arch-sub">{b.sub}</text> : null}
-              </g>
-            )
-          }),
-        )}
-        {spec.bottom.map((b, i) => (
-          <g key={b.label}>
-            <rect x={bottomX(i)} y={botY} width={bottomW} height={BH} fill="#fdfcfa" stroke="#4d7596" strokeWidth="1.4" />
-            <text x={bottomX(i) + bottomW / 2} y={botY + (b.sub ? 26 : 36)} textAnchor="middle" className="arch-box">{b.label}</text>
-            {b.sub ? <text x={bottomX(i) + bottomW / 2} y={botY + 46} textAnchor="middle" className="arch-sub">{b.sub}</text> : null}
-            {i > 0 ? (
-              <>
-                <line x1={bottomX(i)} y1={botY + BH / 2} x2={bottomX(i - 1) + bottomW + 9} y2={botY + BH / 2} stroke="#2f5d7e" strokeWidth="1.6" />
-                <polygon points={head(bottomX(i - 1) + bottomW + 1, botY + BH / 2, 'left')} fill="#2f5d7e" />
-              </>
-            ) : null}
-          </g>
-        ))}
-        </svg>
+    <figure className="arch arch-mermaid">
+      <div className="arch-mermaid__head">
+        <span>{spec.title}</span>
+        <code>mermaid</code>
       </div>
-      <figcaption>{spec.caption}</figcaption>
+      <div className="arch-mermaid__stage">
+        {svg ? (
+          <div className="arch-mermaid__svg" dangerouslySetInnerHTML={{ __html: svg }} />
+        ) : err ? (
+          <pre className="arch-mermaid__fallback">{spec.diagram}</pre>
+        ) : (
+          <div className="arch-mermaid__loading">Rendering architecture graph…</div>
+        )}
+      </div>
+      <figcaption>
+        <RichText text={spec.caption} />
+      </figcaption>
     </figure>
   )
 }

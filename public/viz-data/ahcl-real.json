@@ -1,0 +1,48 @@
+{
+  "sources": [
+    {
+      "path": "../aligned-holistic-continual-learning/results/synthetic-result.json",
+      "scope": "sibling",
+      "sha256": "1220c5eb393edbc413f73e8418d5521ab863b66e90874b663953ff34938d6403"
+    }
+  ],
+  "status": "SyntheticCandidate",
+  "prediction_lock_digest": "86063d2efea40a45",
+  "experiment_digest": "67e0b9d1804dc0a4",
+  "gates": {
+    "minimum_r2": 0.25,
+    "minimum_r2_over_baseline": 0.2,
+    "minimum_sign_agreement": 0.8,
+    "shuffled_control_max_r2": 0.2
+  },
+  "targets": [
+    {
+      "id": "adaptation_gain",
+      "r2": 0.8298,
+      "sign_agreement": 0.9792,
+      "shuffled_r2": -0.4191,
+      "retention_guard_r2": 0.6507
+    },
+    {
+      "id": "retention_harm",
+      "r2": 0.8528,
+      "sign_agreement": 0.9792,
+      "shuffled_r2": -0.2724,
+      "retention_guard_r2": -0.3131
+    },
+    {
+      "id": "calibration_harm",
+      "r2": 0.8998,
+      "sign_agreement": 0.9375,
+      "shuffled_r2": -0.5138,
+      "retention_guard_r2": -1.0221
+    },
+    {
+      "id": "policy_violation_harm",
+      "r2": 0.8297,
+      "sign_agreement": 0.9792,
+      "shuffled_r2": -0.3915,
+      "retention_guard_r2": 0.6199
+    }
+  ]
+}

@@ -1,0 +1,4563 @@
+{
+  "sources": [
+    {
+      "path": "primitives/results/eprocess_holdout_benchmark.json",
+      "scope": "repo",
+      "sha256": "f33c21a132db03ce0321e29b38f817bdd1a029e1e8219f918e11ed883c1326ab"
+    },
+    {
+      "path": "primitives/results/gemma4_trajectory_gate.json",
+      "scope": "repo",
+      "sha256": "bd7b957317a20af0c00930f520204289f35d6291557c744d726c72fcb7223d28"
+    },
+    {
+      "path": "gemma4-agent/runs/b1/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "51f9d3a41eb28792363cd94da6f315dd0a62d005e47bb1e4e58f196e1b00a05d"
+    },
+    {
+      "path": "gemma4-agent/runs/b31/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "edb8dcc05583d92f27e32fb244b80e0823afad44250382795a07e457b734fd7a"
+    },
+    {
+      "path": "gemma4-agent/runs/c7/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "34e816ceb19c8392f2ec9c08e15ac384fb46dd7134697fd73e7544ee9d993675"
+    },
+    {
+      "path": "gemma4-agent/runs/k20/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "755cceda1afb34388bce0e1544aef1bf839ee2a4f73d7a10c327fbaeb8cfb3d5"
+    },
+    {
+      "path": "gemma4-agent/runs/v1/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "4167e123403dfb312265dfe6a843a856696c0c266f06f0ccf7dff600ae3d74b3"
+    },
+    {
+      "path": "gemma4-agent/runs/v2/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "ef7cd8a09d16dd37bc4112800f5101811c627c7bb78ce988e165da4847907341"
+    },
+    {
+      "path": "gemma4-agent/runs/v3/results_heldout_draw1.json",
+      "scope": "repo",
+      "sha256": "e50f0fad5597f09b9c10dd317616063f0ec146e26f470747296f9378aa2e4282"
+    },
+    {
+      "path": "../holdout-ledger/results/confirmatory.jsonl",
+      "scope": "sibling",
+      "sha256": "39401832358fad096398b321f3fea72f6ec328a3a508ce5ed8808d8f0ad2b3bc"
+    }
+  ],
+  "eprocess_benchmark": {
+    "experiment": "anytime_eb_eprocess_mdl_vs_hoeffding_and_wald",
+    "n_trials": 1000,
+    "n_holdout": 256,
+    "n_candidates": 48,
+    "delta": 0.05,
+    "wald_null_attack_violation_rate": 0.544,
+    "hoeffding_mdl_violation_rate": 0.0,
+    "eb_eprocess_anytime_violation_rate": 0.0,
+    "mean_halfwidth_hoeffding_mdl": 0.1735552654503975,
+    "mean_halfwidth_eb_eprocess_mdl": 0.10345859685568007,
+    "certificate_tightening_pct": 40.388672975612614,
+    "mean_queries_fixed": 12288,
+    "mean_queries_sequential_eb": 10624.384,
+    "query_savings_pct": 13.53854166666667,
+    "true_gain_retained_hoeffding": 0.9707428571428572,
+    "true_gain_retained_eb_sequential": 0.9616
+  },
+  "gemma4_trajectory_gate": {
+    "experiment": "certified_trajectory_admission_on_gemma4_swe",
+    "n_trajectories": 238,
+    "n_distinct_tasks": 34,
+    "n_runs": 7,
+    "baseline_solve_rate": 0.1638655462184874,
+    "n_admitted": 83,
+    "n_admitted_broker_sanitized_scratch": 43,
+    "n_rejected": 155,
+    "holdout_budget_saved_pct": 65.12605042016807,
+    "admitted_solve_rate": 0.3373493975903614,
+    "admitted_solve_ci95_task_cluster": [
+      0.1527777777777778,
+      0.5070527643472775
+    ],
+    "naive_reject_scratch_solve_rate": 0.2,
+    "rejected_solve_rate": 0.07096774193548387,
+    "precision_lift_abs": 0.26638165565487754,
+    "precision_lift_ratio": 4.753559693318729,
+    "precision_lift_ci95_task_cluster": [
+      0.11428745982766975,
+      0.41667483660130705
+    ],
+    "reward_hack_mutation_recall": "83/83",
+    "v3_best_agent_gate": {
+      "n_tasks": 34,
+      "n_admitted": 20,
+      "n_rejected": 14,
+      "admitted_solved": 9,
+      "admitted_solve_rate": 0.45,
+      "rejected_solved": 0,
+      "rejected_solve_rate": 0.0,
+      "solved_recall": 1.0
+    },
+    "closed_loop_k20_to_v3_reflex": {
+      "policy": "k20_first_retry_v3_on_broker_reject",
+      "k20_alone_solved": 8,
+      "k20_admitted_solved": 6,
+      "reflex_total_solved": 9,
+      "reflex_solve_rate": 0.2647058823529412,
+      "stage1_accepted_without_retry": 14,
+      "stage2_retries_triggered": 20,
+      "stage2_budget_saved_pct": 41.1764705882353
+    },
+    "rejection_reason_counts": {
+      "unverified_after_last_edit": 142,
+      "no_submit": 5,
+      "test_edit_after_failure": 4,
+      "empty_edit_sequence": 6
+    }
+  },
+  "martingale_trace": {
+    "n_steps": 256,
+    "alpha": 0.05,
+    "ville_threshold": 20.0,
+    "log10_threshold": 1.301,
+    "checkpoints": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "honest_improver": {
+      "mu": 0.6,
+      "k_bits": 8,
+      "series": [
+        {
+          "t": 1,
+          "obs_gain": 0.0454,
+          "wald_lcb": -0.1191,
+          "log10_e": -2.408,
+          "e_val": 0.0
+        },
+        {
+          "t": 4,
+          "obs_gain": 0.0012,
+          "wald_lcb": -0.0341,
+          "log10_e": -2.422,
+          "e_val": 0.0
+        },
+        {
+          "t": 8,
+          "obs_gain": 0.0587,
+          "wald_lcb": 0.012,
+          "log10_e": -2.318,
+          "e_val": 0.0
+        },
+        {
+          "t": 12,
+          "obs_gain": 0.0678,
+          "wald_lcb": 0.0339,
+          "log10_e": -2.216,
+          "e_val": 0.01
+        },
+        {
+          "t": 16,
+          "obs_gain": 0.0758,
+          "wald_lcb": 0.0421,
+          "log10_e": -2.105,
+          "e_val": 0.01
+        },
+        {
+          "t": 20,
+          "obs_gain": 0.0711,
+          "wald_lcb": 0.0415,
+          "log10_e": -2.047,
+          "e_val": 0.01
+        },
+        {
+          "t": 24,
+          "obs_gain": 0.0765,
+          "wald_lcb": 0.0491,
+          "log10_e": -1.928,
+          "e_val": 0.01
+        },
+        {
+          "t": 28,
+          "obs_gain": 0.0837,
+          "wald_lcb": 0.0576,
+          "log10_e": -1.782,
+          "e_val": 0.02
+        },
+        {
+          "t": 32,
+          "obs_gain": 0.0841,
+          "wald_lcb": 0.0613,
+          "log10_e": -1.676,
+          "e_val": 0.02
+        },
+        {
+          "t": 36,
+          "obs_gain": 0.0801,
+          "wald_lcb": 0.059,
+          "log10_e": -1.621,
+          "e_val": 0.02
+        },
+        {
+          "t": 40,
+          "obs_gain": 0.081,
+          "wald_lcb": 0.0608,
+          "log10_e": -1.519,
+          "e_val": 0.03
+        },
+        {
+          "t": 44,
+          "obs_gain": 0.0816,
+          "wald_lcb": 0.0616,
+          "log10_e": -1.423,
+          "e_val": 0.04
+        },
+        {
+          "t": 48,
+          "obs_gain": 0.0869,
+          "wald_lcb": 0.0678,
+          "log10_e": -1.252,
+          "e_val": 0.06
+        },
+        {
+          "t": 52,
+          "obs_gain": 0.084,
+          "wald_lcb": 0.0652,
+          "log10_e": -1.201,
+          "e_val": 0.06
+        },
+        {
+          "t": 56,
+          "obs_gain": 0.0886,
+          "wald_lcb": 0.07,
+          "log10_e": -1.032,
+          "e_val": 0.09
+        },
+        {
+          "t": 60,
+          "obs_gain": 0.0905,
+          "wald_lcb": 0.0728,
+          "log10_e": -0.892,
+          "e_val": 0.13
+        },
+        {
+          "t": 64,
+          "obs_gain": 0.0915,
+          "wald_lcb": 0.0747,
+          "log10_e": -0.766,
+          "e_val": 0.17
+        },
+        {
+          "t": 68,
+          "obs_gain": 0.0989,
+          "wald_lcb": 0.0819,
+          "log10_e": -0.516,
+          "e_val": 0.31
+        },
+        {
+          "t": 72,
+          "obs_gain": 0.1,
+          "wald_lcb": 0.0832,
+          "log10_e": -0.382,
+          "e_val": 0.41
+        },
+        {
+          "t": 76,
+          "obs_gain": 0.1006,
+          "wald_lcb": 0.0845,
+          "log10_e": -0.25,
+          "e_val": 0.56
+        },
+        {
+          "t": 80,
+          "obs_gain": 0.0997,
+          "wald_lcb": 0.084,
+          "log10_e": -0.155,
+          "e_val": 0.7
+        },
+        {
+          "t": 84,
+          "obs_gain": 0.0993,
+          "wald_lcb": 0.0838,
+          "log10_e": -0.054,
+          "e_val": 0.88
+        },
+        {
+          "t": 88,
+          "obs_gain": 0.099,
+          "wald_lcb": 0.084,
+          "log10_e": 0.055,
+          "e_val": 1.13
+        },
+        {
+          "t": 92,
+          "obs_gain": 0.0962,
+          "wald_lcb": 0.0815,
+          "log10_e": 0.089,
+          "e_val": 1.23
+        },
+        {
+          "t": 96,
+          "obs_gain": 0.0991,
+          "wald_lcb": 0.0847,
+          "log10_e": 0.284,
+          "e_val": 1.92
+        },
+        {
+          "t": 100,
+          "obs_gain": 0.0985,
+          "wald_lcb": 0.0845,
+          "log10_e": 0.384,
+          "e_val": 2.42
+        },
+        {
+          "t": 104,
+          "obs_gain": 0.0985,
+          "wald_lcb": 0.085,
+          "log10_e": 0.502,
+          "e_val": 3.18
+        },
+        {
+          "t": 108,
+          "obs_gain": 0.0993,
+          "wald_lcb": 0.086,
+          "log10_e": 0.641,
+          "e_val": 4.38
+        },
+        {
+          "t": 112,
+          "obs_gain": 0.0975,
+          "wald_lcb": 0.0846,
+          "log10_e": 0.697,
+          "e_val": 4.97
+        },
+        {
+          "t": 116,
+          "obs_gain": 0.0996,
+          "wald_lcb": 0.0868,
+          "log10_e": 0.879,
+          "e_val": 7.57
+        },
+        {
+          "t": 120,
+          "obs_gain": 0.0989,
+          "wald_lcb": 0.0864,
+          "log10_e": 0.973,
+          "e_val": 9.4
+        },
+        {
+          "t": 124,
+          "obs_gain": 0.0975,
+          "wald_lcb": 0.0851,
+          "log10_e": 1.031,
+          "e_val": 10.73
+        },
+        {
+          "t": 128,
+          "obs_gain": 0.0976,
+          "wald_lcb": 0.0853,
+          "log10_e": 1.142,
+          "e_val": 13.88
+        },
+        {
+          "t": 132,
+          "obs_gain": 0.0973,
+          "wald_lcb": 0.0853,
+          "log10_e": 1.248,
+          "e_val": 17.7
+        },
+        {
+          "t": 136,
+          "obs_gain": 0.0971,
+          "wald_lcb": 0.0855,
+          "log10_e": 1.361,
+          "e_val": 22.94
+        },
+        {
+          "t": 140,
+          "obs_gain": 0.0958,
+          "wald_lcb": 0.0845,
+          "log10_e": 1.421,
+          "e_val": 26.35
+        },
+        {
+          "t": 144,
+          "obs_gain": 0.0968,
+          "wald_lcb": 0.0856,
+          "log10_e": 1.573,
+          "e_val": 37.4
+        },
+        {
+          "t": 148,
+          "obs_gain": 0.0974,
+          "wald_lcb": 0.0864,
+          "log10_e": 1.715,
+          "e_val": 51.85
+        },
+        {
+          "t": 152,
+          "obs_gain": 0.0977,
+          "wald_lcb": 0.087,
+          "log10_e": 1.846,
+          "e_val": 70.22
+        },
+        {
+          "t": 156,
+          "obs_gain": 0.0954,
+          "wald_lcb": 0.0845,
+          "log10_e": 1.838,
+          "e_val": 68.94
+        },
+        {
+          "t": 160,
+          "obs_gain": 0.0963,
+          "wald_lcb": 0.0856,
+          "log10_e": 1.994,
+          "e_val": 98.6
+        },
+        {
+          "t": 164,
+          "obs_gain": 0.095,
+          "wald_lcb": 0.0845,
+          "log10_e": 2.042,
+          "e_val": 110.17
+        },
+        {
+          "t": 168,
+          "obs_gain": 0.0959,
+          "wald_lcb": 0.0853,
+          "log10_e": 2.19,
+          "e_val": 154.87
+        },
+        {
+          "t": 172,
+          "obs_gain": 0.095,
+          "wald_lcb": 0.0845,
+          "log10_e": 2.252,
+          "e_val": 178.76
+        },
+        {
+          "t": 176,
+          "obs_gain": 0.0953,
+          "wald_lcb": 0.085,
+          "log10_e": 2.377,
+          "e_val": 238.29
+        },
+        {
+          "t": 180,
+          "obs_gain": 0.0972,
+          "wald_lcb": 0.0869,
+          "log10_e": 2.586,
+          "e_val": 385.8
+        },
+        {
+          "t": 184,
+          "obs_gain": 0.0961,
+          "wald_lcb": 0.0859,
+          "log10_e": 2.637,
+          "e_val": 433.47
+        },
+        {
+          "t": 188,
+          "obs_gain": 0.097,
+          "wald_lcb": 0.0869,
+          "log10_e": 2.799,
+          "e_val": 629.76
+        },
+        {
+          "t": 192,
+          "obs_gain": 0.0969,
+          "wald_lcb": 0.087,
+          "log10_e": 2.911,
+          "e_val": 815.21
+        },
+        {
+          "t": 196,
+          "obs_gain": 0.0964,
+          "wald_lcb": 0.0867,
+          "log10_e": 2.995,
+          "e_val": 988.86
+        },
+        {
+          "t": 200,
+          "obs_gain": 0.0968,
+          "wald_lcb": 0.0873,
+          "log10_e": 3.137,
+          "e_val": 1371.9
+        },
+        {
+          "t": 204,
+          "obs_gain": 0.0972,
+          "wald_lcb": 0.0877,
+          "log10_e": 3.269,
+          "e_val": 1857.22
+        },
+        {
+          "t": 208,
+          "obs_gain": 0.0958,
+          "wald_lcb": 0.0862,
+          "log10_e": 3.283,
+          "e_val": 1918.16
+        },
+        {
+          "t": 212,
+          "obs_gain": 0.0954,
+          "wald_lcb": 0.0859,
+          "log10_e": 3.368,
+          "e_val": 2335.66
+        },
+        {
+          "t": 216,
+          "obs_gain": 0.0958,
+          "wald_lcb": 0.0864,
+          "log10_e": 3.504,
+          "e_val": 3192.67
+        },
+        {
+          "t": 220,
+          "obs_gain": 0.0951,
+          "wald_lcb": 0.0857,
+          "log10_e": 3.563,
+          "e_val": 3654.82
+        },
+        {
+          "t": 224,
+          "obs_gain": 0.0951,
+          "wald_lcb": 0.0859,
+          "log10_e": 3.676,
+          "e_val": 4739.99
+        },
+        {
+          "t": 228,
+          "obs_gain": 0.096,
+          "wald_lcb": 0.0869,
+          "log10_e": 3.848,
+          "e_val": 7045.08
+        },
+        {
+          "t": 232,
+          "obs_gain": 0.0951,
+          "wald_lcb": 0.086,
+          "log10_e": 3.894,
+          "e_val": 7842.07
+        },
+        {
+          "t": 236,
+          "obs_gain": 0.0949,
+          "wald_lcb": 0.086,
+          "log10_e": 3.996,
+          "e_val": 9911.01
+        },
+        {
+          "t": 240,
+          "obs_gain": 0.0944,
+          "wald_lcb": 0.0855,
+          "log10_e": 4.067,
+          "e_val": 11678.69
+        },
+        {
+          "t": 244,
+          "obs_gain": 0.0937,
+          "wald_lcb": 0.0849,
+          "log10_e": 4.126,
+          "e_val": 13352.22
+        },
+        {
+          "t": 248,
+          "obs_gain": 0.0936,
+          "wald_lcb": 0.0849,
+          "log10_e": 4.226,
+          "e_val": 16841.26
+        },
+        {
+          "t": 252,
+          "obs_gain": 0.0919,
+          "wald_lcb": 0.0832,
+          "log10_e": 4.198,
+          "e_val": 15788.88
+        },
+        {
+          "t": 256,
+          "obs_gain": 0.0918,
+          "wald_lcb": 0.0832,
+          "log10_e": 4.301,
+          "e_val": 19985.48
+        }
+      ]
+    },
+    "best_of_14_null_patch": {
+      "mu": 0.5,
+      "k_bits": 20,
+      "series": [
+        {
+          "t": 1,
+          "obs_gain": -0.0132,
+          "wald_lcb": -0.1777,
+          "log10_e": -6.0,
+          "e_val": 0.0
+        },
+        {
+          "t": 4,
+          "obs_gain": 0.0239,
+          "wald_lcb": -0.0076,
+          "log10_e": -6.0,
+          "e_val": 0.0
+        },
+        {
+          "t": 8,
+          "obs_gain": 0.017,
+          "wald_lcb": -0.0121,
+          "log10_e": -5.998,
+          "e_val": 0.0
+        },
+        {
+          "t": 12,
+          "obs_gain": 0.0031,
+          "wald_lcb": -0.0295,
+          "log10_e": -6.0,
+          "e_val": 0.0
+        },
+        {
+          "t": 16,
+          "obs_gain": 0.0039,
+          "wald_lcb": -0.0226,
+          "log10_e": -6.0,
+          "e_val": 0.0
+        },
+        {
+          "t": 20,
+          "obs_gain": 0.0252,
+          "wald_lcb": -0.0068,
+          "log10_e": -5.946,
+          "e_val": 0.0
+        },
+        {
+          "t": 24,
+          "obs_gain": 0.0237,
+          "wald_lcb": -0.0049,
+          "log10_e": -5.932,
+          "e_val": 0.0
+        },
+        {
+          "t": 28,
+          "obs_gain": 0.0173,
+          "wald_lcb": -0.0099,
+          "log10_e": -5.966,
+          "e_val": 0.0
+        },
+        {
+          "t": 32,
+          "obs_gain": 0.0248,
+          "wald_lcb": -0.0004,
+          "log10_e": -5.878,
+          "e_val": 0.0
+        },
+        {
+          "t": 36,
+          "obs_gain": 0.0287,
+          "wald_lcb": 0.0055,
+          "log10_e": -5.81,
+          "e_val": 0.0
+        },
+        {
+          "t": 40,
+          "obs_gain": 0.0261,
+          "wald_lcb": 0.0047,
+          "log10_e": -5.809,
+          "e_val": 0.0
+        },
+        {
+          "t": 44,
+          "obs_gain": 0.02,
+          "wald_lcb": -0.0004,
+          "log10_e": -5.866,
+          "e_val": 0.0
+        },
+        {
+          "t": 48,
+          "obs_gain": 0.0155,
+          "wald_lcb": -0.0044,
+          "log10_e": -5.916,
+          "e_val": 0.0
+        },
+        {
+          "t": 52,
+          "obs_gain": 0.0154,
+          "wald_lcb": -0.0034,
+          "log10_e": -5.902,
+          "e_val": 0.0
+        },
+        {
+          "t": 56,
+          "obs_gain": 0.0214,
+          "wald_lcb": 0.0024,
+          "log10_e": -5.795,
+          "e_val": 0.0
+        },
+        {
+          "t": 60,
+          "obs_gain": 0.0234,
+          "wald_lcb": 0.0047,
+          "log10_e": -5.744,
+          "e_val": 0.0
+        },
+        {
+          "t": 64,
+          "obs_gain": 0.0218,
+          "wald_lcb": 0.004,
+          "log10_e": -5.749,
+          "e_val": 0.0
+        },
+        {
+          "t": 68,
+          "obs_gain": 0.0186,
+          "wald_lcb": 0.0015,
+          "log10_e": -5.793,
+          "e_val": 0.0
+        },
+        {
+          "t": 72,
+          "obs_gain": 0.0135,
+          "wald_lcb": -0.0033,
+          "log10_e": -5.891,
+          "e_val": 0.0
+        },
+        {
+          "t": 76,
+          "obs_gain": 0.0135,
+          "wald_lcb": -0.0031,
+          "log10_e": -5.886,
+          "e_val": 0.0
+        },
+        {
+          "t": 80,
+          "obs_gain": 0.0136,
+          "wald_lcb": -0.0024,
+          "log10_e": -5.87,
+          "e_val": 0.0
+        },
+        {
+          "t": 84,
+          "obs_gain": 0.013,
+          "wald_lcb": -0.0026,
+          "log10_e": -5.877,
+          "e_val": 0.0
+        },
+        {
+          "t": 88,
+          "obs_gain": 0.0165,
+          "wald_lcb": 0.0012,
+          "log10_e": -5.776,
+          "e_val": 0.0
+        },
+        {
+          "t": 92,
+          "obs_gain": 0.0149,
+          "wald_lcb": 0.0002,
+          "log10_e": -5.801,
+          "e_val": 0.0
+        },
+        {
+          "t": 96,
+          "obs_gain": 0.0137,
+          "wald_lcb": -0.0009,
+          "log10_e": -5.831,
+          "e_val": 0.0
+        },
+        {
+          "t": 100,
+          "obs_gain": 0.0117,
+          "wald_lcb": -0.0025,
+          "log10_e": -5.878,
+          "e_val": 0.0
+        },
+        {
+          "t": 104,
+          "obs_gain": 0.0137,
+          "wald_lcb": -0.0001,
+          "log10_e": -5.805,
+          "e_val": 0.0
+        },
+        {
+          "t": 108,
+          "obs_gain": 0.0129,
+          "wald_lcb": -0.0005,
+          "log10_e": -5.819,
+          "e_val": 0.0
+        },
+        {
+          "t": 112,
+          "obs_gain": 0.0115,
+          "wald_lcb": -0.0017,
+          "log10_e": -5.859,
+          "e_val": 0.0
+        },
+        {
+          "t": 116,
+          "obs_gain": 0.0118,
+          "wald_lcb": -0.001,
+          "log10_e": -5.837,
+          "e_val": 0.0
+        },
+        {
+          "t": 120,
+          "obs_gain": 0.0101,
+          "wald_lcb": -0.0025,
+          "log10_e": -5.886,
+          "e_val": 0.0
+        },
+        {
+          "t": 124,
+          "obs_gain": 0.0091,
+          "wald_lcb": -0.0032,
+          "log10_e": -5.91,
+          "e_val": 0.0
+        },
+        {
+          "t": 128,
+          "obs_gain": 0.0102,
+          "wald_lcb": -0.0019,
+          "log10_e": -5.874,
+          "e_val": 0.0
+        },
+        {
+          "t": 132,
+          "obs_gain": 0.0118,
+          "wald_lcb": -0.0003,
+          "log10_e": -5.817,
+          "e_val": 0.0
+        },
+        {
+          "t": 136,
+          "obs_gain": 0.0125,
+          "wald_lcb": 0.0008,
+          "log10_e": -5.773,
+          "e_val": 0.0
+        },
+        {
+          "t": 140,
+          "obs_gain": 0.0096,
+          "wald_lcb": -0.0025,
+          "log10_e": -5.9,
+          "e_val": 0.0
+        },
+        {
+          "t": 144,
+          "obs_gain": 0.0089,
+          "wald_lcb": -0.003,
+          "log10_e": -5.919,
+          "e_val": 0.0
+        },
+        {
+          "t": 148,
+          "obs_gain": 0.0101,
+          "wald_lcb": -0.0016,
+          "log10_e": -5.873,
+          "e_val": 0.0
+        },
+        {
+          "t": 152,
+          "obs_gain": 0.0106,
+          "wald_lcb": -0.0009,
+          "log10_e": -5.847,
+          "e_val": 0.0
+        },
+        {
+          "t": 156,
+          "obs_gain": 0.0133,
+          "wald_lcb": 0.0018,
+          "log10_e": -5.726,
+          "e_val": 0.0
+        },
+        {
+          "t": 160,
+          "obs_gain": 0.0137,
+          "wald_lcb": 0.0025,
+          "log10_e": -5.691,
+          "e_val": 0.0
+        },
+        {
+          "t": 164,
+          "obs_gain": 0.0141,
+          "wald_lcb": 0.003,
+          "log10_e": -5.662,
+          "e_val": 0.0
+        },
+        {
+          "t": 168,
+          "obs_gain": 0.0146,
+          "wald_lcb": 0.0036,
+          "log10_e": -5.63,
+          "e_val": 0.0
+        },
+        {
+          "t": 172,
+          "obs_gain": 0.0135,
+          "wald_lcb": 0.0027,
+          "log10_e": -5.673,
+          "e_val": 0.0
+        },
+        {
+          "t": 176,
+          "obs_gain": 0.0127,
+          "wald_lcb": 0.002,
+          "log10_e": -5.706,
+          "e_val": 0.0
+        },
+        {
+          "t": 180,
+          "obs_gain": 0.0129,
+          "wald_lcb": 0.0024,
+          "log10_e": -5.682,
+          "e_val": 0.0
+        },
+        {
+          "t": 184,
+          "obs_gain": 0.0122,
+          "wald_lcb": 0.0017,
+          "log10_e": -5.72,
+          "e_val": 0.0
+        },
+        {
+          "t": 188,
+          "obs_gain": 0.0118,
+          "wald_lcb": 0.0014,
+          "log10_e": -5.733,
+          "e_val": 0.0
+        },
+        {
+          "t": 192,
+          "obs_gain": 0.0137,
+          "wald_lcb": 0.0034,
+          "log10_e": -5.618,
+          "e_val": 0.0
+        },
+        {
+          "t": 196,
+          "obs_gain": 0.012,
+          "wald_lcb": 0.0018,
+          "log10_e": -5.71,
+          "e_val": 0.0
+        },
+        {
+          "t": 200,
+          "obs_gain": 0.0124,
+          "wald_lcb": 0.0023,
+          "log10_e": -5.678,
+          "e_val": 0.0
+        },
+        {
+          "t": 204,
+          "obs_gain": 0.0133,
+          "wald_lcb": 0.0033,
+          "log10_e": -5.615,
+          "e_val": 0.0
+        },
+        {
+          "t": 208,
+          "obs_gain": 0.014,
+          "wald_lcb": 0.004,
+          "log10_e": -5.566,
+          "e_val": 0.0
+        },
+        {
+          "t": 212,
+          "obs_gain": 0.0141,
+          "wald_lcb": 0.0042,
+          "log10_e": -5.55,
+          "e_val": 0.0
+        },
+        {
+          "t": 216,
+          "obs_gain": 0.0131,
+          "wald_lcb": 0.0034,
+          "log10_e": -5.601,
+          "e_val": 0.0
+        },
+        {
+          "t": 220,
+          "obs_gain": 0.0129,
+          "wald_lcb": 0.0032,
+          "log10_e": -5.607,
+          "e_val": 0.0
+        },
+        {
+          "t": 224,
+          "obs_gain": 0.012,
+          "wald_lcb": 0.0025,
+          "log10_e": -5.654,
+          "e_val": 0.0
+        },
+        {
+          "t": 228,
+          "obs_gain": 0.0107,
+          "wald_lcb": 0.0012,
+          "log10_e": -5.735,
+          "e_val": 0.0
+        },
+        {
+          "t": 232,
+          "obs_gain": 0.0107,
+          "wald_lcb": 0.0014,
+          "log10_e": -5.726,
+          "e_val": 0.0
+        },
+        {
+          "t": 236,
+          "obs_gain": 0.0114,
+          "wald_lcb": 0.0022,
+          "log10_e": -5.669,
+          "e_val": 0.0
+        },
+        {
+          "t": 240,
+          "obs_gain": 0.0106,
+          "wald_lcb": 0.0015,
+          "log10_e": -5.718,
+          "e_val": 0.0
+        },
+        {
+          "t": 244,
+          "obs_gain": 0.01,
+          "wald_lcb": 0.0008,
+          "log10_e": -5.759,
+          "e_val": 0.0
+        },
+        {
+          "t": 248,
+          "obs_gain": 0.0105,
+          "wald_lcb": 0.0015,
+          "log10_e": -5.719,
+          "e_val": 0.0
+        },
+        {
+          "t": 252,
+          "obs_gain": 0.0111,
+          "wald_lcb": 0.0022,
+          "log10_e": -5.67,
+          "e_val": 0.0
+        },
+        {
+          "t": 256,
+          "obs_gain": 0.0115,
+          "wald_lcb": 0.0027,
+          "log10_e": -5.631,
+          "e_val": 0.0
+        }
+      ]
+    }
+  },
+  "trajectories": [
+    {
+      "run": "b1",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 56.6,
+      "patch_chars": 1239
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 58.7,
+      "patch_chars": 628
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 39.5,
+      "patch_chars": 2083
+    },
+    {
+      "run": "b1",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 94.2,
+      "patch_chars": 649
+    },
+    {
+      "run": "b1",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 266.9,
+      "patch_chars": 705
+    },
+    {
+      "run": "b1",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 49.8,
+      "patch_chars": 687
+    },
+    {
+      "run": "b1",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 7,
+      "secs": 51.2,
+      "patch_chars": 0
+    },
+    {
+      "run": "b1",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 14,
+      "secs": 104.6,
+      "patch_chars": 797
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 35.3,
+      "patch_chars": 569
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 23,
+      "secs": 102.1,
+      "patch_chars": 37712
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 22,
+      "secs": 216.9,
+      "patch_chars": 884
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 53.8,
+      "patch_chars": 773
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 125.4,
+      "patch_chars": 863
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 67.3,
+      "patch_chars": 442
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 82.3,
+      "patch_chars": 591
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 8,
+      "secs": 57.1,
+      "patch_chars": 592
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 54.5,
+      "patch_chars": 764
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 54.3,
+      "patch_chars": 597
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 88.8,
+      "patch_chars": 378
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 51.0,
+      "patch_chars": 323
+    },
+    {
+      "run": "b1",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 97.6,
+      "patch_chars": 632
+    },
+    {
+      "run": "b1",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 8,
+      "secs": 62.9,
+      "patch_chars": 432
+    },
+    {
+      "run": "b1",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 25,
+      "secs": 186.1,
+      "patch_chars": 1343
+    },
+    {
+      "run": "b1",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 14,
+      "secs": 104.3,
+      "patch_chars": 635
+    },
+    {
+      "run": "b1",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 28.7,
+      "patch_chars": 520
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 44.4,
+      "patch_chars": 575
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 87.3,
+      "patch_chars": 1117
+    },
+    {
+      "run": "b1",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 2,
+      "secs": 26.9,
+      "patch_chars": 740
+    },
+    {
+      "run": "b1",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 3,
+      "secs": 192.1,
+      "patch_chars": 515
+    },
+    {
+      "run": "b1",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 74.9,
+      "patch_chars": 453
+    },
+    {
+      "run": "b1",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 117.9,
+      "patch_chars": 526
+    },
+    {
+      "run": "b1",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 14,
+      "secs": 70.0,
+      "patch_chars": 0
+    },
+    {
+      "run": "b1",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 7,
+      "secs": 63.6,
+      "patch_chars": 2565
+    },
+    {
+      "run": "b1",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 31.5,
+      "patch_chars": 557
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 15,
+      "secs": 196.7,
+      "patch_chars": 1046
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 199.6,
+      "patch_chars": 0
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 27,
+      "secs": 416.3,
+      "patch_chars": 3004
+    },
+    {
+      "run": "b31",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 28,
+      "secs": 132.5,
+      "patch_chars": 521
+    },
+    {
+      "run": "b31",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 17,
+      "secs": 334.6,
+      "patch_chars": 929
+    },
+    {
+      "run": "b31",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 13,
+      "secs": 111.8,
+      "patch_chars": 687
+    },
+    {
+      "run": "b31",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 15,
+      "secs": 196.2,
+      "patch_chars": 502
+    },
+    {
+      "run": "b31",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 239.8,
+      "patch_chars": 0
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 12,
+      "secs": 205.8,
+      "patch_chars": 790
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 251.8,
+      "patch_chars": 4784
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 136.0,
+      "patch_chars": 652
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 7,
+      "secs": 238.4,
+      "patch_chars": 1006
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 27,
+      "secs": 280.9,
+      "patch_chars": 1471
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 19,
+      "secs": 154.9,
+      "patch_chars": 610
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 26,
+      "secs": 222.9,
+      "patch_chars": 1682
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 246.5,
+      "patch_chars": 1619
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 161.8,
+      "patch_chars": 709
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 25,
+      "secs": 285.5,
+      "patch_chars": 1142
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 11,
+      "secs": 277.0,
+      "patch_chars": 746
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 21,
+      "secs": 250.1,
+      "patch_chars": 1133
+    },
+    {
+      "run": "b31",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 14,
+      "secs": 187.4,
+      "patch_chars": 766
+    },
+    {
+      "run": "b31",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 27,
+      "secs": 414.7,
+      "patch_chars": 797
+    },
+    {
+      "run": "b31",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 477.7,
+      "patch_chars": 0
+    },
+    {
+      "run": "b31",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 210.3,
+      "patch_chars": 0
+    },
+    {
+      "run": "b31",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 22,
+      "secs": 116.3,
+      "patch_chars": 626
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 11,
+      "secs": 162.0,
+      "patch_chars": 564
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "no_submit"
+      ],
+      "tools": 25,
+      "secs": 484.5,
+      "patch_chars": 0
+    },
+    {
+      "run": "b31",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 16,
+      "secs": 162.5,
+      "patch_chars": 740
+    },
+    {
+      "run": "b31",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 237.4,
+      "patch_chars": 1195
+    },
+    {
+      "run": "b31",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 15,
+      "secs": 140.8,
+      "patch_chars": 503
+    },
+    {
+      "run": "b31",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 16,
+      "secs": 202.3,
+      "patch_chars": 720
+    },
+    {
+      "run": "b31",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 23,
+      "secs": 122.2,
+      "patch_chars": 528
+    },
+    {
+      "run": "b31",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 9,
+      "secs": 271.4,
+      "patch_chars": 3400
+    },
+    {
+      "run": "b31",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 15,
+      "secs": 73.9,
+      "patch_chars": 557
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 22,
+      "secs": 411.7,
+      "patch_chars": 1101
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 358.1,
+      "patch_chars": 2770
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 28,
+      "secs": 188.1,
+      "patch_chars": 0
+    },
+    {
+      "run": "c7",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 26,
+      "secs": 168.5,
+      "patch_chars": 521
+    },
+    {
+      "run": "c7",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 28,
+      "secs": 424.3,
+      "patch_chars": 929
+    },
+    {
+      "run": "c7",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "test_edit_after_failure"
+      ],
+      "tools": 15,
+      "secs": 112.2,
+      "patch_chars": 687
+    },
+    {
+      "run": "c7",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 18,
+      "secs": 172.2,
+      "patch_chars": 502
+    },
+    {
+      "run": "c7",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 3,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 259.8,
+      "patch_chars": 1147
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 12,
+      "secs": 208.6,
+      "patch_chars": 790
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 27,
+      "secs": 345.1,
+      "patch_chars": 18888
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 128.3,
+      "patch_chars": 344
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 14,
+      "secs": 181.3,
+      "patch_chars": 656
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 28,
+      "secs": 237.7,
+      "patch_chars": 879
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 227.2,
+      "patch_chars": 1767
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "empty_edit_sequence"
+      ],
+      "tools": 28,
+      "secs": 181.1,
+      "patch_chars": 0
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 28,
+      "secs": 267.0,
+      "patch_chars": 1568
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 22,
+      "secs": 365.0,
+      "patch_chars": 1055
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 329.8,
+      "patch_chars": 1138
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 277.5,
+      "patch_chars": 746
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 285.6,
+      "patch_chars": 1086
+    },
+    {
+      "run": "c7",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 425.2,
+      "patch_chars": 1218
+    },
+    {
+      "run": "c7",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "empty_edit_sequence"
+      ],
+      "tools": 10,
+      "secs": 422.5,
+      "patch_chars": 0
+    },
+    {
+      "run": "c7",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "empty_edit_sequence"
+      ],
+      "tools": 28,
+      "secs": 149.1,
+      "patch_chars": 0
+    },
+    {
+      "run": "c7",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 24,
+      "secs": 161.9,
+      "patch_chars": 502
+    },
+    {
+      "run": "c7",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 17,
+      "secs": 109.0,
+      "patch_chars": 626
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 172.0,
+      "patch_chars": 577
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 412.2,
+      "patch_chars": 0
+    },
+    {
+      "run": "c7",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 13,
+      "secs": 129.9,
+      "patch_chars": 740
+    },
+    {
+      "run": "c7",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 222.6,
+      "patch_chars": 523
+    },
+    {
+      "run": "c7",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 22,
+      "secs": 191.3,
+      "patch_chars": 539
+    },
+    {
+      "run": "c7",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 14,
+      "secs": 145.6,
+      "patch_chars": 720
+    },
+    {
+      "run": "c7",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 19,
+      "secs": 102.1,
+      "patch_chars": 528
+    },
+    {
+      "run": "c7",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 12,
+      "secs": 188.9,
+      "patch_chars": 2821
+    },
+    {
+      "run": "c7",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 26,
+      "secs": 349.7,
+      "patch_chars": 557
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 17,
+      "secs": 168.4,
+      "patch_chars": 964
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 388.1,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 218.6,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 143.3,
+      "patch_chars": 521
+    },
+    {
+      "run": "k20",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 342.8,
+      "patch_chars": 879
+    },
+    {
+      "run": "k20",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit",
+        "test_edit_after_failure"
+      ],
+      "tools": 19,
+      "secs": 146.5,
+      "patch_chars": 687
+    },
+    {
+      "run": "k20",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 14,
+      "secs": 188.7,
+      "patch_chars": 502
+    },
+    {
+      "run": "k20",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 213.5,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 11,
+      "secs": 152.5,
+      "patch_chars": 790
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 212.8,
+      "patch_chars": 5278
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 107.3,
+      "patch_chars": 1351
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 303.5,
+      "patch_chars": 1325
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 20,
+      "secs": 283.9,
+      "patch_chars": 481
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 20,
+      "secs": 269.0,
+      "patch_chars": 801
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 289.3,
+      "patch_chars": 1228
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "empty_edit_sequence"
+      ],
+      "tools": 20,
+      "secs": 159.4,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 19,
+      "secs": 224.9,
+      "patch_chars": 709
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 18,
+      "secs": 352.1,
+      "patch_chars": 1138
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 14,
+      "secs": 223.0,
+      "patch_chars": 746
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 204.8,
+      "patch_chars": 855
+    },
+    {
+      "run": "k20",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 17,
+      "secs": 99.9,
+      "patch_chars": 766
+    },
+    {
+      "run": "k20",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "empty_edit_sequence"
+      ],
+      "tools": 15,
+      "secs": 421.8,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 364.0,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 156.6,
+      "patch_chars": 502
+    },
+    {
+      "run": "k20",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 14,
+      "secs": 77.7,
+      "patch_chars": 626
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 18,
+      "secs": 218.5,
+      "patch_chars": 658
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 241.1,
+      "patch_chars": 1739
+    },
+    {
+      "run": "k20",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 12,
+      "secs": 150.5,
+      "patch_chars": 740
+    },
+    {
+      "run": "k20",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 247.0,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 190.2,
+      "patch_chars": 503
+    },
+    {
+      "run": "k20",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 14,
+      "secs": 134.1,
+      "patch_chars": 720
+    },
+    {
+      "run": "k20",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "no_submit"
+      ],
+      "tools": 2,
+      "secs": 14.0,
+      "patch_chars": 0
+    },
+    {
+      "run": "k20",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "no_submit"
+      ],
+      "tools": 14,
+      "secs": 424.1,
+      "patch_chars": 2958
+    },
+    {
+      "run": "k20",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 15,
+      "secs": 82.5,
+      "patch_chars": 557
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 18,
+      "secs": 186.5,
+      "patch_chars": 1248
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 49.5,
+      "patch_chars": 611
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 15,
+      "secs": 63.2,
+      "patch_chars": 548
+    },
+    {
+      "run": "v1",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 11,
+      "secs": 66.9,
+      "patch_chars": 521
+    },
+    {
+      "run": "v1",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 16,
+      "secs": 400.8,
+      "patch_chars": 498
+    },
+    {
+      "run": "v1",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 38.2,
+      "patch_chars": 524
+    },
+    {
+      "run": "v1",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 138.0,
+      "patch_chars": 502
+    },
+    {
+      "run": "v1",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 28,
+      "secs": 236.5,
+      "patch_chars": 754
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 11,
+      "secs": 71.5,
+      "patch_chars": 554
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 16,
+      "secs": 124.4,
+      "patch_chars": 1327
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 101.1,
+      "patch_chars": 2529
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 22,
+      "secs": 121.9,
+      "patch_chars": 1105
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 13,
+      "secs": 131.0,
+      "patch_chars": 468
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 18,
+      "secs": 167.3,
+      "patch_chars": 1902
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 66.1,
+      "patch_chars": 1245
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 17,
+      "secs": 125.5,
+      "patch_chars": 478
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 15,
+      "secs": 225.5,
+      "patch_chars": 1516
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 49.5,
+      "patch_chars": 600
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 15,
+      "secs": 106.1,
+      "patch_chars": 1415
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 18,
+      "secs": 140.1,
+      "patch_chars": 968
+    },
+    {
+      "run": "v1",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 55.5,
+      "patch_chars": 447
+    },
+    {
+      "run": "v1",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 5,
+      "secs": 38.3,
+      "patch_chars": 420
+    },
+    {
+      "run": "v1",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 13,
+      "secs": 92.1,
+      "patch_chars": 447
+    },
+    {
+      "run": "v1",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 14,
+      "secs": 142.6,
+      "patch_chars": 1609
+    },
+    {
+      "run": "v1",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 70.2,
+      "patch_chars": 593
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 41.5,
+      "patch_chars": 577
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 77.1,
+      "patch_chars": 1385
+    },
+    {
+      "run": "v1",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 45.9,
+      "patch_chars": 740
+    },
+    {
+      "run": "v1",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 5,
+      "secs": 198.7,
+      "patch_chars": 531
+    },
+    {
+      "run": "v1",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 8,
+      "secs": 66.6,
+      "patch_chars": 761
+    },
+    {
+      "run": "v1",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 45.1,
+      "patch_chars": 720
+    },
+    {
+      "run": "v1",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 21,
+      "secs": 120.7,
+      "patch_chars": 0
+    },
+    {
+      "run": "v1",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 10,
+      "secs": 65.5,
+      "patch_chars": 1832
+    },
+    {
+      "run": "v1",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 29.0,
+      "patch_chars": 557
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 55.8,
+      "patch_chars": 579
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 13,
+      "secs": 82.7,
+      "patch_chars": 980
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 16,
+      "secs": 115.4,
+      "patch_chars": 687
+    },
+    {
+      "run": "v2",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit",
+        "test_edit_after_failure"
+      ],
+      "tools": 24,
+      "secs": 159.6,
+      "patch_chars": 630
+    },
+    {
+      "run": "v2",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 245.9,
+      "patch_chars": 497
+    },
+    {
+      "run": "v2",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 136.6,
+      "patch_chars": 524
+    },
+    {
+      "run": "v2",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 3,
+      "secs": 142.1,
+      "patch_chars": 771
+    },
+    {
+      "run": "v2",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 87.5,
+      "patch_chars": 488
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 7,
+      "secs": 53.1,
+      "patch_chars": 505
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 24,
+      "secs": 280.6,
+      "patch_chars": 12125
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 10,
+      "secs": 83.8,
+      "patch_chars": 1259
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 65.8,
+      "patch_chars": 767
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 46.4,
+      "patch_chars": 559
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 5,
+      "secs": 73.6,
+      "patch_chars": 493
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 12,
+      "secs": 83.1,
+      "patch_chars": 381
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 220.2,
+      "patch_chars": 0
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 5,
+      "secs": 67.9,
+      "patch_chars": 764
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 6,
+      "secs": 38.5,
+      "patch_chars": 521
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 11,
+      "secs": 106.8,
+      "patch_chars": 978
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 8,
+      "secs": 85.7,
+      "patch_chars": 508
+    },
+    {
+      "run": "v2",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 128.3,
+      "patch_chars": 1164
+    },
+    {
+      "run": "v2",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 8,
+      "secs": 76.8,
+      "patch_chars": 707
+    },
+    {
+      "run": "v2",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 8,
+      "secs": 87.7,
+      "patch_chars": 443
+    },
+    {
+      "run": "v2",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 9,
+      "secs": 96.4,
+      "patch_chars": 552
+    },
+    {
+      "run": "v2",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 10,
+      "secs": 41.4,
+      "patch_chars": 626
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 41.1,
+      "patch_chars": 500
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 27,
+      "secs": 220.8,
+      "patch_chars": 3985
+    },
+    {
+      "run": "v2",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 3,
+      "secs": 38.8,
+      "patch_chars": 740
+    },
+    {
+      "run": "v2",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 193.5,
+      "patch_chars": 515
+    },
+    {
+      "run": "v2",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 4,
+      "secs": 82.0,
+      "patch_chars": 869
+    },
+    {
+      "run": "v2",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 11,
+      "secs": 43.0,
+      "patch_chars": 467
+    },
+    {
+      "run": "v2",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 11,
+      "secs": 92.0,
+      "patch_chars": 525
+    },
+    {
+      "run": "v2",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 8,
+      "secs": 103.0,
+      "patch_chars": 2469
+    },
+    {
+      "run": "v2",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 5,
+      "secs": 34.8,
+      "patch_chars": 557
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_15030",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 18,
+      "secs": 352.0,
+      "patch_chars": 1103
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_15280",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "no_submit"
+      ],
+      "tools": 19,
+      "secs": 428.0,
+      "patch_chars": 0
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_15023",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "empty_edit_sequence"
+      ],
+      "tools": 20,
+      "secs": 191.8,
+      "patch_chars": 0
+    },
+    {
+      "run": "v3",
+      "id": "requests_7315",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 149.2,
+      "patch_chars": 521
+    },
+    {
+      "run": "v3",
+      "id": "requests_7328",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 19,
+      "secs": 406.9,
+      "patch_chars": 929
+    },
+    {
+      "run": "v3",
+      "id": "requests_7309",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 20,
+      "secs": 195.8,
+      "patch_chars": 687
+    },
+    {
+      "run": "v3",
+      "id": "requests_7205",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 18,
+      "secs": 175.8,
+      "patch_chars": 502
+    },
+    {
+      "run": "v3",
+      "id": "rich_4079",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 285.4,
+      "patch_chars": 0
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14794",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 16,
+      "secs": 213.3,
+      "patch_chars": 790
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14609",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 280.2,
+      "patch_chars": 2925
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14372",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 156.5,
+      "patch_chars": 1351
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14349",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 14,
+      "secs": 274.3,
+      "patch_chars": 879
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_11355",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 260.8,
+      "patch_chars": 610
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14485",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 20,
+      "secs": 165.7,
+      "patch_chars": 610
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14482",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 181.0,
+      "patch_chars": 622
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14455",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "no_submit"
+      ],
+      "tools": 20,
+      "secs": 223.9,
+      "patch_chars": 0
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14430",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 14,
+      "secs": 210.6,
+      "patch_chars": 709
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_5077",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 18,
+      "secs": 287.8,
+      "patch_chars": 1138
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_5624",
+      "repo": "fastapi/fastapi",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 20,
+      "secs": 270.7,
+      "patch_chars": 1919
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14246",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 251.2,
+      "patch_chars": 0
+    },
+    {
+      "run": "v3",
+      "id": "rich_3718",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 15,
+      "secs": 133.2,
+      "patch_chars": 766
+    },
+    {
+      "run": "v3",
+      "id": "rich_3934",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [
+        "test_edit_after_failure"
+      ],
+      "tools": 20,
+      "secs": 350.1,
+      "patch_chars": 433
+    },
+    {
+      "run": "v3",
+      "id": "rich_3938",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 396.7,
+      "patch_chars": 433
+    },
+    {
+      "run": "v3",
+      "id": "rich_3882",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 16,
+      "secs": 85.1,
+      "patch_chars": 502
+    },
+    {
+      "run": "v3",
+      "id": "rich_3905",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 14,
+      "secs": 142.0,
+      "patch_chars": 626
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14791",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 11,
+      "secs": 142.2,
+      "patch_chars": 482
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_15745",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 0,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 350.9,
+      "patch_chars": 1610
+    },
+    {
+      "run": "v3",
+      "id": "fastapi_14303",
+      "repo": "fastapi/fastapi",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 17,
+      "secs": 115.2,
+      "patch_chars": 740
+    },
+    {
+      "run": "v3",
+      "id": "requests_6629",
+      "repo": "psf/requests",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 20,
+      "secs": 230.2,
+      "patch_chars": 523
+    },
+    {
+      "run": "v3",
+      "id": "rich_3296",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": false,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [
+        "unverified_after_last_edit"
+      ],
+      "tools": 20,
+      "secs": 286.4,
+      "patch_chars": 1578
+    },
+    {
+      "run": "v3",
+      "id": "rich_3675",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 20,
+      "secs": 167.4,
+      "patch_chars": 720
+    },
+    {
+      "run": "v3",
+      "id": "rich_3518",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 2,
+      "reasons": [],
+      "tools": 20,
+      "secs": 118.3,
+      "patch_chars": 1357
+    },
+    {
+      "run": "v3",
+      "id": "rich_3052",
+      "repo": "Textualize/rich",
+      "resolved": false,
+      "adm": true,
+      "strict_adm": true,
+      "scratch": 0,
+      "reasons": [],
+      "tools": 12,
+      "secs": 277.8,
+      "patch_chars": 3390
+    },
+    {
+      "run": "v3",
+      "id": "rich_3006",
+      "repo": "Textualize/rich",
+      "resolved": true,
+      "adm": true,
+      "strict_adm": false,
+      "scratch": 1,
+      "reasons": [],
+      "tools": 17,
+      "secs": 330.1,
+      "patch_chars": 557
+    }
+  ],
+  "confirmatory_59200": [
+    {
+      "proposer": "mixed",
+      "gate": "batch",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0038,
+      "mean_d_true": 0.0871,
+      "mean_swaps": 4.65
+    },
+    {
+      "proposer": "mixed",
+      "gate": "mdl",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0006,
+      "mean_d_true": 0.0904,
+      "mean_swaps": 3.44
+    },
+    {
+      "proposer": "mixed",
+      "gate": "seq",
+      "n_runs": 5600,
+      "mean_overclaim": 0.0061,
+      "mean_d_true": 0.1,
+      "mean_swaps": 8.91
+    },
+    {
+      "proposer": "mixed",
+      "gate": "seqm",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0007,
+      "mean_d_true": 0.0962,
+      "mean_swaps": 4.19
+    },
+    {
+      "proposer": "patch",
+      "gate": "batch",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0083,
+      "mean_d_true": 0.0,
+      "mean_swaps": 0.0
+    },
+    {
+      "proposer": "patch",
+      "gate": "mdl",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0,
+      "mean_d_true": 0.0,
+      "mean_swaps": 0.0
+    },
+    {
+      "proposer": "patch",
+      "gate": "seq",
+      "n_runs": 5600,
+      "mean_overclaim": 0.0209,
+      "mean_d_true": 0.0,
+      "mean_swaps": 0.0
+    },
+    {
+      "proposer": "patch",
+      "gate": "seqm",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0,
+      "mean_d_true": 0.0,
+      "mean_swaps": 0.0
+    },
+    {
+      "proposer": "pool",
+      "gate": "batch",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0019,
+      "mean_d_true": 0.091,
+      "mean_swaps": 6.2
+    },
+    {
+      "proposer": "pool",
+      "gate": "mdl",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0007,
+      "mean_d_true": 0.0948,
+      "mean_swaps": 3.8
+    },
+    {
+      "proposer": "pool",
+      "gate": "seq",
+      "n_runs": 4800,
+      "mean_overclaim": 0.002,
+      "mean_d_true": 0.1056,
+      "mean_swaps": 13.79
+    },
+    {
+      "proposer": "pool",
+      "gate": "seqm",
+      "n_runs": 4800,
+      "mean_overclaim": 0.0007,
+      "mean_d_true": 0.1011,
+      "mean_swaps": 4.69
+    }
+  ]
+}

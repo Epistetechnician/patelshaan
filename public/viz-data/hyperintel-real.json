@@ -1,0 +1,152 @@
+{
+  "sources": [
+    {
+      "path": "site/src/replays.json",
+      "scope": "repo",
+      "sha256": "8a4cd177534b611965d5de7bb85b205461883133417bd07a6a89f7df337f19cc"
+    },
+    {
+      "path": "../hyperintel/crates/hyperintel-cli/tests/fixtures/evidence-v1.json",
+      "scope": "sibling",
+      "sha256": "37d1d6d31af51991d6f61a0573a22236affe42196f1a1f562541df76749bb8bb"
+    },
+    {
+      "path": "../hyperintel/crates/hyperintel-cli/tests/fixtures/evidence-v2.json",
+      "scope": "sibling",
+      "sha256": "6eb20080ba57f359ddfd9cde249104b4ea013db2dd503c29cbf994f538bb2e25"
+    },
+    {
+      "path": "../hyperintel/crates/hyperintel-cli/tests/fixtures/evidence-v3.json",
+      "scope": "sibling",
+      "sha256": "92ebcf69aefc0e379655afc69c1265fb12793f65e0c4a7d89c922e1dcbb209ea"
+    },
+    {
+      "path": "../hyperintel/crates/hyperintel-cli/tests/fixtures/evidence-v4.json",
+      "scope": "sibling",
+      "sha256": "64e2b6410a2323df608c0e83ac554a46be7bfcee2f5feb8a45ce66b36921df51"
+    }
+  ],
+  "fixtures": [
+    {
+      "version": "V1",
+      "bytes": 20024,
+      "sha256": "37d1d6d31af519"
+    },
+    {
+      "version": "V2",
+      "bytes": 21697,
+      "sha256": "6eb20080ba57f3"
+    },
+    {
+      "version": "V3",
+      "bytes": 25732,
+      "sha256": "92ebcf69aefc0e"
+    },
+    {
+      "version": "V4",
+      "bytes": 30419,
+      "sha256": "64e2b6410a2323"
+    }
+  ],
+  "ignored_tests": 2,
+  "total_tests": 114,
+  "highlighted_total": 56,
+  "modules": [
+    {
+      "module": "core",
+      "total": 90,
+      "highlighted": 46,
+      "samples": [
+        "contract_cli_process_rejects_missing_trust_and_unknown_schema",
+        "contract_cli_process_rejects_invalid_argument_and_file_boundaries",
+        "contract_reroute_rejects_cancelled_or_partial_prior_attempt"
+      ]
+    },
+    {
+      "module": "control",
+      "total": 10,
+      "highlighted": 5,
+      "samples": [
+        "contract_wrong_purpose_registry_entry_never_substitutes",
+        "contract_duplicate_key_insert_is_rejected_and_original_remains_trusted",
+        "contract_non_ready_assertions_fail_closed"
+      ]
+    },
+    {
+      "module": "canonical",
+      "total": 3,
+      "highlighted": 1,
+      "samples": [
+        "contract_canonical_json_rejects_float_and_non_nfc",
+        "contract_canonical_json_orders_object_keys"
+      ]
+    },
+    {
+      "module": "envelope",
+      "total": 2,
+      "highlighted": 1,
+      "samples": [
+        "contract_conjoin_only_weakens_and_discharges_assumptions",
+        "contract_assurance_admission_is_fail_closed"
+      ]
+    },
+    {
+      "module": "contracts",
+      "total": 2,
+      "highlighted": 1,
+      "samples": [
+        "contract_principal_and_operation_mismatch_fail_before_secret_and_economics",
+        "contract_exact_composition_resolves_executes_journals_reconciles_and_redacts"
+      ]
+    },
+    {
+      "module": "signature",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "contract_statement_signature_detects_tampering"
+      ]
+    },
+    {
+      "module": "evidence",
+      "total": 1,
+      "highlighted": 1,
+      "samples": [
+        "contract_evidence_set_verifies_offline_and_rejects_tamper"
+      ]
+    },
+    {
+      "module": "tests",
+      "total": 2,
+      "highlighted": 0,
+      "samples": [
+        "contract_cli_dispatches_only_explicit_v1_through_v4_bundle_schemas",
+        "contract_preexisting_consumption_and_existing_start_never_implicitly_execute"
+      ]
+    },
+    {
+      "module": "exact",
+      "total": 1,
+      "highlighted": 0,
+      "samples": [
+        "contract_exact_amount_rounds_up_and_never_wraps"
+      ]
+    },
+    {
+      "module": "timestamp",
+      "total": 1,
+      "highlighted": 0,
+      "samples": [
+        "contract_timestamp_is_canonical_and_checked"
+      ]
+    },
+    {
+      "module": "identifiers",
+      "total": 1,
+      "highlighted": 0,
+      "samples": [
+        "contract_digest_and_protocol_id_round_trip"
+      ]
+    }
+  ]
+}

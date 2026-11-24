@@ -31,9 +31,25 @@ export default function Root() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('paper', isPaperRoute)
-    const themeMeta = document.getElementById('theme-color-meta')
-    if (themeMeta) {
-      themeMeta.setAttribute('content', isPaperRoute ? '#fdfcfa' : '#08090a')
+    if (isPaperRoute) {
+      let saved: string | null = null
+      try {
+        saved = localStorage.getItem('rp-theme-v2')
+      } catch {
+        /* storage unavailable */
+      }
+      const isLight = saved === 'light'
+      document.documentElement.classList.toggle('light-mode', isLight)
+      const themeMeta = document.getElementById('theme-color-meta')
+      if (themeMeta) {
+        themeMeta.setAttribute('content', isLight ? '#ffffff' : '#141414')
+      }
+    } else {
+      document.documentElement.classList.remove('light-mode')
+      const themeMeta = document.getElementById('theme-color-meta')
+      if (themeMeta) {
+        themeMeta.setAttribute('content', '#08090a')
+      }
     }
   }, [isPaperRoute])
 

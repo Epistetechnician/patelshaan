@@ -10,10 +10,12 @@ import {
   type WheelEvent,
 } from 'react'
 import {
+  DEFAULT_SUGGESTIONS,
   SHELL_COMMANDS,
   executeLocalCommand,
   parseAnsi,
   resolveWorldId,
+  type SuggestionItem,
 } from '../lib/etherShell'
 import {
   EtherFieldRenderer,
@@ -29,6 +31,7 @@ import {
 } from '../lib/etherWorlds'
 
 type ConnectionState = 'connecting' | 'live' | 'fallback'
+type DockTab = 'explore' | 'ask' | 'worlds'
 
 type Telemetry = {
   node?: string
@@ -65,61 +68,93 @@ function getInitialWsUrl(): string {
   return DEFAULT_PROD_WS
 }
 
-const QUICK_PROMPTS: { id: string; label: string; command: string }[] = [
+const EXPLORE_CHIPS: SuggestionItem[] = [
+  { label: '5-stop tour', command: 'tour' },
+  { label: 'research archive', command: 'research' },
+  { label: 'psychohistory v2', command: 'psychohistory' },
+  { label: 'kailas mandala', command: 'kailas' },
+  { label: 'honest nulls', command: 'nulls' },
+  { label: 'e-process compare', command: 'eprocess compare' },
+  { label: 'qr nullspace', command: 'qrproj' },
+  { label: 'essays', command: 'essays' },
+  { label: 'scale timeline', command: 'timeline' },
+]
+
+const ASK_CHIPS: SuggestionItem[] = [
   {
-    id: 'containment',
+    label: 'what connects your work?',
+    command: 'What connects your work across AI safety, markets, and Kailas?',
+  },
+  {
     label: 'formal containment',
     command: 'How do you keep untrusted agent proposers from executing unsafe actions?',
   },
   {
-    id: 'holdout',
     label: 'holdout certificates',
     command: 'How do you keep RSI loops from overfitting their judge?',
   },
   {
-    id: 'nulls',
-    label: 'honest nulls',
-    command: 'nulls',
+    label: 'why track 4 failed → track 5',
+    command: 'Why did ARC Membrane Track 4 fail and how did Track 5 QR-SFT fix it?',
   },
   {
-    id: 'psychohistory-data',
-    label: 'psychohistory v2',
-    command: 'psychohistory',
+    label: 'kailas double dissociation',
+    command: 'How did the Kailas two-clock null become a spatial mandala finding?',
   },
   {
-    id: 'eprocess',
-    label: 'e-process sim',
-    command: 'eprocess signal',
-  },
-  {
-    id: 'qrproj',
-    label: 'qr nullspace',
-    command: 'qrproj',
+    label: 'public goods stack',
+    command: 'How do you think about durable public goods funding?',
   },
 ]
 
 const WELCOME_BANNER =
-  '\x1b[1m\x1b[38;2;223;208;178mSPATEL // ETHER SANDBOX\x1b[0m  ' +
-  '\x1b[38;2;138;134;126m(personal model · research archive · multidimensional ASCII portals)\x1b[0m\n' +
-  '\x1b[38;2;220;216;206mAsk any question directly in real time, run \x1b[38;2;223;208;178mhelp\x1b[38;2;220;216;206m / \x1b[38;2;223;208;178mresearch\x1b[38;2;220;216;206m / \x1b[38;2;223;208;178meprocess\x1b[38;2;220;216;206m,\n' +
-  'or step into a high-res world with \x1b[38;2;132;204;224mtravel universal\x1b[38;2;220;216;206m or any \x1b[38;2;126;214;168m✦ portal\x1b[38;2;220;216;206m chip above.\x1b[0m\n'
+  '\x1b[1m\x1b[38;2;223;208;178m╭─ SPATEL // ETHER HARNESS\x1b[0m  ' +
+  '\x1b[38;2;138;134;126m(personal model · verified research · multidimensional ASCII worlds)\x1b[0m\n' +
+  '\x1b[38;2;138;134;126m╰─\x1b[0m \x1b[38;2;220;216;206mAsk anything directly, click `\x1b[38;2;223;208;178mtour\x1b[38;2;220;216;206m` for a 5-stop walkthrough, ' +
+  'run `\x1b[38;2;223;208;178meprocess compare\x1b[38;2;220;216;206m` or `\x1b[38;2;132;204;224mworlds\x1b[38;2;220;216;206m`.\x1b[0m\n'
 
-function AnsiText({ text }: { text: string }) {
+function stripAnsi(text: string): string {
+  const esc = String.fromCharCode(27)
+  return text.replace(new RegExp(`${esc}\\[[0-9;]*m`, 'g'), '')
+}
+
+function AnsiRichText({
+  text,
+  onRunCommand,
+}: {
+  text: string
+  onRunCommand: (cmd: string) => void
+}) {
   const spans = useMemo(() => parseAnsi(text), [text])
   return (
     <>
-      {spans.map((span, idx) => (
-        <span
-          key={idx}
-          style={{
-            color: span.color,
-            fontWeight: span.bold ? 600 : undefined,
-            opacity: span.dim ? 0.65 : undefined,
-          }}
-        >
-          {span.text}
-        </span>
-      ))}
+      {spans.map((span, idx) =>
+        span.command ? (
+          <button
+            key={idx}
+            type="button"
+            className="ether-inline-cmd"
+            onClick={(e) => {
+              e.stopPropagation()
+              onRunCommand(span.command!)
+            }}
+            title={`Run: ${span.command}`}
+          >
+            {span.text}
+          </button>
+        ) : (
+          <span
+            key={idx}
+            style={{
+              color: span.color,
+              fontWeight: span.bold ? 600 : undefined,
+              opacity: span.dim ? 0.68 : undefined,
+            }}
+          >
+            {span.text}
+          </span>
+        ),
+      )}
     </>
   )
 }
@@ -130,11 +165,15 @@ export function EtherTerminal() {
   const [showEndpointBar, setShowEndpointBar] = useState(false)
   const [connState, setConnState] = useState<ConnectionState>('fallback')
   const [telemetry, setTelemetry] = useState<Telemetry | null>(null)
+  const [busyLabel, setBusyLabel] = useState<string | null>(null)
+  const [dockTab, setDockTab] = useState<DockTab>('explore')
   const [expanded, setExpanded] = useState(false)
+  const [copiedBlockId, setCopiedBlockId] = useState<number | null>(null)
 
   const [blocks, setBlocks] = useState<TerminalBlock[]>([
     { id: 1, kind: 'output', text: WELCOME_BANNER },
   ])
+  const [suggestions, setSuggestions] = useState<SuggestionItem[]>(DEFAULT_SUGGESTIONS)
   const [inputValue, setInputValue] = useState('')
   const [history, setHistory] = useState<string[]>([])
   const [historyIdx, setHistoryIdx] = useState<number>(-1)
@@ -145,14 +184,19 @@ export function EtherTerminal() {
   const [palette, setPalette] = useState<PaletteId>('obsidian')
   const [paused, setPaused] = useState(false)
   const [showHud, setShowHud] = useState(true)
+  const [worldResLabel, setWorldResLabel] = useState('BRAILLE')
   const [hudText, setHudText] = useState(() =>
     getWorldHud('universal', { yaw: 0, pitch: 0, zoom: 1, time: 0 }),
   )
 
   const wsRef = useRef<WebSocket | null>(null)
+  const connectRef = useRef<((url: string, silent?: boolean) => void) | null>(null)
+  const manualDisconnectRef = useRef(false)
+  const reconnectTimerRef = useRef<number | null>(null)
   const nextIdRef = useRef(2)
   const streamBlockIdRef = useRef<number | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
+  const stickToBottomRef = useRef(true)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const viewportRef = useRef<HTMLDivElement | null>(null)
@@ -164,11 +208,21 @@ export function EtherTerminal() {
     y: 0,
   })
 
+  // Inline ghost autocomplete hint
+  const ghostHint = useMemo(() => {
+    const trimmed = inputValue.trimStart()
+    if (!trimmed) return ''
+    const lower = trimmed.toLowerCase()
+    const hit = SHELL_COMMANDS.find((c) => c.startsWith(lower) && c.length > lower.length)
+    return hit ? hit.slice(lower.length) : ''
+  }, [inputValue])
+
   const appendBlock = useCallback(
     (kind: 'command' | 'output', text: string, promptHost?: string) => {
       const id = nextIdRef.current++
       streamBlockIdRef.current = kind === 'output' ? id : null
-      setBlocks((prev) => [...prev.slice(-80), { id, kind, text, promptHost }])
+      stickToBottomRef.current = true
+      setBlocks((prev) => [...prev.slice(-90), { id, kind, text, promptHost }])
     },
     [],
   )
@@ -186,7 +240,7 @@ export function EtherTerminal() {
       }
       const id = nextIdRef.current++
       streamBlockIdRef.current = id
-      return [...prev.slice(-80), { id, kind: 'output', text: chunk }]
+      return [...prev.slice(-90), { id, kind: 'output', text: chunk }]
     })
   }, [])
 
@@ -195,10 +249,19 @@ export function EtherTerminal() {
     setActiveWorld(worldId)
     setPalette(meta.defaultPalette)
     setPaused(false)
+    setDockTab('worlds')
     camRef.current = { yaw: 0, pitch: 0.12, zoom: 1, time: 0 }
   }, [])
 
+  const clearReconnectTimer = useCallback(() => {
+    if (reconnectTimerRef.current !== null) {
+      window.clearTimeout(reconnectTimerRef.current)
+      reconnectTimerRef.current = null
+    }
+  }, [])
+
   const disconnectSocket = useCallback(() => {
+    clearReconnectTimer()
     const ws = wsRef.current
     if (ws) {
       ws.onopen = null
@@ -212,12 +275,14 @@ export function EtherTerminal() {
       }
       wsRef.current = null
     }
+    setBusyLabel(null)
     setConnState('fallback')
     setTelemetry(null)
-  }, [])
+  }, [clearReconnectTimer])
 
   const connectToEndpoint = useCallback(
     (targetUrl: string, silent = false) => {
+      manualDisconnectRef.current = false
       disconnectSocket()
       if (!/^wss?:\/\//i.test(targetUrl)) {
         if (!silent) {
@@ -239,6 +304,7 @@ export function EtherTerminal() {
 
       setConnState('connecting')
       let settled = false
+      let wasLive = false
       let ws: WebSocket
       try {
         ws = new WebSocket(targetUrl)
@@ -260,14 +326,15 @@ export function EtherTerminal() {
           if (!silent) {
             appendBlock(
               'output',
-              `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}) — running in instant local sandbox mode.\x1b[0m\n`,
+              `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}) — instant local sandbox active.\x1b[0m\n`,
             )
           }
         }
-      }, 2200)
+      }, 2800)
 
       ws.onopen = () => {
         settled = true
+        wasLive = true
         window.clearTimeout(timeoutId)
         setConnState('live')
         streamBlockIdRef.current = null
@@ -281,12 +348,19 @@ export function EtherTerminal() {
             type?: string
             data?: unknown
             world?: string
+            active?: boolean
+            label?: string
+            items?: SuggestionItem[]
           }
           if (msg.type === 'ansi' && typeof msg.data === 'string') {
             appendStreamChunk(msg.data)
           } else if (msg.type === 'clear') {
             streamBlockIdRef.current = null
             setBlocks([])
+          } else if (msg.type === 'busy') {
+            setBusyLabel(msg.active ? msg.label || 'streaming from raspberrypi-5…' : null)
+          } else if (msg.type === 'suggestions' && Array.isArray(msg.items)) {
+            setSuggestions(msg.items.slice(0, 5))
           } else if (msg.type === 'telemetry' && msg.data && typeof msg.data === 'object') {
             setTelemetry(msg.data as Telemetry)
           } else if (msg.type === 'portal' && typeof msg.world === 'string') {
@@ -310,34 +384,43 @@ export function EtherTerminal() {
         window.clearTimeout(timeoutId)
         if (wsRef.current === ws) {
           wsRef.current = null
+          setBusyLabel(null)
           setConnState('fallback')
           setTelemetry(null)
+          if (wasLive && !manualDisconnectRef.current) {
+            reconnectTimerRef.current = window.setTimeout(() => {
+              connectRef.current?.(targetUrl, true)
+            }, 3500)
+          }
         }
       }
     },
     [appendBlock, appendStreamChunk, disconnectSocket, openWorld],
   )
 
-  // Auto-dial RPi5 on mount (silent fast fallback to local sandbox if offline)
+  useEffect(() => {
+    connectRef.current = connectToEndpoint
+  }, [connectToEndpoint])
+
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       connectToEndpoint(getInitialWsUrl(), true)
     }, 0)
     return () => {
       window.clearTimeout(timerId)
+      manualDisconnectRef.current = true
       disconnectSocket()
     }
   }, [connectToEndpoint, disconnectSocket])
 
-  // Auto-scroll transcript to bottom on new output
+  // Smart autoscroll: only scroll when pinned near bottom
   useEffect(() => {
     const el = scrollRef.current
-    if (el && !activeWorld) {
+    if (el && !activeWorld && stickToBottomRef.current) {
       el.scrollTop = el.scrollHeight
     }
-  }, [blocks, activeWorld])
+  }, [blocks, activeWorld, busyLabel])
 
-  // Lock body scroll when fullscreen theater mode is active
   useEffect(() => {
     if (!expanded) return
     const prev = document.body.style.overflow
@@ -346,6 +429,21 @@ export function EtherTerminal() {
       document.body.style.overflow = prev
     }
   }, [expanded])
+
+  const handleScroll = () => {
+    const el = scrollRef.current
+    if (!el) return
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+    stickToBottomRef.current = distanceFromBottom < 48
+  }
+
+  const handleInterrupt = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: 'interrupt' }))
+    }
+    setBusyLabel(null)
+    appendBlock('output', '\x1b[38;2;138;134;126m^C interrupted\x1b[0m\n')
+  }, [appendBlock])
 
   const runLine = useCallback(
     (rawLine: string) => {
@@ -356,11 +454,10 @@ export function EtherTerminal() {
       setHistory((prev) => [line, ...prev.filter((item) => item !== line)].slice(0, 60))
       setHistoryIdx(-1)
 
-      const promptHost = connState === 'live' ? telemetry?.node || 'rpi5' : 'sandbox'
+      const promptHost = connState === 'live' ? telemetry?.node || 'rpi5' : 'ether'
       appendBlock('command', line, promptHost)
       streamBlockIdRef.current = null
 
-      // Client-local connection commands always run locally
       const lower = line.toLowerCase()
       if (lower === 'connect' || lower.startsWith('connect ')) {
         const target = line.slice(7).trim() || wsUrl
@@ -372,6 +469,7 @@ export function EtherTerminal() {
         return
       }
       if (lower === 'disconnect') {
+        manualDisconnectRef.current = true
         disconnectSocket()
         appendBlock(
           'output',
@@ -380,21 +478,23 @@ export function EtherTerminal() {
         return
       }
 
-      // Live RPi5 path over WebSocket
       const ws = wsRef.current
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'input', line }))
         return
       }
 
-      // Seamless in-browser grounded sandbox fallback
       const res = executeLocalCommand(line, wsUrl)
       if (res.clear) {
         setBlocks([])
+        setSuggestions(DEFAULT_SUGGESTIONS)
         return
       }
       if (res.ansi) {
         appendBlock('output', res.ansi)
+      }
+      if (res.suggestions && res.suggestions.length > 0) {
+        setSuggestions(res.suggestions)
       }
       if (res.portal) {
         openWorld(res.portal)
@@ -435,27 +535,27 @@ export function EtherTerminal() {
         setHistoryIdx(next)
         setInputValue(history[next])
       }
-    } else if (e.key === 'Tab') {
-      e.preventDefault()
-      const cur = inputValue.trim().toLowerCase()
-      if (!cur) return
-      const parts = cur.split(/\s+/)
-      if (parts.length === 1) {
-        const hit = SHELL_COMMANDS.find((c) => c.startsWith(parts[0]))
-        if (hit) setInputValue(hit === 'travel' || hit === 'ask' ? `${hit} ` : hit)
-      } else if (parts[0] === 'travel' || parts[0] === 'enter' || parts[0] === 'portal') {
-        const hit = WORLD_CATALOG.find((w) => w.id.startsWith(parts[1]))
-        if (hit) setInputValue(`${parts[0]} ${hit.id}`)
+    } else if (e.key === 'Tab' || (e.key === 'ArrowRight' && ghostHint && e.currentTarget.selectionStart === inputValue.length)) {
+      if (ghostHint) {
+        e.preventDefault()
+        setInputValue((prev) => prev + ghostHint)
       }
     } else if (e.key === 'l' && e.ctrlKey) {
       e.preventDefault()
       setBlocks([])
     } else if (e.key === 'c' && e.ctrlKey) {
       e.preventDefault()
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({ type: 'interrupt' }))
-      }
-      appendBlock('output', '\x1b[38;2;138;134;126m^C\x1b[0m\n')
+      handleInterrupt()
+    }
+  }
+
+  const copyBlock = async (block: TerminalBlock) => {
+    try {
+      await navigator.clipboard.writeText(stripAnsi(block.text).trim())
+      setCopiedBlockId(block.id)
+      window.setTimeout(() => setCopiedBlockId((cur) => (cur === block.id ? null : cur)), 1400)
+    } catch {
+      /* ignore */
     }
   }
 
@@ -481,6 +581,9 @@ export function EtherTerminal() {
         setShowHud((v) => !v)
       } else if (e.key === 'f' || e.key === 'F') {
         setExpanded((v) => !v)
+      } else if (e.key === 'i' || e.key === 'I') {
+        const meta = WORLD_BY_ID[activeWorld]
+        runLine(`Explain the science and philosophy behind ${meta.name} (${meta.span}).`)
       } else if (e.key === '+' || e.key === '=') {
         camRef.current.zoom = Math.min(2.8, camRef.current.zoom * 1.12)
       } else if (e.key === '-' || e.key === '_') {
@@ -492,7 +595,7 @@ export function EtherTerminal() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [activeWorld, openWorld])
+  }, [activeWorld, openWorld, runLine])
 
   // High-FPS high-resolution ASCII / Braille world animation loop
   useEffect(() => {
@@ -521,6 +624,13 @@ export function EtherTerminal() {
       canvas.style.width = `${widthPx}px`
       canvas.style.height = `${heightPx}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+      const fontSize = widthPx >= 820 ? 12 : widthPx >= 560 ? 11 : 10
+      const cols = Math.max(36, Math.floor(widthPx / Math.max(6, Math.round(fontSize * 0.62))))
+      const rows = Math.max(16, Math.floor(heightPx / Math.max(11, Math.round(fontSize * 1.12))))
+      const multX = renderMode === 'braille' ? 2 : 1
+      const multY = renderMode === 'braille' ? 4 : renderMode === 'halfblock' ? 2 : 1
+      setWorldResLabel(`${cols * multX}×${rows * multY} ${renderMode.toUpperCase()}`)
     }
 
     syncSize()
@@ -534,7 +644,7 @@ export function EtherTerminal() {
     const tick = (now: number) => {
       rafId = window.requestAnimationFrame(tick)
       const dt = Math.min(0.08, (now - lastFrame) / 1000)
-      if (dt < 0.028) return // ~33fps crisp cadence
+      if (dt < 0.028) return
       lastFrame = now
 
       if (!paused) {
@@ -595,10 +705,10 @@ export function EtherTerminal() {
 
   const statusBadge =
     connState === 'live'
-      ? `● live · ${telemetry?.node || 'rpi5'}${telemetry?.cpu_temp_c != null ? ` ${telemetry.cpu_temp_c}°C` : ''}`
+      ? `● live · ${telemetry?.node || 'rpi5'}${telemetry?.cpu_temp_c != null ? ` · ${telemetry.cpu_temp_c}°C` : ''}`
       : connState === 'connecting'
         ? '◐ dialing rpi5…'
-        : '○ local sandbox · rpi5 ready'
+        : '○ local sandbox · click to dial'
 
   return (
     <div
@@ -608,12 +718,12 @@ export function EtherTerminal() {
       {/* Top Bar */}
       <div className="ether-terminal__head">
         <div className="ether-terminal__brand">
-          <span className="ether-terminal__title">spatel — sandboxed ether terminal</span>
+          <span className="ether-terminal__title">spatel — ether harness</span>
           <button
             type="button"
             className={`ether-status-pill is-${connState}`}
             onClick={() => setShowEndpointBar((v) => !v)}
-            title="Click to configure or reconnect Raspberry Pi 5 WebSocket tunnel"
+            title="Configure or reconnect Raspberry Pi 5 WebSocket tunnel"
           >
             {statusBadge}
           </button>
@@ -623,7 +733,7 @@ export function EtherTerminal() {
           {activeWorld ? (
             <button
               type="button"
-              className="ether-head-btn"
+              className="ether-head-btn is-accent"
               onClick={() => {
                 setActiveWorld(null)
                 window.setTimeout(() => inputRef.current?.focus(), 30)
@@ -631,7 +741,16 @@ export function EtherTerminal() {
             >
               ← prompt
             </button>
-          ) : null}
+          ) : (
+            <button
+              type="button"
+              className="ether-head-btn"
+              onClick={() => runLine('clear')}
+              title="Clear terminal scrollback (Ctrl+L)"
+            >
+              clear
+            </button>
+          )}
           <button
             type="button"
             className="ether-head-btn"
@@ -670,6 +789,7 @@ export function EtherTerminal() {
               type="button"
               className="ether-head-btn"
               onClick={() => {
+                manualDisconnectRef.current = true
                 disconnectSocket()
                 setShowEndpointBar(false)
               }}
@@ -680,36 +800,80 @@ export function EtherTerminal() {
         </form>
       ) : null}
 
-      {/* Quick-Launch Chips: Personal Model + Research + High-Res ASCII Worlds */}
-      <div className="ether-chips" role="toolbar" aria-label="Personal model prompts and ASCII worlds">
-        <div className="ether-chips__row">
-          {QUICK_PROMPTS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="terminal-prompt-chip"
-              onClick={() => runLine(item.command)}
-            >
-              {item.label}
-            </button>
-          ))}
+      {/* Clean Tabbed Explorer Dock: Explore · Ask Model · 8 ASCII Worlds */}
+      <div className="ether-dock">
+        <div className="ether-dock__tabs" role="tablist" aria-label="Terminal exploration modes">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={dockTab === 'explore'}
+            className={`ether-dock__tab${dockTab === 'explore' ? ' is-active' : ''}`}
+            onClick={() => setDockTab('explore')}
+          >
+            Explore
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={dockTab === 'ask'}
+            className={`ether-dock__tab${dockTab === 'ask' ? ' is-active' : ''}`}
+            onClick={() => setDockTab('ask')}
+          >
+            Ask Model
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={dockTab === 'worlds'}
+            className={`ether-dock__tab ether-dock__tab--worlds${dockTab === 'worlds' ? ' is-active' : ''}`}
+            onClick={() => setDockTab('worlds')}
+          >
+            ✦ Worlds (8)
+          </button>
         </div>
-        <div className="ether-chips__row ether-chips__row--worlds">
-          {WORLD_CATALOG.map((w) => (
-            <button
-              key={w.id}
-              type="button"
-              className={`terminal-prompt-chip terminal-prompt-chip--world${activeWorld === w.id ? ' is-active' : ''}`}
-              onClick={() => openWorld(w.id)}
-              title={`${w.name} — ${w.span}`}
-            >
-              ✦ {w.shortLabel}
-            </button>
-          ))}
+
+        <div className="ether-chips__row">
+          {dockTab === 'explore'
+            ? EXPLORE_CHIPS.map((item) => (
+                <button
+                  key={item.command}
+                  type="button"
+                  className="terminal-prompt-chip"
+                  onClick={() => runLine(item.command)}
+                >
+                  {item.label}
+                </button>
+              ))
+            : null}
+          {dockTab === 'ask'
+            ? ASK_CHIPS.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  className="terminal-prompt-chip"
+                  onClick={() => runLine(item.command)}
+                >
+                  {item.label}
+                </button>
+              ))
+            : null}
+          {dockTab === 'worlds'
+            ? WORLD_CATALOG.map((w) => (
+                <button
+                  key={w.id}
+                  type="button"
+                  className={`terminal-prompt-chip terminal-prompt-chip--world${activeWorld === w.id ? ' is-active' : ''}`}
+                  onClick={() => openWorld(w.id)}
+                  title={`${w.name} — ${w.span}`}
+                >
+                  ✦ {w.shortLabel}
+                </button>
+              ))
+            : null}
         </div>
       </div>
 
-      {/* Main Viewport: Either High-Res ASCII World Portal OR Interactive Shell */}
+      {/* Main Viewport: High-Res World Portal OR Interactive Rich ANSI Shell */}
       {activeWorld && activeWorldMeta ? (
         <div className="ether-portal" ref={viewportRef}>
           <canvas
@@ -727,7 +891,7 @@ export function EtherTerminal() {
               <div className="ether-portal__hud ether-portal__hud--top">
                 <div>
                   <span className="ether-portal__kicker">
-                    WORLD 0{activeWorldMeta.index} / 08 · {renderMode.toUpperCase()}
+                    WORLD 0{activeWorldMeta.index} / 08 · {worldResLabel}
                   </span>
                   <strong>{activeWorldMeta.name}</strong>
                 </div>
@@ -740,6 +904,18 @@ export function EtherTerminal() {
               <div className="ether-portal__hud ether-portal__hud--bottom">
                 <span className="ether-portal__caption">{activeWorldMeta.caption}</span>
                 <div className="ether-portal__controls">
+                  <button
+                    type="button"
+                    className="ether-hud-btn is-ask"
+                    onClick={() =>
+                      runLine(
+                        `Explain the science and meaning behind ${activeWorldMeta.name} (${activeWorldMeta.span}).`,
+                      )
+                    }
+                    title="Ask shaanpatel-cv-pico about this world"
+                  >
+                    [i] ask model
+                  </button>
                   <button
                     type="button"
                     className="ether-hud-btn"
@@ -794,7 +970,12 @@ export function EtherTerminal() {
         <div
           className="ether-scroll"
           ref={scrollRef}
-          onClick={() => inputRef.current?.focus()}
+          onScroll={handleScroll}
+          onClick={() => {
+            if (!window.getSelection()?.toString()) {
+              inputRef.current?.focus()
+            }
+          }}
         >
           {blocks.map((block) =>
             block.kind === 'command' ? (
@@ -805,30 +986,88 @@ export function EtherTerminal() {
                 <span>{block.text}</span>
               </div>
             ) : (
-              <pre key={block.id} className="ether-line ether-line--out">
-                <AnsiText text={block.text} />
-              </pre>
+              <div key={block.id} className="ether-block-wrap">
+                <pre className="ether-line ether-line--out">
+                  <AnsiRichText text={block.text} onRunCommand={runLine} />
+                </pre>
+                <button
+                  type="button"
+                  className="ether-copy-btn"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    void copyBlock(block)
+                  }}
+                  title="Copy plain text"
+                >
+                  {copiedBlockId === block.id ? 'copied' : 'copy'}
+                </button>
+              </div>
             ),
           )}
+
+          {busyLabel ? (
+            <div className="ether-busy-bar" role="status" aria-live="polite">
+              <span className="ether-busy-dot" />
+              <span>{busyLabel}</span>
+              <button
+                type="button"
+                className="ether-head-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleInterrupt()
+                }}
+              >
+                stop
+              </button>
+            </div>
+          ) : null}
         </div>
       )}
 
-      {/* Live Interactive Input Bar */}
+      {/* Dynamic Contextual Follow-Up Trail */}
+      {!activeWorld && suggestions.length > 0 ? (
+        <div className="ether-next-rail" aria-label="Suggested next commands">
+          <span className="ether-next-rail__label">next →</span>
+          <div className="ether-next-rail__items">
+            {suggestions.map((item) => (
+              <button
+                key={`${item.label}:${item.command}`}
+                type="button"
+                className="ether-next-chip"
+                onClick={() => runLine(item.command)}
+                title={item.command}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Live Interactive Input Bar with Ghost Autocomplete */}
       <form className="ether-input-bar" onSubmit={handleSubmit}>
         <span className="ether-input-bar__prompt">{promptPrefix}</span>
-        <input
-          ref={inputRef}
-          type="text"
-          className="ether-input-bar__field"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-          placeholder="ask Shaan's model anything, or type `worlds`, `travel universal`, `eprocess`, `help`..."
-          autoComplete="off"
-          autoCorrect="off"
-          spellCheck={false}
-          aria-label="Sandboxed terminal command or personal model prompt"
-        />
+        <div className="ether-input-wrap">
+          {ghostHint ? (
+            <div className="ether-input-ghost" aria-hidden="true">
+              <span className="ether-input-ghost__typed">{inputValue}</span>
+              <span className="ether-input-ghost__hint">{ghostHint}</span>
+            </div>
+          ) : null}
+          <input
+            ref={inputRef}
+            type="text"
+            className="ether-input-bar__field"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleInputKeyDown}
+            placeholder="ask Shaan's model anything, or type `tour`, `research`, `eprocess compare`, `travel universal`..."
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-label="Sandboxed terminal command or personal model prompt"
+          />
+        </div>
         <button type="submit" className="ether-input-bar__send">
           run ↵
         </button>

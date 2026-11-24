@@ -4013,3 +4013,224 @@ button:focus-visible {
     display: none;
   }
 }
+
+/* ---------- Upgraded Ether Terminal Harness UI ---------- */
+
+.ether-dock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(240, 237, 230, 0.018);
+}
+
+.ether-dock__tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-bottom: 1px solid rgba(240, 237, 230, 0.08);
+  padding-bottom: 0.38rem;
+}
+
+.ether-dock__tab {
+  padding: 0.16rem 0.55rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.ether-dock__tab:hover {
+  color: var(--ink);
+}
+
+.ether-dock__tab.is-active {
+  color: var(--accent);
+  border-color: rgba(223, 208, 178, 0.36);
+  background: rgba(223, 208, 178, 0.09);
+}
+
+.ether-dock__tab--worlds.is-active {
+  color: #9ce6f5;
+  border-color: rgba(132, 204, 224, 0.45);
+  background: rgba(132, 204, 224, 0.1);
+}
+
+.ether-block-wrap {
+  position: relative;
+}
+
+.ether-copy-btn {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.1rem;
+  opacity: 0;
+  padding: 0.12rem 0.42rem;
+  border: 1px solid var(--rule);
+  background: rgba(6, 7, 8, 0.88);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.ether-block-wrap:hover .ether-copy-btn,
+.ether-copy-btn:focus-visible {
+  opacity: 1;
+}
+
+.ether-copy-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.ether-inline-cmd {
+  display: inline;
+  padding: 0.02rem 0.32rem;
+  margin: 0 0.04rem;
+  border: 1px solid rgba(223, 208, 178, 0.28);
+  border-radius: 3px;
+  background: rgba(223, 208, 178, 0.07);
+  color: #f0e3c7;
+  font: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  transition: border-color 130ms ease, background 130ms ease, color 130ms ease;
+}
+
+.ether-inline-cmd:hover {
+  border-color: #84cce0;
+  background: rgba(132, 204, 224, 0.14);
+  color: #eef9ff;
+}
+
+.ether-busy-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+  padding: 0.28rem 0.6rem;
+  border: 1px solid rgba(126, 214, 168, 0.28);
+  background: rgba(126, 214, 168, 0.06);
+  color: #a8e8c6;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.ether-busy-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #7ed6a8;
+  animation: etherPulse 1.1s ease-in-out infinite;
+}
+
+@keyframes etherPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.ether-next-rail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.44rem 0.95rem;
+  border-top: 1px solid rgba(240, 237, 230, 0.08);
+  background: rgba(223, 208, 178, 0.025);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ether-next-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.ether-next-rail__label {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ether-next-rail__items {
+  display: flex;
+  align-items: center;
+  gap: 0.36rem;
+  flex-wrap: nowrap;
+}
+
+.ether-next-chip {
+  flex: 0 0 auto;
+  padding: 0.18rem 0.56rem;
+  border: 1px solid rgba(223, 208, 178, 0.26);
+  border-radius: 999px;
+  background: rgba(223, 208, 178, 0.05);
+  color: #e4d8be;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.ether-next-chip:hover {
+  border-color: var(--accent);
+  background: rgba(223, 208, 178, 0.14);
+  color: #fffaf0;
+}
+
+.ether-input-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ether-input-ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.ether-input-ghost__typed {
+  color: transparent;
+}
+
+.ether-input-ghost__hint {
+  color: rgba(132, 204, 224, 0.42);
+}
+
+.ether-input-wrap .ether-input-bar__field {
+  position: relative;
+  width: 100%;
+}
+
+.ether-hud-btn.is-ask {
+  border-color: rgba(126, 214, 168, 0.48);
+  color: #a8e8c6;
+}

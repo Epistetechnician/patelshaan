@@ -18,7 +18,7 @@ export type Lineage = {
 export const lineage: Record<string, Lineage> = {
   'holdout-ledger': {
     epigraph: {
-      text: 'The first principle is that you must not fool yourself—and you are the easiest person to fool.',
+      text: 'The first principle is that you must not fool yourself, and you are the easiest person to fool.',
       by: 'Richard P. Feynman, “Cargo Cult Science”, 1974',
     },
     people:
@@ -35,7 +35,7 @@ export const lineage: Record<string, Lineage> = {
         title: 'Occam’s razor as an audit certificate',
         body: [
           'Jorma Rissanen’s Minimum Description Length principle reframed Occam’s razor as arithmetic: a hypothesis earns belief only to the extent that describing the hypothesis plus its errors takes fewer bits than memorizing the data. A two-line swap of ensemble weights is short; a lookup table of flipped test margins is long.',
-          'By certifying the cheaper of released verdict bits and core description length—and stripping incompressible patches automatically—the ledger lets honest, simple engineering iterate hundreds of times without giving memorizers a free pass.',
+          'By certifying the cheaper of released verdict bits and core description length, and stripping incompressible patches automatically,the ledger lets honest, simple engineering iterate hundreds of times without giving memorizers a free pass.',
         ],
       },
     ],
@@ -45,7 +45,7 @@ export const lineage: Record<string, Lineage> = {
 
   caduceus: {
     people:
-      'Anyone running a personal or team coding agent that saves “skills” from yesterday’s browsing session—and would rather not let a poisoned webpage rewrite tomorrow’s shell permissions.',
+      'Anyone running a personal or team coding agent that saves “skills” from yesterday’s browsing session, and would rather not let a poisoned webpage rewrite tomorrow’s shell permissions.',
     sections: [
       {
         title: 'Precedent, quarantine, and standing orders',
@@ -73,7 +73,7 @@ export const lineage: Record<string, Lineage> = {
         title: 'Photocopies of photocopies, and Lind’s control',
         body: [
           'Scribes copying manuscripts from copies rather than exemplars accumulated characteristic drift until textual critics learned to reconstruct stemmata and check witnesses independently. Unverified recursive training has the same failure mode at GPU speed.',
-          'James Lind’s 1747 scurvy trial—matching conditions across pairs so citrus was isolated from shipboard routine—is the ancestor of `E6-poolctl` here, which showed half of verified synthetic data’s apparent gain was simply pool size, and of `E8-7b`, which showed the remaining toy-world gain hits 0.00 on 7B code.',
+          'James Lind’s 1747 scurvy trial, matching conditions across pairs so citrus was isolated from shipboard routine,is the ancestor of `E6-poolctl` here, which showed half of verified synthetic data’s apparent gain was simply pool size, and of `E8-7b`, which showed the remaining toy-world gain hits 0.00 on 7B code.',
         ],
       },
     ],
@@ -92,14 +92,14 @@ export const lineage: Record<string, Lineage> = {
       {
         title: 'Hospitality laws and attenuated seals',
         body: [
-          'Diplomatic safe-conduct letters and medieval guild halls solved a recurring human problem: how strangers from rival houses work under one roof with bounded rights and a witnessed record of disputes. Playbox’s Biscuit grants are cryptographic safe-conducts—each holder can narrow a token before passing it on and can never widen it.',
+          'Diplomatic safe-conduct letters and medieval guild halls solved a recurring human problem: how strangers from rival houses work under one roof with bounded rights and a witnessed record of disputes. Playbox’s Biscuit grants are cryptographic safe-conducts, each holder can narrow a token before passing it on and can never widen it.',
           'Inside the room, Ed25519 hash-chained histories and sealed-holdout F3 challenges let rival proposers compete on a shared benchmark while catching a dev-set memorizer automatically.',
         ],
       },
       {
         title: 'Telepathy versus plain speech',
         body: [
-          'Philosophers from Locke onward worried about how an idea in one mind crosses into another through words. Showing that a gated activation vector crosses from Qwen3 to OLMo-2 at 87.5%—and still loses to a single English word (71–77% vs 61–68%)—is a healthy reminder that natural language is already a remarkably compressed, cross-architecture protocol.',
+          'Philosophers from Locke onward worried about how an idea in one mind crosses into another through words. Showing that a gated activation vector crosses from Qwen3 to OLMo-2 at 87.5%, and still loses to a single English word (71–77% vs 61–68%),is a healthy reminder that natural language is already a remarkably compressed, cross-architecture protocol.',
         ],
       },
     ],
@@ -119,7 +119,7 @@ export const lineage: Record<string, Lineage> = {
         title: 'Proof-carrying proposals and small clerks',
         body: [
           'In double-entry counting houses and constitutional courts alike, the petitioner may argue however creatively they please, while the clerk checks a short, rigid list of invariants before stamping the writ. FormaSec turns that division of labor into software: 7 free LLMs or a hostile enumerator propose compositions; a tiny kernel checked across Python, Rust (Kani), and Lean 4 (`admitAlg`, `plan_sound`) decides admission.',
-          'Lakatos’s monsters showed up right on schedule in `M6`, when a hostile proposer built a valid-looking diamond DAG with 2^n paths and exhausted 14 GB of RAM—forcing resource bounds into the formal plan alongside type soundness.',
+          'Lakatos’s monsters showed up right on schedule in `M6`, when a hostile proposer built a valid-looking diamond DAG with 2^n paths and exhausted 14 GB of RAM, forcing resource bounds into the formal plan alongside type soundness.',
         ],
       },
     ],
@@ -129,7 +129,7 @@ export const lineage: Record<string, Lineage> = {
 
   'mech-interp-unified': {
     people:
-      'Researchers and safety auditors trying to tell whether a “discovered circuit” or subspace is a real causal handle on behavior—or an artifact of residual norm damage and broken rulers.',
+      'Researchers and safety auditors trying to tell whether a “discovered circuit” or subspace is a real causal handle on behavior, or an artifact of residual norm damage and broken rulers.',
     sections: [
       {
         title: 'Who calibrates the ruler?',
@@ -151,7 +151,7 @@ export const lineage: Record<string, Lineage> = {
         title: 'Catching your own thumb on the scale',
         body: [
           'Feynman’s Cargo Cult Science warns about the subtle ways an experimenter’s setup favors the desired arm. In versions v11–v15 our slow-parameter grid beat baselines handsomely because the attacker script had quietly inherited each arm’s learning-rate multiplier. Catching that in v16 killed the headline and saved the science.',
-          'What survived on the clean harness—frozen discriminant adapters keeping 95% of held-out refusals under benign OOD drift where replay falls to 27%—answers Parfit’s continuity question in practical miniature: you cannot freeze a whole model against a white-box attacker, and you can preserve a specific behavioral commitment across everyday learning.',
+          'What survived on the clean harness, frozen discriminant adapters keeping 95% of held-out refusals under benign OOD drift where replay falls to 27%,answers Parfit’s continuity question in practical miniature: you cannot freeze a whole model against a white-box attacker, and you can preserve a specific behavioral commitment across everyday learning.',
         ],
       },
     ],

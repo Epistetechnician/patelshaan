@@ -35,7 +35,7 @@ export default function ParetoChart() {
       className="pareto"
     >
       <text x={M.l} y={22} className="pareto__title">
-        Pareto Frontier — Qubits vs. Toffoli Gates
+        Pareto Frontier: Qubits vs. Toffoli Gates
       </text>
       <text x={M.l} y={40} className="pareto__sub">
         min qubits {data.front[0][0]} · min Toffoli {fmtExact(746114)} · {data.asOf}

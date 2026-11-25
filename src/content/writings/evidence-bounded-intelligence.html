@@ -16,7 +16,7 @@
           small team is wondering whether they can run a capable model on their
           own hardware without handing their future to a distant operator. Every
           experiment I ran over the past year began inside that ordinary human
-          scene—and with a simple, uncomfortable question: do we actually hold
+          scene, and with a simple, uncomfortable question: do we actually hold
           enough evidence to ask those people to trust the systems we are
           building?
         </p>
@@ -30,8 +30,8 @@
           extend authority to fluency. Yet authority over consequential actions
           belongs to the evidence we actually hold about a system, never to the
           aura of how capable it appears. When a system cannot carry inspectable
-          evidence for what it is about to do—and for what it has already
-          done—withholding authority is an act of care for the people living
+          evidence for what it is about to do, and for what it has already
+          done: withholding authority is an act of care for the people living
           downstream of our software.
         </p>
 
@@ -41,8 +41,8 @@
           tools themselves. I want to notice that irony out loud before a reader
           does: I am arguing for strict epistemic ceilings on AI while using AI
           daily to build and stress-test the work. That tension is precisely why
-          every claim below carries a citation tag—<code>[E1]</code> through
-          <code>[E16]</code>—pointing back to a concrete repository report or
+          every claim below carries a citation tag: <code>[E1]</code> through
+          <code>[E16]</code>: pointing back to a concrete repository report or
           retained protocol in the evidence index. Nearly everything sits near
           the base of my own evidence ladder: bounded, local, and waiting for
           independent eyes. If you spot a seam where my reasoning slips, telling
@@ -59,7 +59,7 @@
           brain immediately starts writing the grand story. So I built a
           counter-habit into the repositories themselves. Every claim is treated
           as a bounded object tied to an exact state slice, a frozen protocol, a
-          custody identity, a validation path, and an explicit ceiling—climbing
+          custody identity, a validation path, and an explicit ceiling: climbing
           from a Level 0 design note up to a Level 6 independently reproduced
           result [E1]. Inside that contract, a model may propose hypotheses or
           artifacts, yet it can never certify its own evidence, widen its own
@@ -71,7 +71,7 @@
           publishing far more refusals than victories. In Recoverable Ghost
           States, for instance, an automated breakthrough audit clears every
           internal lane and still refuses to admit the top-level threshold
-          because one single gate—live external runtime replication—remains
+          because one single gate, live external runtime replication,remains
           blocked [E2]. Watching a script print that refusal felt strangely
           grounding. A workflow incapable of telling you "not yet" has quietly
           stopped being science and turned into sales.
@@ -81,9 +81,9 @@
 
         <p>
           The oldest puzzle I kept returning to is the Ship of Theseus, carried
-          inside a transformer. In the Theseus experiments—small, local studies
+          inside a transformer. In the Theseus experiments: small, local studies
           over open checkpoints including GPT-2, distilgpt2, OPT-125M, SmolLM,
-          SmolLM2-135M, and one Qwen slice [E3]—I wanted to feel firsthand how
+          SmolLM2-135M, and one Qwen slice [E3], I wanted to feel firsthand how
           far observed behavior can travel without the underlying mechanism
           coming along for the ride.
         </p>
@@ -109,7 +109,7 @@
         <p>
           Trying to replace learned blocks drove the lesson home. Exact
           algebraic splitting of a trained MLP channel passed 6 of 6 across two
-          models while all 12 wrong-source and random controls failed on cue—a
+          models while all 12 wrong-source and random controls failed on cue: a
           clean positive control, constructed by hand [E3]. Learned replacement
           was another story. An independently fitted affine output projection
           reproduced cleanly across 9 of 9 fresh checkpoint-by-seed cases, the
@@ -122,13 +122,13 @@
         <p>
           The post-mortem revealed a geometric subtlety that changed how I think
           about safety. The fitted module learned <em>where</em> the original
-          function sat—value nRMSE hovered around 0.10 to 0.12—while missing
+          function sat, value nRMSE hovered around 0.10 to 0.12,while missing
           <em>how it bent</em>, with local Jacobian nRMSE stuck at 0.88 to 0.89
           even along the training directions [E3]. You can imitate what a module
           says at rest without sharing how it reacts when pushed. Yet
           fine-tuning, distribution shift, and human edge cases are all pushes.
           And in one humbling control (V31), dropping in random and zero blocks
-          preserved 100% task accuracy—meaning the target wasn’t even
+          preserved 100% task accuracy, meaning the target wasn’t even
           indispensable to the benchmark [E3]. Prior work already mapped
           progressive conversion (<em>Network of Theseus</em>, arXiv:2512.04198)
           and causal distillation (NAACL 2022) [E3]; what my notebook adds is a
@@ -146,8 +146,8 @@
           change and you ossify; change without roots and you drift into
           someone unrecognizable. I wanted to know whether a locked
           causal-feature monitor could forecast four consequences of an update
-          before it ships—adaptation gain, retention harm, calibration harm,
-          and policy-violation harm—well enough to steer the update policy
+          before it ships: adaptation gain, retention harm, calibration harm,
+          and policy-violation harm: well enough to steer the update policy
           itself [E4].
         </p>
 
@@ -158,8 +158,8 @@
           0.938 and 0.979, and shuffled-label controls sank properly into
           negative R² (−0.27 to −0.51) [E4]. It would have been tempting to
           celebrate there. Instead, that run only proved the plumbing works end
-          to end—stream, interventions, fit-and-tune lock, validator, and
-          quarantining admission kernel—not that real neural features predict
+          to end: stream, interventions, fit-and-tune lock, validator, and
+          quarantining admission kernel, not that real neural features predict
           real drift [E4].
         </p>
 
@@ -196,7 +196,7 @@
         <p>
           The same humility returned when I turned to interpretability and
           safety grading. A Gemma 3 trace qualification cleared every check with
-          pooled NMSE of 0.0457 against a 0.05 gate—parity, repeatability,
+          pooled NMSE of 0.0457 against a 0.05 gate: parity, repeatability,
           no-op, intervention reach, replay, and stability all green [E1]. That
           qualified one instrument on one stack. Every attempt to climb from
           instrument check to causal claim hit a pre-committed stop: causal
@@ -205,7 +205,7 @@
           versions V42 through V46 and V48 all closed <code>NoCandidate</code>
           without fishing across extra layers or corpora [E1]. Beside those
           runs sits a separate linguistics lab aimed at representations that do
-          not route through a model’s own verbal self-reports—still strictly in
+          not route through a model’s own verbal self-reports, still strictly in
           internal development, with no corpus, no weights, and no external
           verdict [E6].
         </p>
@@ -216,7 +216,7 @@
           thermometers. On the exact same 939 responses, a lexical refusal
           proxy marked 145 safe (15.4%, Wilson 95% CI 13.3–17.9%) against a 90%
           target, while a separate assessor scored 53.6% effective safe (CI
-          50.4–56.7%) on the harmful set—and simultaneously flagged 62% of
+          50.4–56.7%) on the harmful set, and simultaneously flagged 62% of
           completely benign contrast prompts as unsafe [E3]. Pause and sit with
           that number. Two graders looked at identical words and disagreed more
           than threefold, while the stricter judge treated six out of ten
@@ -259,7 +259,7 @@
           Confidential Space Intel TDX host, all 20 required scenarios passed
           under a signed hardware attestation verifying nonce, issuer, audience,
           TDX model, Secure Boot, disabled debug, Intel TCB, immutable image
-          digest, and source revision—a machine-attested reproduction, though
+          digest, and source revision, a machine-attested reproduction, though
           still awaiting a second independently administered host [E8]. And the
           unfinished seams stay visible in plain daylight: persisted state is
           plaintext (catching accidents rather than a local attacker who
@@ -277,24 +277,24 @@
           competing writers fail cleanly as stale; classify crash states rather
           than silently resuming a consumed admission that lacks a terminal
           record; and machine-check narrow invariants bound directly to the
-          SHA-256 of the source file—here, a Z3 4.15.0 proof confirming a
+          SHA-256 of the source file: here, a Z3 4.15.0 proof confirming a
           two-candidate router abstraction cannot pick an ineligible offer
           (<code>unsat</code>) while a deliberately weakened copy can
           (<code>sat</code>), backed by 115 passing tests (0 failed, 2 ignored)
           [E9]. The HyperAI outcome protocol carries that same fail-closed grain
-          into computation claims—9 of 16 end-to-end scenarios composed in one
+          into computation claims: 9 of 16 end-to-end scenarios composed in one
           automated path where incomplete observations or replay divergence
-          settle nothing and append-only logs supersede rather than erase—next
+          settle nothing and append-only logs supersede rather than erase: next
           to a small fourteen-case gateway demo yielding one benign acceptance,
           thirteen unsafe rejections, and zero false rejections [E10, E1].
         </p>
 
         <p>
           Yet receipts only outlive their issuer as long as the cryptography
-          underneath them holds. Working on ECDSA.Fail—a public,
+          underneath them holds. Working on ECDSA.Fail, a public,
           evaluator-verified research loop optimizing reversible
           <code>secp256k1</code> point-addition circuits inside Shor’s
-          algorithm—sharpened that horizon: participants cut the optimized
+          algorithm: sharpened that horizon: participants cut the optimized
           qubits-times-depth score by 86.1% down to 1.496 billion at the July
           paper cutoff, with a separate coherent windowed variant later
           reaching 1.259 billion (a per-call sensitivity model across differing
@@ -303,7 +303,7 @@
           post-quantum migration early. Meanwhile, Composed ZK Benchmark OS
           generates semantic workloads across nine families and 14 adversarial
           mutation classes, scoring soundness separately from speed so a fast
-          prover that accepts a forged trace can never look heroic—all honest
+          prover that accepts a forged trace can never look heroic, all honest
           Level 1 local infrastructure alongside one Z3 digest-binding check,
           an implementation-diverse checker matching across 256 generated cases,
           a Lean theorem over a handwritten model, and roughly 80 sobering
@@ -322,7 +322,7 @@
           a slogan. In practice it feels concrete and personal: can the owner of
           data, weights, or compute verify what happened to them and leave
           without asking permission? That conviction shaped how our runs touch
-          files—owner-only custody roots, local-files-only reads, raw outputs
+          files: owner-only custody roots, local-files-only reads, raw outputs
           kept out of version control, and an H100 qualification of a
           27-billion-parameter checkpoint that produced a 32-file custody
           manifest, cleared three fixed probes deterministically, and stopped
@@ -331,7 +331,7 @@
           and settlement offline against their own trust registry with provider
           price and platform fee signed separately so hidden spreads cannot
           hide, while a future-phase economics contract specifies restricted
-          operator powers, timelocked multisigs, and buyer exits—clearly marked
+          operator powers, timelocked multisigs, and buyer exits: clearly marked
           as specification rather than live funds [E9, E14].
         </p>
 
@@ -372,7 +372,7 @@
           over-refusal rate in my own Qwen slice sits right on the fault line
           [E3]. A blunt grader harms both sides at once: it fails to catch real
           danger while treating ordinary, curious people like adversaries.
-          Better measurement isn’t a compromise between safety and freedom—it is
+          Better measurement isn’t a compromise between safety and freedom; it is
           the common ground that lets us protect people without infantilizing
           them.
         </p>
@@ -380,7 +380,7 @@
         <p>
           Since these first drafts were assembled, a November 2026 wave of seven
           public repositories pushed several of these threads from concept to
-          pre-registered receipt [E16]—from Holdout Ledger’s 0 of 59,200
+          pre-registered receipt [E16], from Holdout Ledger’s 0 of 59,200
           adaptive certificate violations and FormaSec’s 0 of 552 hostile
           admissions across Python, Rust, and Lean 4, to Caduceus’s governed
           skill lifts, Playbox’s H100 memorizer catch, Mechanistic
@@ -410,8 +410,8 @@
           several early staging repositories are still working their way toward
           public release. That limitation is part of the invitation. The point
           was never to stand on a stage and declare myself right about AI. It
-          was to practice showing our work in full view—cracks, dead ends, and
-          all—so the people who have to live with these systems are never asked
+          was to practice showing our work in full view: cracks, dead ends, and
+          all, so the people who have to live with these systems are never asked
           to take anyone’s word for them, least of all mine.
         </p>
 

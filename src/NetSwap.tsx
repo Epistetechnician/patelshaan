@@ -197,7 +197,7 @@ const STEPS: Step[] = [
     status: 'fail',
     title: 'Zero-out non-indispensable block (null control)',
     facts: [{ value: '100%', label: 'accuracy kept when zeroed' }],
-    caption: 'When a block is not behaviorally indispensable on a narrow probe, zeroing it out still passes — proving the necessity of indispensability controls.',
+    caption: 'When a block is not behaviorally indispensable on a narrow probe, zeroing it out still passes: proving the necessity of indispensability controls.',
   },
 ]
 

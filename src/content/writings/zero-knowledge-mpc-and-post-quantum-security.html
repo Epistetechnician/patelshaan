@@ -16,7 +16,7 @@
           trust whoever owns the servers, it needs real privacy, verifiable
           computation, and signatures built to outlast a quantum adversary. Of
           everything in my notebooks, this cryptographic basement is where the
-          scaffolding is still rawest—which makes it the exact place where
+          scaffolding is still rawest, which makes it the exact place where
           distinguishing built artifacts from open hopes matters most.
         </p>
 
@@ -28,7 +28,7 @@
           prover that quietly accepts a forged witness is infinitely more
           dangerous than a sluggish prover that slams the door shut. Composed
           ZK Benchmark OS began from that simple inversion: instead of timing
-          hand-picked circuits, start from program meaning—state machines,
+          hand-picked circuits, start from program meaning: state machines,
           transitions, guards, loops, invariants, and expected accept-or-reject
           outcomes.
         </p>
@@ -40,7 +40,7 @@
           separate from soundness evidence. Even its own limitations are wired
           into the output: an oracle-completeness audit and distinguishability
           matrix show exactly which generated constructs the shipped oracle can
-          and cannot judge. Everything here sits candidly at Level 1—local,
+          and cannot judge. Everything here sits candidly at Level 1: local,
           deterministic infrastructure with no external zkVM backend scores yet.
         </p>
 
@@ -60,14 +60,14 @@
         <p>
           I also spent roughly 80 phases pushing Rust-to-Lean extraction through
           Aeneas. Extraction ran, logs piled up, and no complete
-          kernel-checked witness emerged—every stretch ended in tooling,
+          kernel-checked witness emerged: every stretch ended in tooling,
           environment, or execution-protocol stops, each documented and
           cleaned up rather than swept aside. Walking away without the shiny
           theorem hurt for a week, and then I noticed what had quietly survived
           those 80 rounds: a fail-closed execution state machine, a 102-command
           source ledger, and an evidence pipeline structurally incapable of
           promoting a formal claim it hadn’t earned. Protocol discipline cost
-          more than the math—and turned out to be the lasting gift.
+          more than the math, and turned out to be the lasting gift.
         </p>
 
         <h2>Hardware attestation as a bridge, not the destination</h2>
@@ -97,9 +97,9 @@
         <p>
           Every signed agent receipt in my repositories leans on elliptic-curve
           cryptography, which means their durability lives on a countdown.
-          Through ECDSA.Fail—a public, evaluator-verified research loop
+          Through ECDSA.Fail, a public, evaluator-verified research loop
           optimizing reversible <code>secp256k1</code> point-addition circuits
-          inside Shor’s algorithm—participants cut the optimized
+          inside Shor’s algorithm: participants cut the optimized
           <code>Q × T</code> score by 86.1%, reaching 1.496 billion at the July
           arXiv cutoff, alongside a separately reported 1.259 billion coherent
           windowed figure. Because that coherent windowed variant is a per-call
@@ -117,9 +117,9 @@
           signature scheme myself; bringing our semantics-first adversarial
           mutation harness to post-quantum verification inside agent receipts
           remains an inviting road I haven’t started walking. Second, when we
-          tested a quantum-adjacent idea in MeshQRC—a quantum reservoir
+          tested a quantum-adjacent idea in MeshQRC, a quantum reservoir
           computing lane for industrial anomaly detection, keeping live
-          inference strictly classical—a tuned local QRC led on synthetic
+          inference strictly classical, a tuned local QRC led on synthetic
           regimes yet trailed strong classical baselines on real server-machine
           and industrial-control proxies, so we deferred further remote QRC
           work. Quantum physics hands out no free lunch, and a good benchmark

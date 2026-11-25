@@ -15,7 +15,7 @@ const arxiv = (id: string) => `https://arxiv.org/abs/${id}`
 const extras: Record<string, Extra> = {
   'arc-membrane': {
     voice: [
-      'Most self-improving agent proposals hand-wave either safety drift or evaluation leakage. ARC Membrane binds all four layers — CPU compilation, private GPU delegation, QR-nullspace weight rewriting, and anytime-valid holdouts — to one signed manifest discipline.',
+      'Most self-improving agent proposals hand-wave either safety drift or evaluation leakage. ARC Membrane binds all four layers (CPU compilation, private GPU delegation, QR-nullspace weight rewriting, and anytime-valid holdouts) to one signed manifest discipline.',
       'Track 4’s honest null on single-step steering (−1.0 pp across n = 400) made Track 5’s QR-Nullspace SFT result (+36.5 pp at 180× lower replay KL) trustworthy: the same sealed harness that rejected steering certified projected SFT.',
     ],
     sources: [
@@ -61,7 +61,7 @@ const extras: Record<string, Extra> = {
     context: {
       title: 'Why pricing description length unlocks long loops',
       body: [
-        'Pure information-accounting charges one bit per binary query, which makes a 20,000-example holdout vacuous well before 1,000 iterations. Yet genuine engineering wins are short to state—a small swap list, a clean hyper-parameter schedule, a compact patch—whereas holdout memorization requires bits proportional to the examples fit.',
+        'Pure information-accounting charges one bit per binary query, which makes a 20,000-example holdout vacuous well before 1,000 iterations. Yet genuine engineering wins are short to state (a small swap list, a clean hyper-parameter schedule, a compact patch)whereas holdout memorization requires bits proportional to the examples fit.',
         'Charging the minimum of released verdict bits and core description length lets a self-improvement loop run many iterations as long as what it actually ships stays simple, while automatically stripping or refusing high-description patches.',
       ],
     },
@@ -78,7 +78,7 @@ const extras: Record<string, Extra> = {
   caduceus: {
     voice: [
       'Most self-improving agent demos let the agent append "lessons learned" to its own system prompt and call the result continual learning. In practice that is an unmediated write channel into the agent’s authority.',
-      'I built Caduceus so a skill change is treated like a kernel patch: provenance-tagged, sandboxed, checked against paired held-out tasks, and recorded in a Merkle ledger—including the gate lane that failed our own false-positive bar.',
+      'I built Caduceus so a skill change is treated like a kernel patch: provenance-tagged, sandboxed, checked against paired held-out tasks, and recorded in a Merkle ledger, including the gate lane that failed our own false-positive bar.',
     ],
     sources: [
       { label: 'RFC 9162, Certificate Transparency Version 2.0', url: 'https://www.rfc-editor.org/rfc/rfc9162', why: 'Merkle tree structure used by the Caduceus append-only skill ledger.' },
@@ -88,7 +88,7 @@ const extras: Record<string, Extra> = {
       title: 'Why false-positive gates must fail too',
       body: [
         'Security filters usually fail silently in one direction: they block legitimate work until operators turn the whole system off. Testing our `authority` phrase-tripwire against 188 real third-party skills caught a 41.0% false-hold rate against a pre-registered 5% ceiling.',
-        'Keeping that lane disabled—and leaning instead on structural provenance (which blocked 12 of 12 hostile-after-untrusted writes)—kept the governance layer usable enough to deliver +0.245 to +0.305 real task gains.',
+        'Keeping that lane disabled, and leaning instead on structural provenance (which blocked 12 of 12 hostile-after-untrusted writes),kept the governance layer usable enough to deliver +0.245 to +0.305 real task gains.',
       ],
     },
     roadmap: {
@@ -104,14 +104,14 @@ const extras: Record<string, Extra> = {
   'hsi-lab': {
     voice: [
       'Everyone hopes models can bootstrap endlessly on their own synthetic experience. I wanted frozen packets and stdlib-recomputable receipts so I could not talk myself into seeing a compounding curve where none existed.',
-      'The contrast between +0.238 in verified rule worlds and −0.0025 on 7B code—paired with `cl7b` showing independent weight deltas destroy fluency when summed—is the sharpest map I have of where synthetic scaling works and what has to be solved next.',
+      'The contrast between +0.238 in verified rule worlds and −0.0025 on 7B code, paired with `cl7b` showing independent weight deltas destroy fluency when summed,is the sharpest map I have of where synthetic scaling works and what has to be solved next.',
     ],
     sources: [
       { label: 'Shumailov et al. (2024), AI models collapse when trained on recursively generated data', url: 'https://www.nature.com/articles/s41586-024-07566-y', why: 'Why unverified recursive synthetic training degrades without external grounding or verification.' },
       { label: 'Shenfeld et al. (2026), Self-Distillation Fine-Tuning (SDFT)', url: arxiv('2601.19897'), why: 'On-policy distillation arm tested in our companion `cl7b` continual-learning harness.' },
     ],
     context: {
-      title: 'Pool size vs verification—and fast vs slow weights',
+      title: 'Pool size vs verification: and fast vs slow weights',
       body: [
         'Without `E6-poolctl`, we would have credited verification with +0.238 when nearly half of that gain came simply from expanding the state pool. Matched-pool controls should be mandatory in synthetic-data papers.',
         'Similarly, in `cl7b`, single rank-16 task deltas toggle cleanly on a frozen 4-bit or fp base, but summing four independent deltas breaks the model, and 1/K scaling trades retention directly against capability. Replay-anchored consolidation (`replay_kl` at 0.997) remains the bar any fast-to-slow memory architecture must clear.',
@@ -156,7 +156,7 @@ const extras: Record<string, Extra> = {
   formasec: {
     voice: [
       'After eighty phases of trying to extract Rust proofs in an earlier project, I inverted the architecture: keep the proposers completely untrusted, shrink the admission kernel until Python, Rust, Kani, and Lean 4 can agree on every edge, and isolate execution with Landlock.',
-      'Watching 552 hostile proposals and 7 free LLMs hit zero unsafe admissions—while catching a 2^n DAG memory bomb along the way—convinced me this is the practical path to certified agent action.',
+      'Watching 552 hostile proposals and 7 free LLMs hit zero unsafe admissions, while catching a 2^n DAG memory bomb along the way,convinced me this is the practical path to certified agent action.',
     ],
     sources: [
       { label: 'Lean 4 theorem prover', url: 'https://lean-lang.org/', why: 'Used to mechanize `admitAlg` and `plan_sound` for obligation planning.' },
@@ -184,7 +184,7 @@ const extras: Record<string, Extra> = {
   'mech-interp-unified': {
     voice: [
       'Two weeks of negative and positive interpretability runs taught me one lesson: without norm-matched controls and planted-flaw audits, interpretability instruments routinely mistake vector width or residual-stream norm damage for causal mechanism.',
-      'Having Qwen3-1.7B replicate our Pythia neuron gate at p = 0.000999 while J-space collapsed to 0.00 against norm-matched PCA—and watching rules gates catch 0 of 8 planted flaws—gives us the exact ingredients for an honest interpretability benchmark.',
+      'Having Qwen3-1.7B replicate our Pythia neuron gate at p = 0.000999 while J-space collapsed to 0.00 against norm-matched PCA, and watching rules gates catch 0 of 8 planted flaws,gives us the exact ingredients for an honest interpretability benchmark.',
     ],
     sources: [
       { label: 'Barez et al. (2026), Baselines and Validity Controls for Mechanistic Interpretability', url: arxiv('2611.08438'), why: 'Methodological framework behind our norm-matched PCA, random-k, and equivalence-testing baselines.' },
@@ -210,17 +210,17 @@ const extras: Record<string, Extra> = {
 
   'temporal-grid-safety': {
     voice: [
-      'Catching the v16 bug—where our attacker accidentally inherited the defender’s slow learning rates—hurt, because it killed five versions of apparent wins. It is also the reason I trust the v29 and v30 discriminant-adapter result.',
+      'Catching the v16 bug, where our attacker accidentally inherited the defender’s slow learning rates,hurt, because it killed five versions of apparent wins. It is also the reason I trust the v29 and v30 discriminant-adapter result.',
       'Open-weight models are fine-tuned every day on benign customer data and quietly lose their safety training. Keeping 95% of held-out refusals vs 27% for replay is a practical foothold worth scaling properly.',
     ],
     sources: [
-      { label: 'Qi et al. (2023), Fine-tuning Aligned Language Models Compromises Safety, Even When Users Do Not Intend To!', url: arxiv('2310.03693'), why: 'Demonstrated that benign fine-tuning erodes alignment guardrails—the exact regime v29/v30 addresses.' },
+      { label: 'Qi et al. (2023), Fine-tuning Aligned Language Models Compromises Safety, Even When Users Do Not Intend To!', url: arxiv('2310.03693'), why: 'Demonstrated that benign fine-tuning erodes alignment guardrails, the exact regime v29/v30 addresses.' },
     ],
     context: {
       title: 'Separating benign drift from white-box attackers',
       body: [
         'Conflating accidental fine-tuning drift with a white-box weight attacker makes every defense look either miraculous (on weak attackers) or useless (against 64-step LoRA removal).',
-        'Stating both halves cleanly—slow grids do not stop a fair attacker, while frozen discriminant adapters preserve refusals through benign OOD drift across three 7B–8B families—tells builders where the primitive actually belongs: hosted fine-tuning APIs and continual domain adaptation.',
+        'Stating both halves cleanly: slow grids do not stop a fair attacker, while frozen discriminant adapters preserve refusals through benign OOD drift across three 7B–8B families; tells builders where the primitive actually belongs: hosted fine-tuning APIs and continual domain adaptation.',
       ],
     },
     roadmap: {

@@ -1238,7 +1238,7 @@ export default function LocalVideo2Ascii({
     }
   }, [drawFrame, shouldPlay])
 
-  // Main render loop (always rAF when visible/interactive — avoids iOS Safari rVFC stalls on loop/resume)
+  // Main render loop (always rAF when visible/interactive: avoids iOS Safari rVFC stalls on loop/resume)
   useEffect(() => {
     if (!shouldLoadVideo) return
     const hasInteractiveFeatures = enableMouse || enableRipple

@@ -84,15 +84,15 @@ export const kailas: FieldStrand = {
     'spacekime',
   ],
   people:
-    'The pilgrims whose walks became data, and the readers of Tibetan, Bon, Sanskrit, and comparative liturgy who can check what automated coders missed. Seeded, group-blinded review sheets—233 IAST-normalized Sanskrit rows, 115 v2 + 128 v3 Tibetan and Bon rows, and a 40-episode human double-coding pack—are built and ready for specialist review.',
+    'The pilgrims whose walks became data, and the readers of Tibetan, Bon, Sanskrit, and comparative liturgy who can check what automated coders missed. Seeded, group-blinded review sheets (233 IAST-normalized Sanskrit rows, 115 v2 + 128 v3 Tibetan and Bon rows, and a 40-episode human double-coding pack)are built and ready for specialist review.',
   essay: {
     callout:
-      'A pooled null can hide two opposite truths. Separating spatial mandala cosmology from multi-temporal cosmology across 2,626 passages—and walking the 52-km kora sequentially across 494 coded windows (114 on the S¹ circuit across 7 lineages)—shows that Kailash indexes plural worlds by spatial position around the mountain (φ = f(r)), whereas independent two-clock time belongs to calendar-bound liturgy and asynchronous institutional settlement.',
+      'A pooled null can hide two opposite truths. Separating spatial mandala cosmology from multi-temporal cosmology across 2,626 passages, and walking the 52-km kora sequentially across 494 coded windows (114 on the S¹ circuit across 7 lineages),shows that Kailash indexes plural worlds by spatial position around the mountain (φ = f(r)), whereas independent two-clock time belongs to calendar-bound liturgy and asynchronous institutional settlement.',
     sections: [
       {
         title: 'The mountain, and the two competing hypotheses',
         body: [
-          'Mount Kailash rises a little over 6,600 meters in western Tibet and is held sacred simultaneously by Hindus, Buddhists, Jains, and followers of Bon. Almost no one climbs it. Instead, pilgrims walk a 52-kilometer circuit around its base—clockwise for Hindus and Buddhists, anticlockwise for Bon practitioners—crossing the 5,630-meter Drolma La pass halfway round.',
+          'Mount Kailash rises a little over 6,600 meters in western Tibet and is held sacred simultaneously by Hindus, Buddhists, Jains, and followers of Bon. Almost no one climbs it. Instead, pilgrims walk a 52-kilometer circuit around its base (clockwise for Hindus and Buddhists, anticlockwise for Bon practitioners)crossing the 5,630-meter Drolma La pass halfway round.',
           'Our initial proposal (`PROPOSAL.md`) accidentally blended two very different ideas about what makes Kailash unusual. The first, following Piasecki’s “A Mountain as Multiverse,” is spatial: the mountain acts as a shared mandala axis onto which rival cosmological, devotional, and biographical realities are mapped according to where a pilgrim stands on the trail (φ = f(r)). The second, borrowing Ivo Dinov’s complex-time (`kime`, κ = r · e^{iφ}) notation, is temporal: texts and journeys around Kailash might carry a second, calendar-decoupled clock that runs independently of physical progress along the path (φ ≠ f(r)).',
         ],
         aside:
@@ -101,7 +101,7 @@ export const kailas: FieldStrand = {
           {
             kind: 'plate',
             title:
-              'Plate I — Mount Kailash / Tise / Yungdrung Gutsek: Cosmographic Pramāṇa Cutaway & Four-Gated Mandala Plan',
+              'Plate I: Mount Kailash / Tise / Yungdrung Gutsek: Cosmographic Pramāṇa Cutaway & Four-Gated Mandala Plan',
             src: '/illustrations/kailas-mandala-pramana.jpg',
             alt: 'Archival copperplate architectural cutaway and mandala plan of Mount Kailash showing nine stepped terraces, four cardinal rivers, square bhupura gates, and 52-km circumambulation circuit',
             legend: [
@@ -134,7 +134,7 @@ export const kailas: FieldStrand = {
       {
         title: 'Study 1A: Self-caught aggregation cancellation across 2,362 passages',
         body: [
-          'We first assembled an open-license corpus across more than fifteen languages—including 1,459 Sanskrit works, 206 CC0 Tibetan and Bon canonical texts, and 51 pre-1928 travel accounts—after catching and retracting an early multilingual-embedding false positive whose top hits were matching literary genre rather than cosmology. Blind raters then scored 2,362 deduplicated 120-token passages on a three-point rubric alongside six specific tags: cyclic cosmic ages (a), rebirth cycles (b), coexisting realms (c), time deities (d), spatial axis-mundi or mandala geometry (e), and bardo or non-linear time (f).',
+          'We first assembled an open-license corpus across more than fifteen languages (including 1,459 Sanskrit works, 206 CC0 Tibetan and Bon canonical texts, and 51 pre-1928 travel accounts)after catching and retracting an early multilingual-embedding false positive whose top hits were matching literary genre rather than cosmology. Blind raters then scored 2,362 deduplicated 120-token passages on a three-point rubric alongside six specific tags: cyclic cosmic ages (a), rebirth cycles (b), coexisting realms (c), time deities (d), spatial axis-mundi or mandala geometry (e), and bardo or non-linear time (f).',
           'Our first aggregation script (`analyze2.py`) collapsed all six tags into a single binary score and threw away the category column. That produced a puzzling null in Sanskrit (−3.39 per 100) and a noisy, underpowered positive in Tibetan (+6.11). When we decomposed the exact same 2,362 blind ratings into spatial mandala structure (e) versus multi-temporal concepts (a, b, d, f) using document-clustered bootstrap intervals (`analyze_v3.py`), the reason jumped out immediately: across English, Sanskrit, and Tibetan, Kailash passages are significantly enriched in spatial mandala geometry and significantly depleted in multi-temporal language. Summing the two had canceled both signals.',
         ],
         figures: [
@@ -194,7 +194,7 @@ export const kailas: FieldStrand = {
       {
         title: 'Study 1B: Recovering classical Tibetan Tise and Bon Yungdrung Gutsek (42 → 282 passages)',
         body: [
-          'A second puzzle remained: why had Corpus v2 found 4,888 Tibetan passages for Mount Meru, yet only 46 for Kailash—three of which turned out to be modern book-series colophons? Auditing our extraction lexicon (`lexicon_verified.json`) exposed a script bug. Classical Meru epithets had been patched in Tibetan script, whereas “Tise” had been entered only in Latin letters, leaving the matcher blind to classical Tibetan verse compounds (such as ཏི་སེའི་གངས and གངས་དཀར་ཏི་སེ, “White Snow Tise”) and omitting the canonical Bon cosmic mountain གཡུང་དྲུང་དགུ་བརྩེགས (*Yungdrung Gutsek*, the Nine-Stacked Swastika Mountain at the center of Olmo Lungring).',
+          'A second puzzle remained: why had Corpus v2 found 4,888 Tibetan passages for Mount Meru, yet only 46 for Kailash, three of which turned out to be modern book-series colophons? Auditing our extraction lexicon (`lexicon_verified.json`) exposed a script bug. Classical Meru epithets had been patched in Tibetan script, whereas “Tise” had been entered only in Latin letters, leaving the matcher blind to classical Tibetan verse compounds (such as ཏི་སེའི་གངས and གངས་དཀར་ཏི་སེ, “White Snow Tise”) and omitting the canonical Bon cosmic mountain གཡུང་དྲུང་དགུ་བརྩེགས (*Yungdrung Gutsek*, the Nine-Stacked Swastika Mountain at the center of Olmo Lungring).',
           'Adding those classical forms and blind-rating the recovered passages (with 95% dual-rater agreement, κ = 0.90) expanded our canonical Tibetan and Bon sample nearly sevenfold, from 42 clean passages to 282 passages across 145 works. At full canonical scale, the spatial-versus-temporal dissociation became unmistakable: classical Tibetan Tise passages jump +21.1 per 100 over religious controls on mandala geometry (+42.0 inside full-text Kangyur/Bon scriptures), Bon *Yungdrung Gutsek* jumps +44.1 on mandala geometry plus +15.7 on coexisting realms, and both sit squarely at null (+1.2 and +1.5) on multi-temporal concepts.',
         ],
         figures: [
@@ -286,11 +286,11 @@ export const kailas: FieldStrand = {
       },
       {
         title:
-          'Study 2: 494 pilgrimage windows—Hajj liturgical calendars vs. the 114-episode, 7-lineage Kailash kora',
+          'Study 2: 494 pilgrimage windows; Hajj liturgical calendars vs. the 114-episode, 7-lineage Kailash kora',
         body: [
           'Scripture tells you how a tradition imagines a place; travel accounts tell you what happens when someone actually walks it. Our initial 195-window coding study hinted that calendar-decoupled ritual time appeared far more often in Mecca and Jerusalem accounts than around Kailash, but the sample was too small to clear information-theoretic breakeven, and most public-domain Kailash books were written by nineteenth-century colonial surveyors mapping valleys rather than walking the ritual circuit.',
           'We therefore expanded public-domain dual coding to 368 windows across twenty-one books (α = 0.86) and dual-coded 114 sequential full-circuit kora episodes ordered from r = 0.00 to r = 1.00 across seven distinct lineages: indigenous Tibetan Buddhist *Ti se’i dkar chag* and *Mgur ’bum* texts (+1 CW), indigenous Bon *Dri med gzi brjid* and *Tise* accounts (−1 CCW), Swami Pranavananda’s Hindu *Kailāsa–Mānasarovara Parikramā* (+1 CW), Lama Anagarika Govinda’s contemplative Buddhist circuit (+1 CW), Colin Thubron’s *To a Mountain in Tibet* (+1 CW, coded strictly by chapter/paragraph locator and SHA-1 hash), the Japanese Zen monk Ekai Kawaguchi’s 1900 circuit (+1 CW), and Sven Hedin’s 1907 topographic circuit (+1 CW).',
-          'The two pilgrimage regimes separated cleanly. Calendar-decoupled ritual time—where a liturgical feast or prayer schedule runs orthogonal to physical geography—concentrates in Hajj and Holy Land accounts (16.7% vs 3.0% in Kailash explorer logs, p = 0.0022). Around Kailash, the opposite happens: 96.5% of kora episodes braid multiple interpretive realities at once, and route-locked mandala phase rises ninefold over off-circuit surveyor logs (20.0% strict, 34.3% loose, p = 0.0017), peaking at 50.0% around the Zutulpuk cave of Milarepa and Naro Bonchung. Across all seven lineages, sacred-landscape 4-register agreement reaches 59.0% (and 70.8% directly between indigenous Tibetan Buddhist *Dkar chag* and Bon *Dri med gzi brjid* circuits) while observer-personal registers diverge (43.1%). Crucially, across all 24 contiguous episodes on the mountain proper (Stages 2–5, from Lha-chu valley over the 5,630 m Drolma La pass to Zutulpuk), calendar decoupling drops to exactly zero.',
+          'The two pilgrimage regimes separated cleanly. Calendar-decoupled ritual time, where a liturgical feast or prayer schedule runs orthogonal to physical geography,concentrates in Hajj and Holy Land accounts (16.7% vs 3.0% in Kailash explorer logs, p = 0.0022). Around Kailash, the opposite happens: 96.5% of kora episodes braid multiple interpretive realities at once, and route-locked mandala phase rises ninefold over off-circuit surveyor logs (20.0% strict, 34.3% loose, p = 0.0017), peaking at 50.0% around the Zutulpuk cave of Milarepa and Naro Bonchung. Across all seven lineages, sacred-landscape 4-register agreement reaches 59.0% (and 70.8% directly between indigenous Tibetan Buddhist *Dkar chag* and Bon *Dri med gzi brjid* circuits) while observer-personal registers diverge (43.1%). Crucially, across all 24 contiguous episodes on the mountain proper (Stages 2–5, from Lha-chu valley over the 5,630 m Drolma La pass to Zutulpuk), calendar decoupling drops to exactly zero.',
         ],
         figures: [
           {
@@ -352,7 +352,7 @@ export const kailas: FieldStrand = {
       {
         title: 'Study 3: Testing ancient ciphers vs. architectural pramāṇa blueprints',
         body: [
-          'Classical Indic and Tibetan traditions developed sophisticated encoding systems—including Vararuci’s *Kaṭapayādi* consonant-to-digit cipher, *Bhūtasaṃkhyā* object-numeral chronograms, Pingala’s binary `laghu/guru` prosodic meter, and tantric *Sāṃdhyābhāṣā* (“Twilight Language”), which maps subtle-body channels onto mandala geography. Because every Sanskrit consonant maps to a digit from 0 to 9, unconstrained numerological searches over sacred hymns will inevitably “discover” sacred constants by pure chance unless tested against permutation controls.',
+          'Classical Indic and Tibetan traditions developed sophisticated encoding systems, including Vararuci’s *Kaṭapayādi* consonant-to-digit cipher, *Bhūtasaṃkhyā* object-numeral chronograms, Pingala’s binary `laghu/guru` prosodic meter, and tantric *Sāṃdhyābhāṣā* (“Twilight Language”), which maps subtle-body channels onto mandala geography. Because every Sanskrit consonant maps to a digit from 0 to 9, unconstrained numerological searches over sacred hymns will inevitably “discover” sacred constants by pure chance unless tested against permutation controls.',
           'Running Rissanen Minimum Description Length (MDL) audits across 482 phonologically normalized Sanskrit passages and 602 disjoint Classical Tibetan and Bon passages (`analysis/ciphers.py`, `analysis/pramana_colophons.py`) draws a sharp line between numerological apophenia and genuine ancient encoding. Unconstrained *Kaṭapayādi* matches for constants like 108, 432, 1008, and π appear at 77.4% in Kailash texts versus 82.5% in randomly shuffled syllables, losing 3.16 bits under MDL. What the texts actually encode is surveyed three-dimensional architecture paired with subtle-body anatomy: explicit Sanskrit *pramāṇa* dimensions in yojanas appear in nearly half of Kailash passages (+11.12 bits over religious controls), and Tibetan/Bon nine-tiered mandala plus subtle-body registers compress blind-rated spatial cosmology by +53.79 bits in Tibetan and +110.98 bits across the pooled corpus.',
         ],
         aside:
@@ -459,7 +459,7 @@ export const kailas: FieldStrand = {
               ['Kailas region (v2 expanded)', '134', '118.88', '116.85', '+2.03 bits', '2-clock / spatial-mandala'],
               ['Hajj & Holy Land liturgical subset', '96', '97.63', '99.03', '−1.40 bits', '1-clock liturgical calendar'],
               ['All comparison pilgrimages', '61', '63.75', '64.87', '−1.12 bits', '1-clock sufficient'],
-              ['Thubron full kora (stages 2–5)', '24', '—', '—', '0/24 decoupled', 'route-locked φ = f(r)'],
+              ['Thubron full kora (stages 2–5)', '24', '--', '--', '0/24 decoupled', 'route-locked φ = f(r)'],
               ['Quarantined Waddell/Strachey/Wilson', '24', 'isolated', '0 in Tiers 1–2', 'verified=true', 'audit remediated'],
             ],
             caption: 'Recomputed directly from `primitives/results/two_clock_mdl.json` (`sha256: 9348f14d...`) and `kailas-corpus/coding/results_coding_v3.json`.',

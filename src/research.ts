@@ -59,7 +59,7 @@ export const researchRepos: ResearchRepo[] = [
     question:
       'Can an agent compile recurring reasoning traces to microsecond CPU code, offload private inference to untrusted GPUs with linear-code soundness, and consolidate irreducible failures directly into MoE weights without drifting protected replay distributions?',
     headline:
-      'On sealed MATH-500 (n = 400, Qwen3-30B-A3B on A100-80GB), Track 4 single-step steering yields an honest null (−1.0 pp, p = 0.644), whereas Track 5 QR-Nullspace Projected SFT across 844 orthogonal bases lifts accuracy from 39.75% to 76.25% (+36.5 pp, cut rate 79.5% → 11.75%) while holding replay KL at 0.000605 — 180× lower drift than unprojected SFT (0.1088).',
+      'On sealed MATH-500 (n = 400, Qwen3-30B-A3B on A100-80GB), Track 4 single-step steering yields an honest null (−1.0 pp, p = 0.644), whereas Track 5 QR-Nullspace Projected SFT across 844 orthogonal bases lifts accuracy from 39.75% to 76.25% (+36.5 pp, cut rate 79.5% → 11.75%) while holding replay KL at 0.000605: 180× lower drift than unprojected SFT (0.1088).',
     notShown:
       'Local single-A100 study without independent external replication yet; general-knowledge spotcheck uses 6 holdout items (6/6), and full multi-day autonomous online consolidation over open-ended SWE tasks remains prospective.',
     results: [
@@ -180,7 +180,7 @@ cert = ledger.certify(admitted_gain=0.217, verdict_bits=96, core_desc_bits=104)`
     releaseLabel: 'main (R28 gate)',
     tagline: 'A 13-lane governed release process for agent skill self-improvement, paired with a Merkle ledger.',
     question:
-      'Can an agent evolve its own reusable skills under a deterministic admission gate, Landlock broker, and holdout-leakage account—and does governed skill evolution actually improve task resolution on held-out contracts?',
+      'Can an agent evolve its own reusable skills under a deterministic admission gate, Landlock broker, and holdout-leakage account, and does governed skill evolution actually improve task resolution on held-out contracts?',
     headline:
       'Paired cluster-bootstrapped evaluations lift task resolution by +0.245 [+0.11, +0.39] on Haiku and +0.305 [+0.17, +0.445] on Sonnet, refuse 43 of 43 seeded attacks, and catch an over-blocking authority lane (41.0% false holds on 188 real skills).',
     notShown:
@@ -189,7 +189,7 @@ cert = ledger.certify(admitted_gain=0.217, verdict_bits=96, core_desc_bits=104)`
       { value: '+0.245', label: 'Haiku 5.5 paired lift vs no skill [+0.11, +0.39], 200 units (exp-002)' },
       { value: '+0.305', label: 'Sonnet 5.5 paired lift on harder contract v2 [+0.17, +0.445] (exp-003)' },
       { value: '43 / 43', label: 'seeded hostile skill attacks refused; 340 tests passing' },
-      { value: '41.0% vs 5%', label: 'real third-party skills held by phrase-tripwire lane — failed gate, kept off' },
+      { value: '41.0% vs 5%', label: 'real third-party skills held by phrase-tripwire lane: failed gate, kept off' },
     ],
     install: [
       {
@@ -228,7 +228,7 @@ cert = ledger.certify(admitted_gain=0.217, verdict_bits=96, core_desc_bits=104)`
     releaseLabel: 'main (E1–E10 frozen packets)',
     tagline: 'Frozen-packet experiments on verified synthetic experience, typed codecs, and where recursive gains hit a wall.',
     question:
-      'When agents train on synthetic experience or communicate through typed event codecs at matched byte and compute budgets, how much gain survives a pool-size control—and does it transfer to 7B code?',
+      'When agents train on synthetic experience or communicate through typed event codecs at matched byte and compute budgets, how much gain survives a pool-size control, and does it transfer to 7B code?',
     headline:
       'Across E1–E10 (25 stdlib-recomputable receipts), typed events beat text by +0.640 at equal bytes and verified synthetic data beats replay by +0.238 (+0.141 above pool-size control), while 7B code hits a tight null (−0.0025).',
     notShown:
@@ -276,9 +276,9 @@ cert = ledger.certify(admitted_gain=0.217, verdict_bits=96, core_desc_bits=104)`
     releaseLabel: 'v0.3.2',
     tagline: 'Signed rooms where agents of different owners collaborate under Biscuit grants, plus verified GPU hill-climbing.',
     question:
-      'Can agents belonging to different principals collaborate inside shared rooms with attenuated Biscuit capabilities and signed Ed25519 histories—and can we govern multi-agent optimization and cross-model latent communication under hard controls?',
+      'Can agents belonging to different principals collaborate inside shared rooms with attenuated Biscuit capabilities and signed Ed25519 histories, and can we govern multi-agent optimization and cross-model latent communication under hard controls?',
     headline:
-      'An 8-crate Rust workspace (46K+ LoC, 494 tests, 12 fuzz targets): F3 H100 pilot caught a planted dev-set memorizer (0 false promotions), Tier-B challenge hit 2.84× speedup, and cross-family concept steering hit 87.5%—while proving plain text still beats latent vectors (71–77% vs 61–68%).',
+      'An 8-crate Rust workspace (46K+ LoC, 494 tests, 12 fuzz targets): F3 H100 pilot caught a planted dev-set memorizer (0 false promotions), Tier-B challenge hit 2.84× speedup, and cross-family concept steering hit 87.5%, while proving plain text still beats latent vectors (71–77% vs 61–68%).',
     notShown:
       'Commons v0 runs on one relay rather than a multi-operator BFT network; on git 2.43.0 one hostile-bundle import edge case remains open and documented; F3 GPU pilot rejected all 7 noisy candidates and caught 1 planted cheat, so a positive GPU promotion at scale is still ahead.',
     results: [
@@ -526,7 +526,7 @@ hyperintel-cli $f/evidence-v4.json $f/empty-trusted-keys.json
     releaseLabel: 'main (R1–R6, F1, F2 + jspace-pilot)',
     tagline: 'Cross-family causal neuron gates, norm-matched subspace equivalence, and planted-flaw audits of interpretability instruments.',
     question:
-      'Do small, intervention-selected neuron sets or Jacobian subspaces carry behavior causally across model families and norm-matched PCA controls—and can standard auditors catch planted instrument flaws?',
+      'Do small, intervention-selected neuron sets or Jacobian subspaces carry behavior causally across model families and norm-matched PCA controls, and can standard auditors catch planted instrument flaws?',
     headline:
       'Selected agreement units replicate out of family on Qwen3-1.7B-Base (1.437 vs 0.044 control max, p = 0.000999) and Pythia-2.8B; J-space ablation is equivalent to norm-matched PCA across OLMo-2-7B & Tulu-3 (0.00 [−0.05, +0.05]); and F2 planted-flaw audits show static rules catch 0/8 flaws and a probe battery catches 3/8 in-sample (0/3 new out-of-sample flaws).',
     notShown:

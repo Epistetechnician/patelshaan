@@ -83,13 +83,13 @@ function HoldoutBudgetDemo() {
         <div className={waldWrong ? 'bad' : 'good'}>
           <strong>{waldBound.toFixed(3)}</strong>
           <span>
-            usual zero-bit Wald lower bound — {waldWrong ? 'INVALID (exceeds true gain)' : 'valid here'}
+            usual zero-bit Wald lower bound: {waldWrong ? 'INVALID (exceeds true gain)': 'valid here'}
           </span>
         </div>
         <div className={ledgerValid ? 'good' : 'bad'}>
           <strong>{ledgerBound.toFixed(3)}</strong>
           <span>
-            ledger bound min(info {infoBound.toFixed(3)}, desc {descBound.toFixed(3)}) — {ledgerBound <= 0 ? 'refuses claim' : 'valid certificate'}
+            ledger bound min(info {infoBound.toFixed(3)}, desc {descBound.toFixed(3)}): {ledgerBound <= 0 ? 'refuses claim': 'valid certificate'}
           </span>
         </div>
       </div>
@@ -694,7 +694,7 @@ function KailasKoraMandalaDemo() {
     >
       <div className="demo-ctl">
         <label>
-          circuit landmark ({idx + 1} / {KORA_STAGES.length}) — r = {st.r.toFixed(2)} ({st.elev})
+          circuit landmark ({idx + 1} / {KORA_STAGES.length}): r = {st.r.toFixed(2)} ({st.elev})
           <input
             type="range"
             min={0}

@@ -53,7 +53,7 @@ const CONCEPT_NODES: Record<string, ConceptSpec> = {
     title: 'Evidence-Bounded Intelligence',
     badge: 'Thesis',
     subtitle:
-      'Why operational authority over self-improving and autonomous AI systems must scale with adversarial verification receipts—never raw capability scores.',
+      'Why operational authority over self-improving and autonomous AI systems must scale with adversarial verification receipts, never raw capability scores.',
     body: [
       'Across safety grading, learned module replacement, and self-improvement loops, single evaluators routinely disagree (15.4% vs 53.6% on identical model outputs) or miss high-order sensitivity drift (0.89 Jacobian error at 0.11 value error).',
       'An evidence-bounded architecture separates untrusted proposers from small formal/attested kernels, prices every holdout query in bits, and keeps null results and self-caught confounds in the permanent ledger.',
@@ -287,7 +287,7 @@ function resolveWikiNode(id: string): WikiResolvedNode | null {
       id: work.id,
       kind: 'work',
       eyebrow: `Canonical Shelf · ${work.year}`,
-      title: `${work.by} — ${work.title}`,
+      title: `${work.by}: ${work.title}`,
       badge: work.year,
       subtitle: 'Why this work sits in the portfolio’s intellectual lineage:',
       body: [
@@ -467,14 +467,14 @@ export function WikiDrawer({
 
           {node.ceiling ? (
             <div className="wiki-drawer__ceiling">
-              <span>Scope ceiling — </span>
+              <span>Scope ceiling: </span>
               <RichText text={node.ceiling} />
             </div>
           ) : null}
 
           {node.relatedIds.length > 0 ? (
             <section className="wiki-drawer__graph" aria-label="Connected nodes">
-              <h3>Connected nodes — click to traverse</h3>
+              <h3>Connected nodes (click to traverse)</h3>
               <div className="wiki-drawer__chips">
                 {node.relatedIds.map((rel) => (
                   <button

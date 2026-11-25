@@ -55,7 +55,7 @@ export const essays: Record<string, Essay> = {
         title: 'Track 4 honest null vs. Track 5 QR-Nullspace breakthrough',
         body: [
           'On `Qwen/Qwen3-30B-A3B` evaluated over the sealed $n = 400$ MATH-500 holdout (`uid_overlap = 0` against dev-100), we first tested Track 4 single-step activation steering across layers 44–47. The initial $n = 100$ slice hinted at $+5.0\\text{ pp}$ (`38% → 43%`, $p = 0.180$), but expanding to the remaining $300$ sealed problems reversed the sign (`40.3% → 37.3%`), yielding a clean full-$n=400$ null (`39.75% → 38.75%`, McNemar $p = 0.644$, EB-MDL gain LCB $= -2.92$).[^t4]',
-          'In Track 5 we replaced one-step steering with 80-step multi-layer MoE SFT projected strictly orthogonal to $844$ orthonormal QR replay bases ($\\text{mean rank } 8.04$, $\\text{max rank } 31$) across layers 40–47: $$\\Delta W_{\\perp} = \\Delta W \\left(I - Q Q^{\\top}\\right)$$ Unprojected SFT (Arm B) lifted accuracy to `82%` on the 100-problem slice but spiked replay KL drift to `0.1088` (`16.3%` routing flip rate). QR-Nullspace SFT (Arm C) achieved **`76.25%` accuracy across all 400 sealed MATH-500 problems** (`+36.5 pp` over base, cut rate `79.5% → 11.75%`, average `603.5` tokens) while clamping replay KL to **`0.000605`** — **`180×` lower drift** with max QR orthogonality residual $1.06\\times 10^{-8}$ and an offline-verifiable Ed25519 receipt.',
+          'In Track 5 we replaced one-step steering with 80-step multi-layer MoE SFT projected strictly orthogonal to $844$ orthonormal QR replay bases ($\\text{mean rank } 8.04$, $\\text{max rank } 31$) across layers 40–47: $$\\Delta W_{\\perp} = \\Delta W \\left(I - Q Q^{\\top}\\right)$$ Unprojected SFT (Arm B) lifted accuracy to `82%` on the 100-problem slice but spiked replay KL drift to `0.1088` (`16.3%` routing flip rate). QR-Nullspace SFT (Arm C) achieved **`76.25%` accuracy across all 400 sealed MATH-500 problems** (`+36.5 pp` over base, cut rate `79.5% → 11.75%`, average `603.5` tokens) while clamping replay KL to **`0.000605`**: **`180×` lower drift** with max QR orthogonality residual $1.06\\times 10^{-8}$ and an offline-verifiable Ed25519 receipt.',
         ],
         sidenotes: [
           {
@@ -219,8 +219,8 @@ for t, x_t in enumerate(holdout_stream, start=1):
               ['Pool swaps (honest)', '0.229', '0.229', '0.223 (3% viol.)', '0.098 (0% viol.)'],
               ['Patch (holdout fitting)', '0.037', '0.006', '0.033 (100% wrong)', '−0.002 (no claim)'],
               ['Mixed proposer', '0.217', '0.211', '0.211 (54% wrong)', '0.112 (0% viol.)'],
-              ['Mixed + MDL gate', '0.205', '0.205', '—', '0.152 (94.4% kept)'],
-              ['Batch-64 (96 bits)', '0.226', '0.226', '—', '0.166 (98.6% kept)'],
+              ['Mixed + MDL gate', '0.205', '0.205', '--', '0.152 (94.4% kept)'],
+              ['Batch-64 (96 bits)', '0.226', '0.226', '--', '0.166 (98.6% kept)'],
             ],
             caption: 'At 1,024 one-bit queries the raw information route is vacuous (−0.038); the description route (~100 bits for swaps) carries the certificate, while core fallback strips patches.',
           },
@@ -285,7 +285,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
         ],
       },
       {
-        title: 'Paired task gains—and a gate that caught our own over-reach',
+        title: 'Paired task gains: and a gate that caught our own over-reach',
         body: [
           'In pre-registered paired tests over 40 task clusters (200 units, 0 excluded), admitted skills lifted Claude Haiku 5.5 by +0.245 [+0.11, +0.39] over no skill and +0.24 [+0.095, +0.39] over wrong-source skills (`exp-002`). On a harder v2 contract with Claude Sonnet 5.5 (`exp-003`), lift rose to +0.305 [+0.17, +0.445] vs no skill and +0.27 [+0.13, +0.415] vs wrong-source.',
           'Equally important is the lane that failed. An `authority` phrase-tripwire lane held 77 of 188 real third-party skills (41.0%) against a pre-registered 5% false-hold limit (`r28`). Rather than tuning phrases to hide the false positives, the lane stays disabled on the record.',
@@ -345,7 +345,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
         ],
       },
       {
-        title: 'The 7B code wall—and why task deltas do not compose for free',
+        title: 'The 7B code wall: and why task deltas do not compose for free',
         body: [
           'When the same verified-synthetic recipe moved to Qwen2.5-7B on real code (`E8-7b`), the effect collapsed to a tight null: −0.0025 [−0.025, +0.020], with every arm within 0.04 of the 0.674 base. `E9` (−0.019) also overturned an earlier reading that verifier precision alone was driving gains, after auditing showed an early “exact oracle” had only 19–43% true ground-truth optimality.',
           'A companion continual-learning study on Qwen3-1.7B (`rsi-loops/cl7b`) tested whether per-task rank-16 MLP deltas on fp and 4-bit bases can serve as modular fast memories. Across 3 seeds, `replay_kl` retained `99.6%` of facts vs `82.5%` for SFT, whereas summing 4 independent deltas blew wiki NLL from `3.29` to `15.96` (`17.74` on 4-bit), and scaling by `1/K` restored fluency only by erasing learned facts back to chance (`15.0%`). Orthogonalizing task deltas (`OrthoDelta`) recovered **`94.4%` composed accuracy at base Wiki NLL (`3.294`)** with exact selective unlearning (`remove_t2`: `96.1%` remaining / `10.0%` unlearned).',
@@ -421,12 +421,12 @@ for t, x_t in enumerate(holdout_stream, start=1):
 
   formasec: {
     callout:
-      'Let the proposer be as wild, heuristic, or hallucination-prone as it wants—provided every composition has to pass a tiny kernel checked across Python, Rust, Kani, and Lean 4 before a single syscall runs.',
+      'Let the proposer be as wild, heuristic, or hallucination-prone as it wants: provided every composition has to pass a tiny kernel checked across Python, Rust, Kani, and Lean 4 before a single syscall runs.',
     sections: [
       {
         title: 'Separating search from soundness',
         body: [
-          'FormaSec splits synthesis into an untrusted proposer (enumerators, Bend, or 7 live LLMs) and a tiny trusted admission kernel implemented twice—a Python reference and a Rust production core—backed by Lean 4 soundness theorems (`admitAlg`, `plan_sound`), Kani model-checking on the pure Rust decision logic, and Linux Landlock execution.',
+          'FormaSec splits synthesis into an untrusted proposer (enumerators, Bend, or 7 live LLMs) and a tiny trusted admission kernel implemented twice, a Python reference and a Rust production core,backed by Lean 4 soundness theorems (`admitAlg`, `plan_sound`), Kani model-checking on the pure Rust decision logic, and Linux Landlock execution.',
           'Across 135 full admission cases (37 valid, 98 invalid), Python and Rust produce zero differences and byte-identical receipts (`M2`). Across 600 random structural cases, Python, Rust, and Lean agree $600 / 600$ times: $$\\forall\\, p \\in \\mathcal{P}_{\\text{hostile}}\\; (n = 552):\\quad \\mathrm{Admit}_{\\text{Py}}(p) = \\mathrm{Admit}_{\\text{Rust}}(p) = 0$$ Across 75 generated spec mutants and 11 receipt/ledger tamper attacks (`M1`), false accepts and false rejects are both 0.[^fsec]',
         ],
         sidenotes: [
@@ -468,7 +468,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
       {
         title: 'What broke under attack, and what did not speed up',
         body: [
-          'During the 552-proposal hostile campaign (`M6`), zero unsafe compositions were admitted, but an adversarial proposer synthesized a valid-looking DAG with 2^n execution paths that exhausted 14 GB of RAM on the dev VM and forced a hard reset—prompting explicit path-count bounds in obligation planning.',
+          'During the 552-proposal hostile campaign (`M6`), zero unsafe compositions were admitted, but an adversarial proposer synthesized a valid-looking DAG with 2^n execution paths that exhausted 14 GB of RAM on the dev VM and forced a hard reset: prompting explicit path-count bounds in obligation planning.',
           'We also tested Bend as a massively parallel proposer (`M3`). It was slower than plain Python at depths 1–2 and timed out at 240 seconds on depth 3 (10.2M candidates). That negative is kept in DESIGN.md §20 so nobody repeats the port expecting free throughput.',
         ],
         figures: [
@@ -497,7 +497,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
         title: 'Where small causal unit sets actually replicate (Astral & R6)',
         body: [
           'Consolidating the Astral neuron lane (`V49–V65`) with new pre-registered protocols (`R1–R6`), a Lean-proved null-calibrated gate (1,000 matched-random draws, p floor 1/(1+n)) identified 7 swap units in Pythia-2.8B whose ablation drops agreement by 0.482 logits against a control maximum of 0.019 (`V61`).',
-          'Out-of-family replication succeeded on Qwen3-1.7B-Base (`R6`): selected units scored 1.437 vs control max 0.044 on T0 (L: 1.158 vs 0.038; P: 1.550 vs 0.044; p = 0.000999 across all three) and replicated upstream on GPT-2 XL (`V64/V65`). Yet Pythia-1.4B failed the frozen 0.5-logit floor (`V55`), and `V60` showed unit selection shifts across GPU/CPU precision—making these necessary, concentrated unit sets rather than representation-invariant circuits.',
+          'Out-of-family replication succeeded on Qwen3-1.7B-Base (`R6`): selected units scored 1.437 vs control max 0.044 on T0 (L: 1.158 vs 0.038; P: 1.550 vs 0.044; p = 0.000999 across all three) and replicated upstream on GPT-2 XL (`V64/V65`). Yet Pythia-1.4B failed the frozen 0.5-logit floor (`V55`), and `V60` showed unit selection shifts across GPU/CPU precision, making these necessary, concentrated unit sets rather than representation-invariant circuits.',
         ],
         figures: [
           {
@@ -518,7 +518,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
         title: 'Norm-matched PCA matches J-space ablation (jspace-pilot)',
         body: [
           'In the companion `jspace-pilot` study on OLMo-2-7B (Base, SFT, DPO, Instruct; up to 4,000 prompts) and Tulu-3, ablating a Jacobian (“J-space”) basis removed far more injected valence effect than a same-rank random subspace (+0.39 to +0.42 logits). Without a harder baseline, that would look like a workspace discovery.',
-          'Against a damage-matched top-PCA subspace (`pcanorm`), the gap collapsed to 0.00 [−0.05, +0.05] on DPO and −0.02 [−0.08, +0.05] on Instruct—statistically equivalent within ±0.2 logits in 11 of 12 runs, and unchanged after refitting the lens on 5× more prompts (1,000 prompts, fidelity 0.51 → 0.52) and accounting for a +2-logit clean-margin shift.',
+          'Against a damage-matched top-PCA subspace (`pcanorm`), the gap collapsed to 0.00 [−0.05, +0.05] on DPO and −0.02 [−0.08, +0.05] on Instruct: statistically equivalent within ±0.2 logits in 11 of 12 runs, and unchanged after refitting the lens on 5× more prompts (1,000 prompts, fidelity 0.51 → 0.52) and accounting for a +2-logit clean-margin shift.',
         ],
         figures: [
           {
@@ -589,7 +589,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
       {
         title: 'What survived: benign-drift refusal retention across three families',
         body: [
-          'Customer and domain fine-tuning is usually benign OOD drift, not a white-box jailbreak adversary—yet standard fine-tuning and replay still erode refusals rapidly. In `v29` and `v30`, freezing low-rank discriminant safety adapters kept refusals intact through benign OOD fine-tuning across Qwen3-8B, Mistral-7B, and OLMo-2-7B.',
+          'Customer and domain fine-tuning is usually benign OOD drift, not a white-box jailbreak adversary, yet standard fine-tuning and replay still erode refusals rapidly. In `v29` and `v30`, freezing low-rank discriminant safety adapters kept refusals intact through benign OOD fine-tuning across Qwen3-8B, Mistral-7B, and OLMo-2-7B.',
           'On OLMo-2-7B (`n = 6` seeds), discriminant adapters retained 1.00 in-distribution and 0.9505 held-out refusals, while free replay collapsed to 0.2682 held-out (`out30/olmo_refuse.combine.txt`). On Qwen3-8B and Mistral-7B, held-out harmful-keyword refusal stayed at 0.96 vs 0.20 for replay.',
         ],
         figures: [
@@ -608,7 +608,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
             src: '/viz-media/subspace-null-projection.mp4',
             scriptPath: 'viz/manimgx/subspace_null_projection.py',
             caption:
-              'ManimGX 3D visualization of orthogonal null-space projection — the same geometric mechanism protecting discriminant safety subspaces here and replay KL in `arc-membrane` Track 5.',
+              'ManimGX 3D visualization of orthogonal null-space projection, the same geometric mechanism protecting discriminant safety subspaces here and replay KL in `arc-membrane` Track 5.',
           },
         ],
       },
@@ -646,7 +646,7 @@ for t, x_t in enumerate(holdout_stream, start=1):
             src: '/viz-media/ahcl-confound-funnel.mp4',
             scriptPath: 'viz/manimgx/ahcl_confound_funnel.py',
             caption:
-              'ManimGX funnel showing how synthetic fit (`R² = 0.88`), shuffled controls (`R² < 0`), and sign agreement (`91%`) pass—before the matched-progress gate halts promotion honestly.',
+              'ManimGX funnel showing how synthetic fit (`R² = 0.88`), shuffled controls (`R² < 0`), and sign agreement (`91%`) pass, before the matched-progress gate halts promotion honestly.',
           },
           {
             kind: 'terminal',

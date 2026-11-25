@@ -296,7 +296,7 @@ export const UNIVERSAL_EPOCHS: EpochStop[] = [
     shortLabel: '10⁻⁴³s',
     time: 't = 10⁻⁴³ s',
     detail: 'scale a ~ 10⁻³⁵ m · T ≈ 1.4×10³² K',
-    note: 'At the Planck wall, geometry dissolves into quantum foam — the UV boundary where classical spacetime ceases to be a smooth manifold.',
+    note: 'At the Planck wall, geometry dissolves into quantum foam, the UV boundary where classical spacetime ceases to be a smooth manifold.',
   },
   {
     label: 'COSMIC INFLATION',
@@ -331,14 +331,14 @@ export const UNIVERSAL_EPOCHS: EpochStop[] = [
     shortLabel: '9.2 Gyr',
     time: 't = 9.2 Gyr',
     detail: '4.6 Gyr ago · T = 3.9 K',
-    note: 'A metal-enriched molecular cloud collapses into the Sun and protoplanetary disk — third-generation stardust assembling planets.',
+    note: 'A metal-enriched molecular cloud collapses into the Sun and protoplanetary disk; third-generation stardust assembling planets.',
   },
   {
     label: 'BIOSPHERE & COGNITION',
     shortLabel: '13.79 Gyr',
     time: 't = 13.79 Gyr',
     detail: 'z = 0.00 · T = 2.725 K',
-    note: 'Self-replicating chemistry crosses into nervous systems and symbolic compression — matter beginning to audit its own models.',
+    note: 'Self-replicating chemistry crosses into nervous systems and symbolic compression; matter beginning to audit its own models.',
   },
   {
     label: 'NOOSPHERE · 2026 CE',
@@ -362,14 +362,14 @@ export const PSYCHO_EPOCHS: EpochStop[] = [
     shortLabel: '3000 BCE',
     time: '3000 BCE',
     detail: 'clay accounting · first statebooks',
-    note: 'Before poetry, writing begins as barley and silver accounting on cuneiform tablets — humanity’s first verifiable statebooks.',
+    note: 'Before poetry, writing begins as barley and silver accounting on cuneiform tablets; humanity’s first verifiable statebooks.',
   },
   {
     label: 'AXIAL AGE REFORM',
     shortLabel: '500 BCE',
     time: '500 BCE',
     detail: 'symbolic compression across Eurasia',
-    note: 'Coinage, alphabetic literacy, and formal logic co-emerge across Greece, India, and China — compressing institutional trust.',
+    note: 'Coinage, alphabetic literacy, and formal logic co-emerge across Greece, India, and China; compressing institutional trust.',
   },
   {
     label: 'SONG JIAOZI NOTES',
@@ -383,7 +383,7 @@ export const PSYCHO_EPOCHS: EpochStop[] = [
     shortLabel: '1602 CE',
     time: '1602 CE',
     detail: 'continuous joint-stock price discovery',
-    note: 'Continuous secondary trading turns collective expectation into a live geometric signal — and births the first multi-leg arbitrage.',
+    note: 'Continuous secondary trading turns collective expectation into a live geometric signal, and births the first multi-leg arbitrage.',
   },
   {
     label: 'PEEL BANK CHARTER',
@@ -441,17 +441,17 @@ export const WORLD_DEFAULT_NOTES: Record<WorldId, string> = {
   psychohistory: PSYCHO_EPOCHS[PSYCHO_EPOCHS.length - 1].note,
   universal: UNIVERSAL_EPOCHS[2].note,
   tesseract:
-    'Stereographic S³ Hopf fibers thread a rotating 4D hypercube — lifting dimensions reveals orthogonal structure hidden in 2D shadows.',
+    'Stereographic S³ Hopf fibers thread a rotating 4D hypercube: lifting dimensions reveals orthogonal structure hidden in 2D shadows.',
   kailas:
     'Around Mount Kailas’s 52 km kora, pilgrimage phenomenology locks to radial spatial phase φ = f(r) across 2,626 blind-labeled passages (α = 0.86, p = 0.0022).',
   horizon:
     'Near r_ph = 1.5 r_s, Kerr frame dragging bends back-side plasma into upper and lower Einstein arcs while Doppler beaming brightens the approaching limb.',
   ruliad:
-    'Branchial space holds all entangled multiway evaluations — any bounded observer only sees a coarse foliation, echoing anytime-valid holdout bounds.',
+    'Branchial space holds all entangled multiway evaluations: any bounded observer only sees a coarse foliation, echoing anytime-valid holdout bounds.',
   lorenz:
-    'Chaotic twin-lobe flow evolves while the invariant QR-nullspace plane remains untouched — the geometry behind Track 5’s 180× lower replay KL (0.000605).',
+    'Chaotic twin-lobe flow evolves while the invariant QR-nullspace plane remains untouched, the geometry behind Track 5’s 180× lower replay KL (0.000605).',
   noosphere:
-    'Standing wave harmonics across collective memory nodes — durable commons pair quadratic preference discovery with Ostrom-legible stewardship.',
+    'Standing wave harmonics across collective memory nodes: durable commons pair quadratic preference discovery with Ostrom-legible stewardship.',
 }
 
 export function getWorldHud(world: WorldId, cam: WorldCamera): WorldHudInfo {
@@ -1010,7 +1010,7 @@ export class EtherFieldRenderer {
       return
     }
 
-    // Default: noosphere — Ethereal Cathedral of Minds (Akashic Lattice)
+    // Default: noosphere: Ethereal Cathedral of Minds (Akashic Lattice)
     for (let py = 0; py < ph; py++) {
       const ny = ((py / ph) * 2 - 1) / zoom
       for (let px = 0; px < pw; px++) {

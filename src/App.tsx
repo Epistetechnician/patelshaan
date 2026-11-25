@@ -170,119 +170,239 @@ declare global {
 
 const landingMusicVideoId = 'oe8kgXNqLFI'
 
-/** Auto-playing ambient audio with synchronous first-gesture unlock for mobile/strict browsers. */
+type SynthEngine = {
+  ctx: AudioContext
+  master: GainNode
+  stop: () => void
+}
+
+function createCosmicSynth(): SynthEngine | null {
+  if (typeof window === 'undefined') return null
+  const Ctx =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  if (!Ctx) return null
+  try {
+    const ctx = new Ctx()
+    const master = ctx.createGain()
+    master.gain.setValueAtTime(0.0001, ctx.currentTime)
+
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.setValueAtTime(340, ctx.currentTime)
+    filter.Q.setValueAtTime(0.9, ctx.currentTime)
+
+    // Slow cosmic breathing LFO modulating filter cutoff
+    const lfo = ctx.createOscillator()
+    const lfoGain = ctx.createGain()
+    lfo.type = 'sine'
+    lfo.frequency.setValueAtTime(0.075, ctx.currentTime)
+    lfoGain.gain.setValueAtTime(140, ctx.currentTime)
+    lfo.connect(lfoGain)
+    lfoGain.connect(filter.frequency)
+
+    const freqs = [55, 82.41, 110, 164.81, 220]
+    const oscs: OscillatorNode[] = []
+    freqs.forEach((f, idx) => {
+      const osc = ctx.createOscillator()
+      const g = ctx.createGain()
+      osc.type = idx % 2 === 0 ? 'sine' : 'triangle'
+      osc.frequency.setValueAtTime(f, ctx.currentTime)
+      osc.detune.setValueAtTime((idx - 2) * 3.5, ctx.currentTime)
+      g.gain.setValueAtTime(0.18 / (idx + 1), ctx.currentTime)
+      osc.connect(g)
+      g.connect(filter)
+      osc.start()
+      oscs.push(osc)
+    })
+
+    lfo.start()
+    filter.connect(master)
+    master.connect(ctx.destination)
+
+    return {
+      ctx,
+      master,
+      stop: () => {
+        try {
+          oscs.forEach((o) => o.stop())
+          lfo.stop()
+          void ctx.close()
+        } catch {
+          /* ignore */
+        }
+      },
+    }
+  } catch {
+    return null
+  }
+}
+
+/** Auto-playing ambient audio: YouTube primary + warm Web Audio cosmic pad fallback for strict iOS/Safari. */
 function AmbientSoundControl() {
   const playerHostRef = useRef<HTMLDivElement | null>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
+  const synthRef = useRef<SynthEngine | null>(null)
   const readyRef = useRef(false)
+  const ytPlayingRef = useRef(false)
   const userMutedRef = useRef(false)
   const pendingPlayOnReadyRef = useRef(true)
   const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('loading')
 
-  const startPlayer = useCallback((host: HTMLDivElement, isDisposed: () => boolean) => {
-    let readyTimeoutTimer: number | undefined
-
-    const clearTimer = () => {
-      if (readyTimeoutTimer !== undefined) {
-        window.clearTimeout(readyTimeoutTimer)
-        readyTimeoutTimer = undefined
+  const fadeSynth = useCallback((active: boolean) => {
+    const synth = synthRef.current
+    if (!synth) return
+    const now = synth.ctx.currentTime
+    if (active) {
+      if (synth.ctx.state === 'suspended') {
+        void synth.ctx.resume().catch(() => undefined)
       }
-    }
-
-    const createPlayer = () => {
-      if (isDisposed() || !window.YT?.Player || playerRef.current) {
-        return
-      }
-
-      const mountNode = document.createElement('div')
-      mountNode.id = 'landing-music-player'
-      host.replaceChildren(mountNode)
-
-      playerRef.current = new window.YT.Player(mountNode, {
-        videoId: landingMusicVideoId,
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          enablejsapi: 1,
-          loop: 1,
-          origin: window.location.origin,
-          playlist: landingMusicVideoId,
-          playsinline: 1,
-          rel: 0,
-        },
-        events: {
-          onReady: ({ target }) => {
-            if (isDisposed()) return
-            readyRef.current = true
-            clearTimer()
-            if (!userMutedRef.current && pendingPlayOnReadyRef.current) {
-              target.unMute?.()
-              target.setVolume?.(70)
-              target.playVideo()
-            }
-          },
-          onAutoplayBlocked: () => {
-            if (isDisposed()) return
-            setPlayback('paused')
-          },
-          onStateChange: ({ data }) => {
-            if (isDisposed()) return
-            if (data === 1) {
-              setPlayback('playing')
-            } else if (data === 2 || data === 0) {
-              setPlayback('paused')
-            }
-          },
-          onError: () => {
-            if (isDisposed()) return
-            clearTimer()
-            setPlayback('idle')
-          },
-        },
-      })
-    }
-
-    readyTimeoutTimer = window.setTimeout(() => {
-      if (!isDisposed() && !readyRef.current) {
-        setPlayback('paused')
-      }
-    }, 6000)
-
-    if (window.YT?.Player) {
-      createPlayer()
-      return clearTimer
-    }
-
-    const prevReady = window.onYouTubeIframeAPIReady
-    const handleApiReady = () => {
-      prevReady?.()
-      createPlayer()
-    }
-    window.onYouTubeIframeAPIReady = handleApiReady
-
-    if (!document.getElementById('youtube-iframe-api')) {
-      const script = document.createElement('script')
-      script.id = 'youtube-iframe-api'
-      script.src = 'https://www.youtube.com/iframe_api'
-      script.onerror = () => {
-        script.remove()
-        if (!isDisposed()) {
-          clearTimer()
-          setPlayback('idle')
-        }
-      }
-      document.head.appendChild(script)
-    }
-
-    return () => {
-      clearTimer()
-      if (window.onYouTubeIframeAPIReady === handleApiReady) {
-        window.onYouTubeIframeAPIReady = prevReady
-      }
+      synth.master.gain.cancelScheduledValues(now)
+      synth.master.gain.setTargetAtTime(0.085, now, 0.45)
+    } else {
+      synth.master.gain.cancelScheduledValues(now)
+      synth.master.gain.setTargetAtTime(0.0001, now, 0.25)
     }
   }, [])
 
-  // Mount and attempt autoplay immediately; unlock on first tap/click/key anywhere if mobile blocks initial autoplay
+  const ensureSynthPlaying = useCallback(() => {
+    if (userMutedRef.current || ytPlayingRef.current) return false
+    if (!synthRef.current) {
+      synthRef.current = createCosmicSynth()
+    }
+    const synth = synthRef.current
+    if (!synth) return false
+    if (synth.ctx.state === 'suspended') {
+      void synth.ctx.resume().catch(() => undefined)
+    }
+    fadeSynth(true)
+    setPlayback('playing')
+    return true
+  }, [fadeSynth])
+
+  const startPlayer = useCallback(
+    (host: HTMLDivElement, isDisposed: () => boolean) => {
+      let readyTimeoutTimer: number | undefined
+
+      const clearTimer = () => {
+        if (readyTimeoutTimer !== undefined) {
+          window.clearTimeout(readyTimeoutTimer)
+          readyTimeoutTimer = undefined
+        }
+      }
+
+      const createPlayer = () => {
+        if (isDisposed() || !window.YT?.Player || playerRef.current) {
+          return
+        }
+
+        const mountNode = document.createElement('div')
+        mountNode.id = 'landing-music-player'
+        host.replaceChildren(mountNode)
+
+        playerRef.current = new window.YT.Player(mountNode, {
+          videoId: landingMusicVideoId,
+          playerVars: {
+            autoplay: 1,
+            controls: 0,
+            enablejsapi: 1,
+            loop: 1,
+            origin: window.location.origin,
+            playlist: landingMusicVideoId,
+            playsinline: 1,
+            rel: 0,
+          },
+          events: {
+            onReady: ({ target }) => {
+              if (isDisposed()) return
+              readyRef.current = true
+              clearTimer()
+              if (!userMutedRef.current && pendingPlayOnReadyRef.current) {
+                target.unMute?.()
+                target.setVolume?.(70)
+                target.playVideo()
+              }
+            },
+            onAutoplayBlocked: () => {
+              if (isDisposed()) return
+              ytPlayingRef.current = false
+              if (!synthRef.current || synthRef.current.ctx.state !== 'running') {
+                setPlayback('paused')
+              }
+            },
+            onStateChange: ({ data }) => {
+              if (isDisposed()) return
+              if (data === 1) {
+                ytPlayingRef.current = true
+                fadeSynth(false)
+                setPlayback('playing')
+              } else if (data === 2 || data === 0) {
+                ytPlayingRef.current = false
+                if (!userMutedRef.current && synthRef.current?.ctx.state === 'running') {
+                  fadeSynth(true)
+                  setPlayback('playing')
+                } else {
+                  setPlayback('paused')
+                }
+              }
+            },
+            onError: () => {
+              if (isDisposed()) return
+              clearTimer()
+              ytPlayingRef.current = false
+              if (synthRef.current?.ctx.state === 'running') {
+                setPlayback('playing')
+              } else {
+                setPlayback('paused')
+              }
+            },
+          },
+        })
+      }
+
+      readyTimeoutTimer = window.setTimeout(() => {
+        if (!isDisposed() && !readyRef.current) {
+          setPlayback((cur) => (cur === 'playing' ? 'playing' : 'paused'))
+        }
+      }, 4500)
+
+      if (window.YT?.Player) {
+        createPlayer()
+        return clearTimer
+      }
+
+      const prevReady = window.onYouTubeIframeAPIReady
+      const handleApiReady = () => {
+        prevReady?.()
+        createPlayer()
+      }
+      window.onYouTubeIframeAPIReady = handleApiReady
+
+      if (!document.getElementById('youtube-iframe-api')) {
+        const script = document.createElement('script')
+        script.id = 'youtube-iframe-api'
+        script.src = 'https://www.youtube.com/iframe_api'
+        script.onerror = () => {
+          script.remove()
+          if (!isDisposed()) {
+            clearTimer()
+            setPlayback((cur) => (cur === 'playing' ? 'playing' : 'paused'))
+          }
+        }
+        document.head.appendChild(script)
+      }
+
+      return () => {
+        clearTimer()
+        if (window.onYouTubeIframeAPIReady === handleApiReady) {
+          window.onYouTubeIframeAPIReady = prevReady
+        }
+      }
+    },
+    [fadeSynth],
+  )
+
+  // Mount and attempt autoplay immediately; unlock synchronously on first tap/click/key anywhere on mobile
   useEffect(() => {
     const host = playerHostRef.current
     if (!host) return
@@ -291,7 +411,6 @@ function AmbientSoundControl() {
 
     const onFirstInteraction = (event: Event) => {
       if (disposed || userMutedRef.current) return
-      // Don't hijack clicks directly on the Sound toggle button itself
       const target = event.target as HTMLElement | null
       if (target?.closest('.sound-toggle')) return
 
@@ -305,8 +424,12 @@ function AmbientSoundControl() {
             player.playVideo()
           }
         } catch {
-          /* wait for next gesture or onReady */
+          /* fallback to Web Audio cosmic pad below */
         }
+      }
+      // Guarantee immediate sound on iOS Safari even if cross-origin YouTube iframe blocks parent-gesture play
+      if (!ytPlayingRef.current) {
+        ensureSynthPlaying()
       }
     }
 
@@ -323,37 +446,43 @@ function AmbientSoundControl() {
       window.removeEventListener('click', onFirstInteraction)
       window.removeEventListener('keydown', onFirstInteraction)
       readyRef.current = false
+      ytPlayingRef.current = false
+      synthRef.current?.stop()
+      synthRef.current = null
       playerRef.current?.destroy()
       playerRef.current = null
       host.replaceChildren()
     }
-  }, [startPlayer])
+  }, [ensureSynthPlaying, startPlayer])
 
   const toggleSound = () => {
     const player = playerRef.current
-    if (!player || !readyRef.current) {
-      userMutedRef.current = false
-      pendingPlayOnReadyRef.current = true
-      const host = playerHostRef.current
-      if (!player && host) {
-        setPlayback('loading')
-        startPlayer(host, () => playerHostRef.current !== host)
-      }
-      return
-    }
-
     if (playback === 'playing') {
       userMutedRef.current = true
       pendingPlayOnReadyRef.current = false
-      player.pauseVideo()
+      ytPlayingRef.current = false
+      fadeSynth(false)
+      try {
+        player?.pauseVideo()
+      } catch {
+        /* ignore */
+      }
       setPlayback('paused')
-    } else {
-      userMutedRef.current = false
-      pendingPlayOnReadyRef.current = true
-      player.unMute?.()
-      player.setVolume?.(70)
-      player.playVideo()
+      return
     }
+
+    userMutedRef.current = false
+    pendingPlayOnReadyRef.current = true
+    if (player && readyRef.current) {
+      try {
+        player.unMute?.()
+        player.setVolume?.(70)
+        player.playVideo()
+      } catch {
+        /* ignore */
+      }
+    }
+    ensureSynthPlaying()
   }
 
   return (
@@ -1123,7 +1252,7 @@ function App() {
       />
 
       <main className="page-main">
-        {/* HERO — Pure living SOTA GPU ASCII cinema + singular authorial thesis */}
+        {/* HERO: Pure living SOTA GPU ASCII cinema + singular authorial thesis */}
         <section className="hero">
           <div className="hero__canvas" aria-hidden="true">
             <Video2Ascii
@@ -1160,7 +1289,7 @@ function App() {
             <div className="hero__intro">
               <h1 className="hero__headline">
                 Making autonomous AI, markets, and human archives answer to
-                verifiable evidence—not rhetoric.
+                verifiable evidence, not rhetoric.
               </h1>
 
               <p className="hero__sub">
@@ -1225,10 +1354,10 @@ function App() {
           </div>
         </section>
 
-        {/* 01 — FOUNDATIONS */}
+        {/* 01 · FOUNDATIONS */}
         <section className="ed-section" id="about">
           <div className="ed-section__head">
-            <p className="ed-eyebrow">01 — Foundations</p>
+            <p className="ed-eyebrow">01 · Foundations</p>
             <h2>First-person notes before the archive.</h2>
           </div>
 
@@ -1259,7 +1388,7 @@ function App() {
                 />
               </div>
               <figcaption className="about-figure__caption about-figure__caption--split">
-                <span>Interactive glyph study — move or tap across the frame.</span>
+                <span>Interactive glyph study: move or tap across the frame.</span>
                 <span className="about-figure__lenses" role="group" aria-label="Glyph study lens">
                   {(['cinematic', 'braille', 'detailed'] as CharsetKey[]).map((key) => (
                     <button
@@ -1284,7 +1413,7 @@ function App() {
               <div className="about-prose">
                 <p>
                   I trained in economics and data science, beginning in sustainable
-                  development and environmental impact assessment—fields where a
+                  development and environmental impact assessment, fields where a
                   sloppy measurement model quietly warps every decision built atop
                   it. That same seam pulled me toward verifiable AI, formal
                   admission kernels, market coherence, and computational
@@ -1294,8 +1423,8 @@ function App() {
                 <p>
                   Every empirical claim on this site links back to a reproducible
                   run, a cryptographic digest, or an honest ceiling. When a clean
-                  hypothesis breaks—whether a geometric probe ties plain PCA or a
-                  sacred-geography conjecture reverses under blind coding—the
+                  hypothesis breaks, whether a geometric probe ties plain PCA or a
+                  sacred-geography conjecture reverses under blind coding, the
                   negative result stays in the ledger beside what held.
                 </p>
               </div>

@@ -255,7 +255,7 @@ const LOCAL_CORPUS: CorpusDoc[] = [
       '1.06×10⁻⁸ max QR orthogonality residual across 844 expert bases',
     ],
     aliases: ['arc', 'membrane', 'qr', 'nullspace', 'moe', 'math500', 'math-500', 'sft', 'drift', 'self-compiling'],
-    body: 'On sealed MATH-500 (n=400, Qwen3-30B-A3B), Track 4 single-step steering yields an honest null (-1.0 pp, p=0.644), whereas Track 5 QR-Nullspace Projected SFT across 844 orthogonal bases lifts accuracy from 39.75% to 76.25% (+36.5 pp) while holding replay KL at 0.000605 — 180× lower drift than unprojected SFT (0.1088).',
+    body: 'On sealed MATH-500 (n=400, Qwen3-30B-A3B), Track 4 single-step steering yields an honest null (-1.0 pp, p=0.644), whereas Track 5 QR-Nullspace Projected SFT across 844 orthogonal bases lifts accuracy from 39.75% to 76.25% (+36.5 pp) while holding replay KL at 0.000605; 180× lower drift than unprojected SFT (0.1088).',
     followups: [
       { label: 'Visualize QR nullspace', command: 'qrproj' },
       { label: 'Enter Lorenz · QR Plane ✦', command: 'travel lorenz' },
@@ -329,7 +329,7 @@ const LOCAL_CORPUS: CorpusDoc[] = [
     ceiling: 'Verified CV & working portfolio (shaan4d.xyz)',
     metrics: ['13 research repos + Kailas multilingual corpus + shaanpatel-cv-pico'],
     aliases: ['who', 'shaan', 'patel', 'about', 'bio', 'cv', 'working', 'now', 'background', 'hi', 'hello'],
-    body: 'I am Shaan Patel (@Epistetechnician) — independent researcher & systems engineer working on formal containment (FormaSec), anytime evaluation integrity (Holdout Ledger, ARC Membrane), mechanistic interpretability audits, and epistemic history/markets (Psychohistory v2, Kailas Corpus).',
+    body: 'I am Shaan Patel (@Epistetechnician); independent researcher & systems engineer working on formal containment (FormaSec), anytime evaluation integrity (Holdout Ledger, ARC Membrane), mechanistic interpretability audits, and epistemic history/markets (Psychohistory v2, Kailas Corpus).',
     followups: [
       { label: 'Start 5-stop tour', command: 'tour' },
       { label: 'Browse research', command: 'research' },
@@ -358,7 +358,7 @@ const ESSAYS = [
     title: 'The Mountain That Decoupled From the Clock',
     theme: 'Humanities · Spatial Geometry',
     excerpt:
-      'Across 2,626 multilingual passages and 368 pilgrimage windows, Mount Kailas refuses purely liturgical calendar timing — its phenomenology locks instead to radial kora distance φ = f(r) around a 52 km sacred circuit.',
+      'Across 2,626 multilingual passages and 368 pilgrimage windows, Mount Kailas refuses purely liturgical calendar timing: its phenomenology locks instead to radial kora distance φ = f(r) around a 52 km sacred circuit.',
   },
   {
     slug: 'psychohistory',
@@ -373,7 +373,7 @@ const TOUR_STOPS = [
   {
     step: 1,
     title: 'Formal Containment & Hardware Attestation',
-    body: 'Start at the security boundary: FormaSec pairs untrusted LLM proposers with a tiny deterministic kernel verified across Python, Kani Rust, and Lean 4 (600/600 structural agreements, 0/552 hostile admissions) before Linux Landlock runs. Even this RPi5 terminal obeys the same philosophy — zero bash/sh, read-only rootfs, cap-drop=ALL.',
+    body: 'Start at the security boundary: FormaSec pairs untrusted LLM proposers with a tiny deterministic kernel verified across Python, Kani Rust, and Lean 4 (600/600 structural agreements, 0/552 hostile admissions) before Linux Landlock runs. Even this RPi5 terminal obeys the same philosophy: zero bash/sh, read-only rootfs, cap-drop=ALL.',
     next: 'tour 2',
     extra: [
       { label: 'Inspect sandbox policy', command: 'cat /etc/sandbox.policy' },
@@ -413,7 +413,7 @@ const TOUR_STOPS = [
   {
     step: 5,
     title: 'Step Into the Multidimensional Ether',
-    body: 'Eight real-time high-resolution 2×4 Braille / dense ASCII worlds connect human psychohistory to universal cosmic deep time — from 10⁻⁴³ s Planck foam to 10⁴⁰ yr black holes, 4D Hopf fibrations, Kerr lensing, and the Ruliad branchial ether.',
+    body: 'Eight real-time high-resolution 2×4 Braille / dense ASCII worlds connect human psychohistory to universal cosmic deep time, from 10⁻⁴³ s Planck foam to 10⁴⁰ yr black holes, 4D Hopf fibrations, Kerr lensing, and the Ruliad branchial ether.',
     next: 'worlds',
     extra: [
       { label: 'Enter Universal History ✦', command: 'travel universal' },
@@ -502,7 +502,7 @@ const VIRTUAL_FS: Record<string, string> = {
   '/corpus/psychohistory.v2':
     'PSYCHOHISTORY & HISTORICAL STATEBOOK v2 (Pure D_real_hold)\nEvents         : 1,673 real (1,004 train / 669 hold · 0 overlap)\nLean 4 checks  : 1,673 / 1,673 (100.0%) Pinsker + weak-duality + causal macro\nP1 Certified   : pooled high_resolution_surprise (+0.1721b, E_t=3.43e6)\n                 pooled extreme_mispricing_correction (+0.3822b, E_t=1e12, AUROC 0.9810)\n                 polymarket_only extreme_mispricing (+0.1091b, E_t=6.50e5)\n                 kalshi_only extreme_mispricing (+1.1023b, E_t=1e12)\nP2 Certified   : pooled delayed_settlement_median (+0.0152b, E_t=36.79)\nHonest Nulls   : 8/12 P1 cells & 11/12 P2 cells reported verbatim',
   '/corpus/kailas.mandala':
-    'KAILAS CORPUS — SPATIAL MANDALA DOUBLE DISSOCIATION\nPassages       : 2,626 blind-labeled across 15+ languages\nRecovered      : 282 classical Tibetan (ཏི་སེ) & Bon Kangyur passages\nPilgrimage     : 368 windows · α=0.86 · p=0.0022 (spatial φ=f(r) vs calendar clocks)\nThubron kora   : 48 episodes · 20.0% strict / 34.3% loose route-aligned phase',
+    'KAILAS CORPUS: SPATIAL MANDALA DOUBLE DISSOCIATION\nPassages: 2,626 blind-labeled across 15+ languages\nRecovered: 282 classical Tibetan (ཏི་སེ) & Bon Kangyur passages\nPilgrimage: 368 windows · α=0.86 · p=0.0022 (spatial φ=f(r) vs calendar clocks)\nThubron kora: 48 episodes · 20.0% strict / 34.3% loose route-aligned phase',
 }
 
 const INJECTION_RE = /(;|&&|\|\||`|\$\(|>\s*\/|<\s*\/|\brm\s+-rf\b|\bchmod\b|\bbash\b|\b\/bin\/sh\b)/
@@ -673,7 +673,7 @@ export function executeLocalCommand(
     const nextLabel = idx < TOUR_STOPS.length ? `Next stop (${idx + 1}/5) →` : 'Explore all 8 worlds ✦'
     return {
       ansi: [
-        boxHeader(`GUIDED TOUR · STOP ${idx}/5 — ${stop.title}`, dots),
+        boxHeader(`GUIDED TOUR · STOP ${idx}/5 · ${stop.title}`, dots),
         `${INK}${stop.body}${R}`,
       ].join('\n') + '\n',
       suggestions: [{ label: nextLabel, command: stop.next }, ...stop.extra],
@@ -751,7 +751,7 @@ export function executeLocalCommand(
           `${INK}${hit.headline}${R}`,
           '',
           `${GOLD}Verified metrics:${R}`,
-          ...hit.results.slice(0, 4).map((x) => `  ${EMERALD}▸${R} ${BRIGHT}${x.value}${R} ${MUTED}— ${x.label}${R}`),
+          ...hit.results.slice(0, 4).map((x) => `  ${EMERALD}▸${R} ${BRIGHT}${x.value}${R} ${MUTED}: ${x.label}${R}`),
           '',
           `  ${MUTED}evidence ceiling :${R} ${AMBER}${hit.notShown}${R}`,
         ].join('\n') + '\n',
@@ -766,7 +766,7 @@ export function executeLocalCommand(
       boxHeader(`VERIFIED RESEARCH MONOGRAPH (${researchRepos.length} REPOS)`, 'click any `research <slug>`'),
       ...researchRepos.map(
         (r) =>
-          `  ${CYAN}▸${R} \`${GOLD}research ${r.slug}${R}\`  ${BRIGHT}${r.name}${R}\n    ${MUTED}${r.results[0]?.value ?? ''} — ${r.results[0]?.label ?? r.tagline}${R}`,
+          `  ${CYAN}▸${R} \`${GOLD}research ${r.slug}${R}\`  ${BRIGHT}${r.name}${R}\n    ${MUTED}${r.results[0]?.value ?? ''}: ${r.results[0]?.label ?? r.tagline}${R}`,
       ),
     ]
     return {
@@ -832,8 +832,8 @@ export function executeLocalCommand(
         `  ${INK}${'pooled · high_resolution_surprise'.padEnd(40)}${R} ${EMERALD}${'+0.1721'.padStart(8)}${R} ${BRIGHT}${'0.7690'.padStart(7)}${R} ${GOLD}${'3.43e+06'.padStart(10)}${R}  ${EMERALD}CERTIFIED${R}`,
         `  ${INK}${'polymarket · extreme_mispricing'.padEnd(40)}${R} ${EMERALD}${'+0.1091'.padStart(8)}${R} ${BRIGHT}${'0.8121'.padStart(7)}${R} ${GOLD}${'6.50e+05'.padStart(10)}${R}  ${EMERALD}CERTIFIED${R}`,
         `  ${INK}${'kalshi · extreme_mispricing'.padEnd(40)}${R} ${EMERALD}${'+1.1023'.padStart(8)}${R} ${BRIGHT}${'0.9749'.padStart(7)}${R} ${GOLD}${'1.00e+12'.padStart(10)}${R}  ${EMERALD}CERTIFIED${R}`,
-        `  ${INK}${'pooled P2 · delayed_settlement_median'.padEnd(40)}${R} ${CYAN}${'+0.0152'.padStart(8)}${R} ${BRIGHT}${'—'.padStart(7)}${R} ${GOLD}${'36.79'.padStart(10)}${R}  ${EMERALD}CERTIFIED${R}`,
-        `  ${MUTED}${'remaining 8/12 P1 & 11/12 P2 cells'.padEnd(40)} ${'mixed/0'.padStart(8)} ${'—'.padStart(7)} ${'< 20'.padStart(10)}  ${AMBER}HONEST NULL${R}`,
+        `  ${INK}${'pooled P2 · delayed_settlement_median'.padEnd(40)}${R} ${CYAN}${'+0.0152'.padStart(8)}${R} ${BRIGHT}${'--'.padStart(7)}${R} ${GOLD}${'36.79'.padStart(10)}${R}  ${EMERALD}CERTIFIED${R}`,
+        `  ${MUTED}${'remaining 8/12 P1 & 11/12 P2 cells'.padEnd(40)} ${'mixed/0'.padStart(8)} ${'--'.padStart(7)} ${'< 20'.padStart(10)}  ${AMBER}HONEST NULL${R}`,
         '',
         `  ${MUTED}Fly over the live 3D obstruction manifold with \`${CYAN}travel psychohistory${MUTED}\`.${R}`,
       ].join('\n') + '\n',
@@ -848,7 +848,7 @@ export function executeLocalCommand(
   if (cmd === 'kailas' || cmd === 'kailash' || cmd === 'mandala') {
     return {
       ansi: [
-        boxHeader('KAILAS CORPUS — SPATIAL MANDALA φ = f(r)', '2,626 passages · 15+ languages'),
+        boxHeader('KAILAS CORPUS: SPATIAL MANDALA φ = f(r)', '2,626 passages · 15+ languages'),
         `  ${EMERALD}▸${R} ${BRIGHT}282 recovered classical Tibetan (ཏི་སེ) & Bon Kangyur passages${R}`,
         `  ${EMERALD}▸${R} ${BRIGHT}368-window pilgrimage coding${R} ${MUTED}(Krippendorff α = 0.86, p = 0.0022)${R}`,
         `  ${EMERALD}▸${R} ${BRIGHT}Double dissociation:${R} ${INK}Hajj & Holy Land lock to calendar clocks; Kailas locks to spatial kora phase φ = f(r).${R}`,
@@ -913,7 +913,7 @@ export function executeLocalCommand(
   if (cmd === 'qrproj' || cmd === 'qr' || cmd === 'nullspace') {
     return {
       ansi: [
-        boxHeader('ARC MEMBRANE TRACK 5 — QR-NULLSPACE PROJECTION', '844 MoE expert bases'),
+        boxHeader('ARC MEMBRANE TRACK 5: QR-NULLSPACE PROJECTION', '844 MoE expert bases'),
         `  ${MUTED}Projection :${R} ${CYAN}ΔW_⊥ = ΔW − (ΔW · Q) · Qᵀ${R}`,
         `  ${MUTED}Orthogonal :${R} ${EMERALD}||ΔW_⊥ · Q||_max = 1.06 × 10⁻⁸${R}`,
         '',
@@ -934,7 +934,7 @@ export function executeLocalCommand(
   if (cmd === 'timeline') {
     return {
       ansi: [
-        boxHeader('SCALE LADDER — HUMAN PSYCHOHISTORY TO UNIVERSAL HISTORY'),
+        boxHeader('SCALE LADDER: HUMAN PSYCHOHISTORY TO UNIVERSAL HISTORY'),
         `  ${VIOLET}10⁻⁴³ s${R}   ${BRIGHT}Planck Foam & Inflation${R}        ${MUTED}→ \`${CYAN}travel universal${MUTED}\`${R}`,
         `  ${CYAN}380 kyr${R}   ${BRIGHT}CMB Last Scattering (3,000 K)${R}  ${MUTED}→ \`${CYAN}travel horizon${MUTED}\`${R}`,
         `  ${AMBER}3000 BCE${R}  ${BRIGHT}Sumerian Ledgers & Statebooks${R}  ${MUTED}→ \`${CYAN}travel psychohistory${MUTED}\`${R}`,
@@ -1013,7 +1013,7 @@ export function executeLocalCommand(
 
   if (!question) {
     return {
-      ansi: `${MUTED}Ask anything about Shaan's work, research, or essays — or run \`${GOLD}tour${MUTED}\` / \`${GOLD}worlds${MUTED}\`.${R}\n`,
+      ansi: `${MUTED}Ask anything about Shaan's work, research, or essays, or run \`${GOLD}tour${MUTED}\` / \`${GOLD}worlds${MUTED}\`.${R}\n`,
       suggestions: DEFAULT_SUGGESTIONS,
     }
   }

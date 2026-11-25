@@ -126,7 +126,7 @@ export function ReceiptVerifier({ slug }: { slug: string }) {
         <div>
           <span className="demo-tag">webcrypto</span>
           <strong>Offline dataset integrity check</strong>
-          <span className="receipt-verifier__sub"> — {entry.label}</span>
+          <span className="receipt-verifier__sub"> · {entry.label}</span>
         </div>
         <button type="button" onClick={verify} disabled={state.status === 'running'}>
           {state.status === 'running' ? 'Hashing…' : state.status === 'ok' ? 'Re-verify SHA-256' : 'Verify SHA-256 in browser'}

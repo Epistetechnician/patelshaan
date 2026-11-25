@@ -26,7 +26,7 @@
           constitutional plumbing. In Security Alignment OS, I deliberately
           left the language model out of the loop at first so the control plane
           itself could stand on bare rock. Every untrusted proposal must earn
-          its effect step by step—carrying exact-subject evidence, clearing
+          its effect step by step: carrying exact-subject evidence, clearing
           deterministic admission, receiving a single-use kernel-bound
           capability, passing through an isolated capability broker process,
           and running inside a sandbox where any fault closes straight to
@@ -49,8 +49,8 @@
         </p>
 
         <p>
-          To test whether those walls held under pressure, we wrote 279 tests—all
-          passing—including an adversarial runner that attacks the broker head
+          To test whether those walls held under pressure, we wrote 279 tests: all
+          passing, including an adversarial runner that attacks the broker head
           on with path escapes, replay attempts, forged receipts, malformed
           child operations, and telemetry leaks. Next, we moved the suite onto
           a Google Confidential Space Intel TDX instance, where all 20 required
@@ -60,7 +60,7 @@
           evidence packets even bind both the broker executable digest and the
           per-host runner digest while keeping older packets verifiable under
           their original identities. Calling this a machine-attested
-          reproduction—rather than independent replication—keeps us honest
+          reproduction, rather than independent replication,keeps us honest
           until a second, separately administered host runs the exact same
           check.
         </p>
@@ -110,8 +110,8 @@
           tampered bundles, and mid-settlement crashes all refuse silent
           corruption, and append-only logs let corrections supersede history
           without erasing it. A compact fourteen-case gateway demo mirrored
-          that shape—one benign acceptance, thirteen unsafe rejections, zero
-          false rejections, and fourteen recomputation agreements—small enough
+          that shape, one benign acceptance, thirteen unsafe rejections, zero
+          false rejections, and fourteen recomputation agreements: small enough
           to inspect by hand and reported strictly at that scale.
         </p>
 
@@ -123,7 +123,7 @@
           Canonical events seal into Merkle roots with per-event proofs, while
           live Kubernetes actions remain disabled by default behind explicit
           context and namespace allowlists. I deliberately avoid calling this
-          "self-healing"—keeping a real human in the steering seat is the
+          "self-healing", keeping a real human in the steering seat is the
           point, not a temporary crutch.
         </p>
 

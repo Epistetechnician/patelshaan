@@ -411,7 +411,7 @@ export function EtherTerminal() {
         if (!silent) {
           appendBlock(
             'output',
-            `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}) — instant local sandbox active.\x1b[0m\n`,
+            `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}); instant local sandbox active.\x1b[0m\n`,
           )
         }
       }
@@ -889,7 +889,7 @@ export function EtherTerminal() {
       {/* Top Bar */}
       <div className="ether-terminal__head">
         <div className="ether-terminal__brand">
-          <span className="ether-terminal__title">spatel — ether harness</span>
+          <span className="ether-terminal__title">spatel · ether harness</span>
           <button
             type="button"
             className={`ether-status-pill is-${connState}`}
@@ -1037,7 +1037,7 @@ export function EtherTerminal() {
                     type="button"
                     className={`terminal-prompt-chip terminal-prompt-chip--world${activeWorld === w.id ? ' is-active' : ''}`}
                     onClick={() => openWorld(w.id)}
-                    title={`${w.name} — ${w.span}`}
+                    title={`${w.name} (${w.span})`}
                   >
                     ✦ {w.shortLabel}
                     {count > 0 ? <span className="ether-world-count">· {count}</span> : null}

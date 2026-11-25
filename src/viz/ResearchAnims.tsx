@@ -337,7 +337,7 @@ function renderArcHero(
         { text: `${pr.uid}  [L${pr.lvl} · ${pr.subj}]`, bold: true },
         { text: flipTag, bold: true, color: rgb(accent) },
         { text: `Base: ${baseStr}  →  Arm C: ${armCStr}`, color: C.fg },
-        { text: `gold: ${pr.gold || '—'}   pred: ${pr.pred || '—'}`, color: C.mute },
+        { text: `gold: ${pr.gold || '--'}   pred: ${pr.pred || '--'}`, color: C.mute },
       ],
       C,
       accent,
@@ -1595,7 +1595,7 @@ function renderTheseusHero(
   }
 
   drawPanel(36, 'Original network (index 0 = unit u₀)', hOrig, yOrig, false)
-  drawPanel(118, 'Permuted network P (index 0 = unit u₂ — 100% positions moved)', hPerm, yPerm, true)
+  drawPanel(118, 'Permuted network P (index 0 = unit u₂: 100% positions moved)', hPerm, yPerm, true)
 
   chip(
     ctx,
@@ -2077,7 +2077,7 @@ function renderPlayboxHero(
 }
 
 /* ============================================================================
-   10–14. ALL REMAINING MONOGRAPHS — BACKED BY REAL SHA-256 BUNDLES + HOVER
+   10–14. ALL REMAINING MONOGRAPHS, BACKED BY REAL SHA-256 BUNDLES + HOVER
    ============================================================================ */
 type FormasecGate = { id: string; label: string; tested: number; unsafe: number; status: string; note: string }
 type FormasecJson = { fuzz_admit_seeds: number; strata_trace_events: number; gates: FormasecGate[] }
@@ -2928,7 +2928,7 @@ const RESEARCH_ANIMS: Record<string, AnimDef> = {
     cycleMs: 8000,
     height: () => 255,
     ariaLabel: 'Security Alignment OS 279 real Rust tests grouped by module highlighting adversarial, replay, forged, and escape checks.',
-    caption: 'All `279` real passing Rust tests (`replays.json`), grouped by kernel module with adversarial, replay, escape, and rejection checks highlighted in amber — `0` failures.',
+    caption: 'All `279` real passing Rust tests (`replays.json`), grouped by kernel module with adversarial, replay, escape, and rejection checks highlighted in amber; `0` failures.',
     provenance: 'site/src/replays.json (security-alignment-os)',
     hoverHint: 'Hover any kernel module bar to inspect exact adversarial test names',
     render: renderSecAlignHero,
@@ -2948,7 +2948,7 @@ const RESEARCH_ANIMS: Record<string, AnimDef> = {
     cycleMs: 8500,
     height: () => 255,
     ariaLabel: 'Composed ZK Benchmark OS 1,107 real Rust tests grouped by module highlighting adversarial mutation tests.',
-    caption: 'All `1,107` real passing Rust tests (`replays.json`) across `9` workload families and `14` adversarial mutation classes — explicitly scoped to Claim Ladder Level 1.',
+    caption: 'All `1,107` real passing Rust tests (`replays.json`) across `9` workload families and `14` adversarial mutation classes; explicitly scoped to Claim Ladder Level 1.',
     provenance: 'site/src/replays.json (composed-zk-benchmark-os)',
     hoverHint: 'Hover any crate module bar to inspect exact adversarial mutation test names',
     render: renderZkBenchHero,

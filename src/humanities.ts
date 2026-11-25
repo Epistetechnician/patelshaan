@@ -111,7 +111,7 @@ export const works: Record<string, Work> = {
     by: 'Mark S. Miller',
     title: 'Robust Composition: Towards a Unified Approach to Access Control and Concurrency Control',
     year: '2006',
-    note: 'Shows how object-capabilities let mutually suspicious principals compose work safely without ambient authority—the architectural ancestor of Playbox grants and FormaSec kernels.',
+    note: 'Shows how object-capabilities let mutually suspicious principals compose work safely without ambient authority, the architectural ancestor of Playbox grants and FormaSec kernels.',
   },
   elster: {
     id: 'elster',
@@ -323,7 +323,7 @@ export const works: Record<string, Work> = {
     by: 'Ekai Kawaguchi',
     title: 'Three Years in Tibet',
     year: '1909',
-    note: 'A Japanese Zen monk’s firsthand circuit of Kailas—one of the nine public-domain Kailas accounts coded in the pilgrimage episode study.',
+    note: 'A Japanese Zen monk’s firsthand circuit of Kailas, one of the nine public-domain Kailas accounts coded in the pilgrimage episode study.',
   },
   burton: {
     id: 'burton',
@@ -395,7 +395,7 @@ export const threads: Thread[] = [
     ],
     essay: [
       'Every system that learns is a ship being repaired at sea. The Athenians kept the galley of Theseus for centuries, replacing each plank as it rotted, and philosophers kept asking whether it was still his ship. At Ise in Japan the question is answered by ritual and not by argument: the main shrine is rebuilt beside itself every twenty years, and has been, with some long interruptions, since the late seventh century. The building is the same because the practice of rebuilding it is the same.',
-      'A model that keeps learning forces both answers at once. We want it to stay the thing we tested—keeping its refusals through fine-tuning (`temporal-grid-safety`) and its prior facts across tasks (`hsi-lab` / `cl7b`)—and we want it to change. Borges imagined the cost of the extreme case in Funes, who remembers everything and therefore cannot think; to think, his narrator says, is to forget differences.',
+      'A model that keeps learning forces both answers at once. We want it to stay the thing we tested, keeping its refusals through fine-tuning (`temporal-grid-safety`) and its prior facts across tasks (`hsi-lab` / `cl7b`),and we want it to change. Borges imagined the cost of the extreme case in Funes, who remembers everything and therefore cannot think; to think, his narrator says, is to forget differences.',
     ],
     works: ['plutarch', 'hobbes', 'parfit', 'quine', 'borges', 'luria', 'mccloskey'],
   },
@@ -406,7 +406,7 @@ export const threads: Thread[] = [
     inquiries: ['hyperintel', 'playbox', 'caduceus', 'security-alignment-os', 'formasec'],
     essay: [
       'A receipt is a small act of trust made portable. The English Exchequer split wooden tally sticks lengthwise so that creditor and treasury each kept half. The halves matched or they did not, and nobody had to be present to find out. In the seventeenth century the Royal Society took as its motto Nullius in verba, take nobody’s word for it, and then spent decades working out whose witness could stand in for everyone’s. Shapin’s history of that effort is a reminder that evidence is social before it is technical: we check what we can and trust for the rest.',
-      'Verification software—hash-chained room histories in `playbox`, RFC 9162 Merkle skill ledgers in `caduceus`, byte-exact admission receipts in `formasec`, and caller-rooted bundles in `hyperintel`—moves trust from the person who made a claim to a small rule a stranger can run offline.',
+      'Verification software: hash-chained room histories in `playbox`, RFC 9162 Merkle skill ledgers in `caduceus`, byte-exact admission receipts in `formasec`, and caller-rooted bundles in `hyperintel`; moves trust from the person who made a claim to a small rule a stranger can run offline.',
     ],
     works: ['shapin', 'shapinSchaffer', 'poovey', 'pacioli', 'schmandt', 'akerlof'],
   },
@@ -424,7 +424,7 @@ export const threads: Thread[] = [
   {
     id: 'measure',
     title: 'Measure and its distortions',
-    question: 'What happens to a number once people—or self-improving loops—optimize against it?',
+    question: 'What happens to a number once people, or self-improving loops,optimize against it?',
     inquiries: [
       'holdout-ledger',
       'mech-interp-unified',
@@ -432,7 +432,7 @@ export const threads: Thread[] = [
       'aligned-holistic-continual-learning',
     ],
     essay: [
-      'When a measure becomes a target, it ceases to be a good measure. Strathern’s wording of Goodhart’s law is the shortest account of why benchmarks age—and Dwork and Roth’s reusable-holdout theorem is its mathematical form for adaptive loops that query a test set a thousand times. Porter adds that numbers earn authority because strangers can agree on a rule even when they do not trust one another’s judgment.',
+      'When a measure becomes a target, it ceases to be a good measure. Strathern’s wording of Goodhart’s law is the shortest account of why benchmarks age, and Dwork and Roth’s reusable-holdout theorem is its mathematical form for adaptive loops that query a test set a thousand times. Porter adds that numbers earn authority because strangers can agree on a rule even when they do not trust one another’s judgment.',
       'Across this portfolio, pricing holdout queries by description length (`holdout-ledger`), planting 8 flaw classes into interpretability gates (`mech-interp-unified`), and mutating ZK traces adversarially (`composed-zk-benchmark-os`) are three instances of Lakatos’s rule: let the counterexamples into the room first.',
     ],
     works: ['dwork', 'rissanen', 'strathern', 'porter', 'lakatos', 'dijkstra', 'lind', 'hill', 'gmr', 'quisquater'],
@@ -473,7 +473,7 @@ export const threads: Thread[] = [
     ],
     essay: [
       'Michelson and Morley set out in 1887 to measure the Earth’s motion through the aether and found nothing, and that null result reshaped physics. Rosenthal named the opposite habit, the file drawer where nulls go to disappear. Feynman’s rule against that fate was short: you must not fool yourself, and you are the easiest person to fool.',
-      'Catching our own v16 attacker-rate confound (`temporal-grid-safety`), retracting our first-pass Kailas embedding positive (3% precision), showing J-space ties norm-matched PCA (`jspace-pilot`), and keeping Caduceus’s failed 41% false-hold tripwire on the record are the sharpest things on this site—because each one cleared away a mirage and pointed at a real mechanism.',
+      'Catching our own v16 attacker-rate confound (`temporal-grid-safety`), retracting our first-pass Kailas embedding positive (3% precision), showing J-space ties norm-matched PCA (`jspace-pilot`), and keeping Caduceus’s failed 41% false-hold tripwire on the record are the sharpest things on this site, because each one cleared away a mirage and pointed at a real mechanism.',
     ],
     works: ['feynman', 'merton', 'rosenthal', 'lakatos', 'hill', 'dwork'],
   },

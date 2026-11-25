@@ -226,7 +226,7 @@ const DISPATCHES: DispatchItem[] = [
     channels: ['cs-ml', 'security', 'nulls'],
     title: 'Temporal Grid Safety & Self-Caught v16 Attacker Confound',
     summary:
-      'Frozen discriminant safety adapters retain 0.95 vs 0.27 refusal under benign OOD fine-tuning—after stripping our own 35-point eval-rate confound.',
+      'Frozen discriminant safety adapters retain 0.95 vs 0.27 refusal under benign OOD fine-tuning, after stripping our own 35-point eval-rate confound.',
     metric: '0.95 vs 0.27',
     metricSub: 'refusal retained · v16 confound corrected',
     whatHeld:
@@ -475,7 +475,7 @@ export function ExplorerFeed({
 
       <div className="ed-section__head ed-section__head--split">
         <div>
-          <p className="ed-eyebrow">03 — Research Stream &amp; Live Embeds</p>
+          <p className="ed-eyebrow">03: Research Stream &amp; Live Embeds</p>
           <h2>Dig in at your own depth.</h2>
         </div>
 
@@ -588,7 +588,7 @@ export function ExplorerFeed({
       {channel === 'horizons' ? (
         <div className="horizon-stream" aria-label="Approaching research thresholds">
           <p className="horizon-stream__intro">
-            Open problems across the six fronts—each stated with what a genuine
+            Open problems across the six fronts, each stated with what a genuine
             unlock requires and the exact bottleneck currently blocking it.
           </p>
           <div className="horizon-stream__grid">
@@ -601,7 +601,7 @@ export function ExplorerFeed({
                 <h3><RichText text={h.title} /></h3>
                 <p className="horizon-mini__threshold"><RichText text={h.unlock} /></p>
                 <p className="horizon-mini__gap">
-                  <span>Blocking — </span>
+                  <span>Blocking: </span>
                   <RichText text={h.bottleneck} />
                 </p>
               </article>

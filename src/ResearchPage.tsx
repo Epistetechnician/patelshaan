@@ -647,6 +647,25 @@ function FieldPage({ field }: { field: FieldStrand }) {
   )
 }
 
+const PI5_VERIFY_TARGET: Record<string, string> = {
+  'arc-membrane': 'arc-membrane',
+  'holdout-ledger': 'holdout-ledger',
+  formasec: 'formasec',
+  'security-alignment-os': 'formasec',
+  psychohistory: 'psychohistory',
+  'kailas-corpus': 'kailas-corpus',
+  'track-b': 'track-b',
+}
+
+function launchPi5Verify(target: string) {
+  try {
+    window.sessionStorage.setItem('spatel_pending_cmd', `verify ${target}`)
+  } catch {
+    /* ignore storage errors */
+  }
+  window.location.hash = '#install'
+}
+
 /* ============================================================================
    REPOSITORY MONOGRAPH PAGE (#/research/<slug>): Pure nathan.rs/posts style
    ============================================================================ */
@@ -736,6 +755,19 @@ function RepoPage({ repo }: { repo: ResearchRepo }) {
             <p className="rp-note">Verify:</p>
             <CopyBlock command={repo.reproduce} />
             <ReceiptVerifier key={repo.slug} slug={repo.slug} />
+            {PI5_VERIFY_TARGET[repo.slug] ? (
+              <p className="rp-links">
+                <a
+                  href="#install"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    launchPi5Verify(PI5_VERIFY_TARGET[repo.slug])
+                  }}
+                >
+                  Verify live on Pi 5 (<code>verify {PI5_VERIFY_TARGET[repo.slug]}</code>) ↗
+                </a>
+              </p>
+            ) : null}
             {repo.custody ? <p className="rp-note">{repo.custody}</p> : null}
           </section>
 

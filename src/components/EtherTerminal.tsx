@@ -40,10 +40,16 @@ type Telemetry = {
   node?: string
   arch?: string
   cpu_temp_c?: number | null
+  uptime_s?: number
   active_sessions?: number
   max_sessions?: number
   model?: string
+  fts_chunks?: number
+  manifests_mounted?: boolean
 }
+
+const PENDING_CMD_STORAGE_KEY = 'spatel_pending_cmd'
+const HEALTH_POLL_URL = 'https://term.shaan4d.xyz/health'
 
 type TerminalBlock = {
   id: number
@@ -540,6 +546,52 @@ export function EtherTerminal() {
     }
   }, [connectToEndpoint, disconnectSocket])
 
+  // Poll /health on mount & every 60s so Pi 5 temp, FTS chunk count, and manifest badge stay live
+  useEffect(() => {
+    let cancelled = false
+    const pollHealth = async () => {
+      try {
+        const res = await fetch(HEALTH_POLL_URL, { cache: 'no-store' })
+        if (!res.ok) return
+        const data = (await res.json()) as Telemetry
+        if (!cancelled && data && typeof data === 'object') {
+          setTelemetry((prev) => ({ ...(prev ?? {}), ...data }))
+        }
+      } catch {
+        /* ignore offline/CORS errors */
+      }
+    }
+    void pollHealth()
+    const iv = window.setInterval(() => void pollHealth(), 60000)
+    return () => {
+      cancelled = true
+      window.clearInterval(iv)
+    }
+  }, [])
+
+  // Auto-execute queued deep-link command (e.g. from ResearchPage "Verify live on Pi 5" or ?run=...)
+  const pendingCmdRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    let cmd: string | null = null
+    try {
+      cmd = window.sessionStorage.getItem(PENDING_CMD_STORAGE_KEY)
+      if (cmd) window.sessionStorage.removeItem(PENDING_CMD_STORAGE_KEY)
+    } catch {
+      /* ignore */
+    }
+    if (!cmd) {
+      const q = new URLSearchParams(window.location.search).get('run')?.trim()
+      if (q) cmd = q
+    }
+    if (cmd) {
+      pendingCmdRef.current = cmd
+      window.setTimeout(() => {
+        document.getElementById('install')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 60)
+    }
+  }, [])
+
   // Sync anonymous world traveler presence with RPi5 whenever entering/switching/exiting a world
   useEffect(() => {
     activeWorldRef.current = activeWorld
@@ -667,6 +719,26 @@ export function EtherTerminal() {
       wsUrl,
     ],
   )
+
+  useEffect(() => {
+    const pending = pendingCmdRef.current
+    if (!pending) return
+    if (connState === 'live') {
+      pendingCmdRef.current = null
+      const t = window.setTimeout(() => runLine(pending), 120)
+      return () => window.clearTimeout(t)
+    }
+    if (connState === 'fallback') {
+      const t = window.setTimeout(() => {
+        if (pendingCmdRef.current) {
+          const c = pendingCmdRef.current
+          pendingCmdRef.current = null
+          runLine(c)
+        }
+      }, 1400)
+      return () => window.clearTimeout(t)
+    }
+  }, [connState, runLine])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -881,6 +953,32 @@ export function EtherTerminal() {
         ? '◐ dialing rpi5…'
         : '○ local sandbox · click to dial'
 
+  const healthSummary = useMemo(() => {
+    if (!telemetry) return null
+    const parts: string[] = []
+    if (telemetry.manifests_mounted) parts.push('6/6 receipts')
+    if (typeof telemetry.fts_chunks === 'number' && telemetry.fts_chunks > 0) {
+      parts.push(`${telemetry.fts_chunks.toLocaleString()} FTS`)
+    }
+    return parts.length > 0 ? parts.join(' · ') : null
+  }, [telemetry])
+
+  const healthTitle = useMemo(() => {
+    if (!telemetry) return 'Live Raspberry Pi 5 telemetry'
+    const upMin = typeof telemetry.uptime_s === 'number' ? Math.floor(telemetry.uptime_s / 60) : null
+    const sess =
+      typeof telemetry.active_sessions === 'number' && typeof telemetry.max_sessions === 'number'
+        ? `${telemetry.active_sessions}/${telemetry.max_sessions} sessions`
+        : null
+    return [
+      telemetry.model || 'shaanpatel-cv-pico',
+      upMin != null ? `up ${upMin}m` : null,
+      sess,
+    ]
+      .filter(Boolean)
+      .join(' · ')
+  }, [telemetry])
+
   return (
     <div
       className={`ether-terminal${expanded ? ' is-expanded' : ''}`}
@@ -898,6 +996,16 @@ export function EtherTerminal() {
           >
             {statusBadge}
           </button>
+          {healthSummary ? (
+            <button
+              type="button"
+              className="ether-head-btn"
+              onClick={() => runLine('verify')}
+              title={`${healthTitle} — click to run live receipt verification`}
+            >
+              {healthSummary}
+            </button>
+          ) : null}
         </div>
 
         <div className="ether-terminal__actions">

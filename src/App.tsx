@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ExplorerFeed } from './ExplorerFeed'
 import { WikiChip, WikiDrawer } from './WikiDrawer'
 import { EtherTerminal } from './components/EtherTerminal'
-import Video2Ascii, { type CharsetKey } from './components/LocalVideo2Ascii'
+import Video2Ascii from './components/LocalVideo2Ascii'
+import { ProofShowcase } from './components/ProofShowcase'
 import { WorkList } from './components/WorkList'
 import { getField } from './field'
 import { essayNotes, threadById } from './humanities'
@@ -96,17 +96,8 @@ const cliCommands = [
 type ExperienceVideo = {
   src: string
   poster?: string
-  label: string
   caption: string
-  stats: string
-  renderMode?: 'ascii' | 'video'
-  fitMode?: 'cover' | 'ambient'
-  focalY?: number
-  posterTime?: number
-  numColumns: number
-  blend: number
-  highlight: number
-  brightness: number
+  renderMode?: 'video'
 }
 
 type ExperienceLink = {
@@ -120,11 +111,10 @@ type ExperienceCard = {
   eyebrow: string
   title: string
   role: string
-  summary: string
-  details: string[]
-  video: ExperienceVideo
+  narrative: string
+  shipped: string[]
+  video?: ExperienceVideo
   links?: ExperienceLink[]
-  secondaryVideo?: ExperienceVideo
   wikiIds: string[]
 }
 
@@ -179,23 +169,17 @@ declare global {
 
 const landingMusicVideoId = 'oe8kgXNqLFI'
 
+/** Strictly opt-in ambient audio: loads YouTube iframe only after explicit click. */
 function AmbientSoundControl() {
   const playerHostRef = useRef<HTMLDivElement | null>(null)
-  const buttonRef = useRef<HTMLButtonElement | null>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
   const readyRef = useRef(false)
-  const userPausedRef = useRef(false)
-  const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('loading')
+  const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('idle')
 
   const startPlayer = useCallback((host: HTMLDivElement, isDisposed: () => boolean) => {
-    let autoplayCheckTimer: number | undefined
     let readyTimeoutTimer: number | undefined
 
-    const clearTimers = () => {
-      if (autoplayCheckTimer !== undefined) {
-        window.clearTimeout(autoplayCheckTimer)
-        autoplayCheckTimer = undefined
-      }
+    const clearTimer = () => {
       if (readyTimeoutTimer !== undefined) {
         window.clearTimeout(readyTimeoutTimer)
         readyTimeoutTimer = undefined
@@ -227,27 +211,13 @@ function AmbientSoundControl() {
           onReady: ({ target }) => {
             if (isDisposed()) return
             readyRef.current = true
-            if (readyTimeoutTimer !== undefined) {
-              window.clearTimeout(readyTimeoutTimer)
-              readyTimeoutTimer = undefined
-            }
-            if (!userPausedRef.current) {
-              target.unMute?.()
-              target.playVideo()
-              autoplayCheckTimer = window.setTimeout(() => {
-                if (isDisposed() || playerRef.current !== target) return
-                const state = target.getPlayerState?.()
-                if (state !== 1 && state !== 3) {
-                  setPlayback((curr) => (curr === 'loading' ? 'paused' : curr))
-                }
-              }, 1200)
-            } else {
-              setPlayback('paused')
-            }
+            clearTimer()
+            target.unMute?.()
+            target.playVideo()
           },
           onAutoplayBlocked: () => {
             if (isDisposed()) return
-            setPlayback((curr) => (curr === 'loading' ? 'paused' : curr))
+            setPlayback('paused')
           },
           onStateChange: ({ data }) => {
             if (isDisposed()) return
@@ -259,7 +229,7 @@ function AmbientSoundControl() {
           },
           onError: () => {
             if (isDisposed()) return
-            clearTimers()
+            clearTimer()
             setPlayback('idle')
           },
         },
@@ -268,18 +238,16 @@ function AmbientSoundControl() {
 
     readyTimeoutTimer = window.setTimeout(() => {
       if (!isDisposed() && !readyRef.current) {
-        setPlayback((curr) => (curr === 'loading' ? 'idle' : curr))
+        setPlayback('idle')
       }
     }, 6000)
 
     if (window.YT?.Player) {
       createPlayer()
-      return clearTimers
+      return clearTimer
     }
 
-    const handleApiReady = () => {
-      createPlayer()
-    }
+    const handleApiReady = () => createPlayer()
     window.onYouTubeIframeAPIReady = handleApiReady
 
     if (!document.getElementById('youtube-iframe-api')) {
@@ -289,7 +257,7 @@ function AmbientSoundControl() {
       script.onerror = () => {
         script.remove()
         if (!isDisposed()) {
-          clearTimers()
+          clearTimer()
           setPlayback('idle')
         }
       }
@@ -297,7 +265,7 @@ function AmbientSoundControl() {
     }
 
     return () => {
-      clearTimers()
+      clearTimer()
       if (window.onYouTubeIframeAPIReady === handleApiReady) {
         window.onYouTubeIframeAPIReady = undefined
       }
@@ -306,61 +274,17 @@ function AmbientSoundControl() {
 
   useEffect(() => {
     const host = playerHostRef.current
-    if (!host) return
-
-    let disposed = false
-    const cleanupStart = startPlayer(host, () => disposed)
-
     return () => {
-      disposed = true
-      cleanupStart()
       readyRef.current = false
       playerRef.current?.destroy()
       playerRef.current = null
-      host.replaceChildren()
+      host?.replaceChildren()
     }
-  }, [startPlayer])
-
-  useEffect(() => {
-    if (playback === 'playing') return
-
-    const unlockPlayback = (event: Event) => {
-      if (userPausedRef.current) return
-      if (event.target instanceof Node && buttonRef.current?.contains(event.target)) {
-        return
-      }
-      if (
-        event instanceof KeyboardEvent &&
-        (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta')
-      ) {
-        return
-      }
-      const player = playerRef.current
-      if (!player || !readyRef.current) return
-      const state = player.getPlayerState?.()
-      if (state === 1 || state === 3) return
-      player.unMute?.()
-      player.playVideo()
-    }
-
-    const opts: AddEventListenerOptions = { capture: true, passive: true }
-    window.addEventListener('pointerdown', unlockPlayback, opts)
-    window.addEventListener('touchend', unlockPlayback, opts)
-    window.addEventListener('click', unlockPlayback, opts)
-    window.addEventListener('keydown', unlockPlayback, opts)
-
-    return () => {
-      window.removeEventListener('pointerdown', unlockPlayback, opts)
-      window.removeEventListener('touchend', unlockPlayback, opts)
-      window.removeEventListener('click', unlockPlayback, opts)
-      window.removeEventListener('keydown', unlockPlayback, opts)
-    }
-  }, [playback])
+  }, [])
 
   const toggleSound = () => {
     const player = playerRef.current
     if (!player || !readyRef.current) {
-      userPausedRef.current = false
       const host = playerHostRef.current
       if (!player && host) {
         setPlayback('loading')
@@ -370,11 +294,9 @@ function AmbientSoundControl() {
     }
 
     if (playback === 'playing') {
-      userPausedRef.current = true
       player.pauseVideo()
       setPlayback('paused')
     } else {
-      userPausedRef.current = false
       player.unMute?.()
       player.playVideo()
     }
@@ -384,7 +306,6 @@ function AmbientSoundControl() {
     <div className="sound-toggle">
       <div ref={playerHostRef} className="sound-toggle__player" />
       <button
-        ref={buttonRef}
         type="button"
         className={`sound-toggle__btn${playback === 'playing' ? ' is-playing' : ''}`}
         onClick={toggleSound}
@@ -410,30 +331,24 @@ const experienceCards: ExperienceCard[] = [
     eyebrow: '2025 — 2026',
     title: 'Halo Labs',
     role: 'Co-Founder & Head of AI',
-    summary:
-      'Leading research on a confidential stablecoin network and verifiable AI inside trusted execution environments, alongside documentation, developer onboarding, and ecosystem partnerships.',
-    details: [
-      'Research on verifiable AI execution combining TEEs and zero-knowledge proofs.',
-      'Authored technical documentation and light-client onboarding guides.',
-      'Coordinated infrastructure partnerships across Phala, Fairblocks, and ecosystem teams.',
+    narrative:
+      'At Halo Labs I worked on the hardest seam in confidential finance: how to make private settlement and autonomous execution provable to counterparties who should never have to trust an operator. That meant pairing trusted execution environments with zero-knowledge verification, writing the protocol documentation developers actually build from, and shipping a light client that makes privacy legible.',
+    shipped: [
+      'Architected Halo Verus—verifiable AI execution binding TEE hardware attestation to zero-knowledge proofs.',
+      'Authored protocol architecture documentation and light-client onboarding guides.',
+      'Built infrastructure partnerships across Phala, Fairblocks, and confidential-compute ecosystem teams.',
     ],
     video: {
       src: '/ascii/loomhalo-web.mp4',
       poster: '/ascii/loomhalo-poster.jpg',
-      label: 'halo labs / light client',
       caption: 'Halo light-client walkthrough',
-      stats: 'live walkthrough',
       renderMode: 'video',
-      numColumns: 88,
-      blend: 18,
-      highlight: 14,
-      brightness: 1.24,
     },
     links: [
       {
         href: 'https://docs.halo-labs.xyz/',
         label: 'Halo Documentation',
-        description: 'Architecture and protocol docs',
+        description: 'Architecture and protocol reference',
       },
       {
         href: 'https://github.com/Halo-Labs-xyz/halo-verus',
@@ -446,21 +361,6 @@ const experienceCards: ExperienceCard[] = [
         description: 'Research memo on modular privacy',
       },
     ],
-    secondaryVideo: {
-      src: '/ascii/lorenz.mp4',
-      poster: '/ascii/lorenz-poster.webp',
-      label: 'lorenz attractor',
-      caption: 'Lorenz chaotic system in ASCII',
-      stats: 'rendered',
-      renderMode: 'ascii',
-      fitMode: 'ambient',
-      focalY: 0.42,
-      posterTime: 4,
-      numColumns: 96,
-      blend: 12,
-      highlight: 18,
-      brightness: 1.25,
-    },
     wikiIds: ['power', 'trust', 'formasec', 'security-alignment-os'],
   },
   {
@@ -468,42 +368,23 @@ const experienceCards: ExperienceCard[] = [
     eyebrow: '2024 — 2025',
     title: 'NPC Capital',
     role: 'Full-Stack Developer & Researcher',
-    summary:
-      'Liquid digital-asset fund focused on decentralized market structure, built in partnership with Polygon.',
-    details: [
-      'Designed operator and investor heads-up displays for live portfolio context.',
-      'Built cross-chain data pipelines informing capital allocation decisions.',
-      'Collaborated with Hyperliquid validators to evaluate real-yield strategies.',
+    narrative:
+      'In liquid digital-asset markets, mispricing is rarely an absence of data—it is a failure of accounting across venues with incompatible settlement clocks. Alongside Polygon and Hyperliquid validators, I built the telemetry and portfolio interfaces that kept capital allocation anchored to live on-chain state rather than lagging spreadsheets.',
+    shipped: [
+      'Designed operator and investor heads-up displays surfacing live cross-venue portfolio risk.',
+      'Built cross-chain telemetry pipelines grounding allocation decisions in verifiable on-chain state.',
+      'Evaluated real-yield validator economics directly with Hyperliquid operators—seed work for Statebook.',
     ],
-    video: {
-      src: '/ascii/npc-skyline.mp4',
-      poster: '/ascii/npc-skyline-poster.webp',
-      label: 'markets / skyline',
-      caption: 'Skyline ASCII study',
-      stats: 'synced',
-      numColumns: 96,
-      blend: 10,
-      highlight: 10,
-      brightness: 1.18,
-    },
-    secondaryVideo: {
-      src: '/ascii/npc-skyline.mp4',
-      poster: '/ascii/npc-skyline-poster.webp',
-      label: 'npc skyline',
-      caption: 'Skyline in ASCII',
-      stats: 'rendered',
-      renderMode: 'ascii',
-      posterTime: 2,
-      numColumns: 124,
-      blend: 8,
-      highlight: 14,
-      brightness: 1.15,
-    },
     links: [
       {
         href: 'https://npcgroup.xyz/',
         label: 'NPC Capital',
         description: 'Fund overview',
+      },
+      {
+        href: '/publications/statebook-whitepaper.pdf',
+        label: 'Statebook Specification',
+        description: '72-pp market coherence paper',
       },
     ],
     wikiIds: ['statebook', 'measure', 'commons', 'poovey'],
@@ -512,57 +393,15 @@ const experienceCards: ExperienceCard[] = [
     shortTab: 'Public Goods',
     eyebrow: '2022 — 2024',
     title: 'Public Goods & Open Source',
-    role: 'Solana Foundation, Celo, Dream DAO, Eco DAO',
-    summary:
-      'Developer documentation, public-goods funding design, and governance stewardship across open-source communities.',
-    details: [
-      'Solana Foundation: Tightened SDK versioning, examples, and developer lessons.',
-      'Celo: Shaped public-goods strategy around account abstraction and quadratic funding.',
-      'Dream DAO & Eco DAO: Co-stewarded builder cohorts, governance tooling, and ecological primitives.',
+    role: 'Solana Foundation · Celo · Dream DAO · Eco DAO',
+    narrative:
+      'Before formal kernels and verifiable models, I spent two years inside open-source institutions asking why public goods either endure or quietly decay. The answer was almost always legibility: clear developer tooling, transparent funding mechanisms, and governance rules that survive contact with real incentives.',
+    shipped: [
+      'Solana Foundation — tightened SDK versioning, reference examples, and hands-on developer lessons.',
+      'Celo — shaped public-goods funding strategy around account abstraction and quadratic funding.',
+      'Dream DAO & Eco DAO — co-stewarded builder cohorts, governance tooling, and ecological primitives.',
     ],
-    video: {
-      src: '/ascii/public-goods-nature.mp4',
-      poster: '/ascii/public-goods-nature-poster.webp',
-      label: 'commons',
-      caption: 'Canopy in ASCII',
-      stats: 'alive',
-      numColumns: 92,
-      blend: 6,
-      highlight: 16,
-      brightness: 1.1,
-    },
-    secondaryVideo: {
-      src: '/ascii/public-goods-nature.mp4',
-      poster: '/ascii/public-goods-nature-poster.webp',
-      label: 'canopy',
-      caption: 'Forest canopy in ASCII',
-      stats: 'rendered',
-      renderMode: 'ascii',
-      posterTime: 2,
-      numColumns: 120,
-      blend: 6,
-      highlight: 16,
-      brightness: 1.08,
-    },
     wikiIds: ['commons', 'ostrom', 'mauss', 'playbox'],
-  },
-]
-
-const foundations = [
-  {
-    label: 'Discipline',
-    body: 'Trained in Economics and Data Science, with early work in sustainable development and environmental impact assessment. Drawn to where formal mechanisms meet living, adaptive systems.',
-    wikiId: 'measure',
-  },
-  {
-    label: 'Questions',
-    body: 'Products and protocols that make complex environments legible and accountable: verifiable AI, cryptographic assurance, market coherence, governance design, and durable public goods.',
-    wikiId: 'power',
-  },
-  {
-    label: 'Off-screen',
-    body: 'Permaculture, DIY engineering, long runs, bike rides, cooking, yoga, soccer, chess, Go, and Catan.',
-    wikiId: 'sacred',
   },
 ]
 
@@ -635,13 +474,13 @@ const writingCategoryBySlug: Record<string, Exclude<WritingCategory, 'all' | 'fe
 
 function parseWritingDocument(filePath: string, rawHtml: string): WritingEntry {
   const slug = filePath.split('/').pop()?.replace(/\.html$/, '') ?? filePath
-  const document = new DOMParser().parseFromString(rawHtml, 'text/html')
-  const content = document.querySelector('.article-content')
+  const doc = new DOMParser().parseFromString(rawHtml, 'text/html')
+  const content = doc.querySelector('.article-content')
   const title =
-    document.querySelector('.article-title')?.textContent?.trim() ??
+    doc.querySelector('.article-title')?.textContent?.trim() ??
     slug.replace(/-/g, ' ')
   const meta =
-    document.querySelector('.article-meta')?.textContent?.trim() ?? 'Essay'
+    doc.querySelector('.article-meta')?.textContent?.trim() ?? 'Essay'
   const summary =
     content
       ?.querySelector('p')
@@ -882,7 +721,7 @@ function WritingReaderModal({
             onClick={onClose}
             aria-label={`Close ${writing.title}`}
           >
-            ← Back
+            ← Back to archive
           </button>
           <span className="reader-modal__meta-top">{writing.meta}</span>
         </div>
@@ -908,7 +747,15 @@ function WritingReaderModal({
   )
 }
 
-function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
+function SiteHeader({
+  onOpenWiki,
+  lightMode,
+  onToggleTheme,
+}: {
+  onOpenWiki: (id: string) => void
+  lightMode: boolean
+  onToggleTheme: () => void
+}) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -953,7 +800,7 @@ function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
         <nav className="site-nav__links" aria-label="Primary">
           <a href="#about">About</a>
           <a href="#archive">Work</a>
-          <a href="#frontiers">Stream</a>
+          <a href="#frontiers">Proofs</a>
           <a href="#writings">Writing</a>
           <a href="#install">Terminal</a>
           <a href="#/research">Monograph</a>
@@ -969,6 +816,15 @@ function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
             [[Wiki]]
           </button>
           <AmbientSoundControl />
+          <button
+            type="button"
+            className="site-nav__theme-btn"
+            onClick={onToggleTheme}
+            aria-label={lightMode ? 'Switch to dark mode' : 'Switch to light mode'}
+            title={lightMode ? 'Dark mode' : 'Light mode'}
+          >
+            {lightMode ? '☾' : '☼'}
+          </button>
           <a href="#/research" className="site-nav__mobile-link">
             Monograph
           </a>
@@ -995,16 +851,16 @@ function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
               <span>02</span> Selected Work
             </a>
             <a href="#frontiers" onClick={closeMenu}>
-              <span>03</span> Research Stream &amp; Embeds
+              <span>03</span> Verified Research &amp; Nulls
             </a>
             <a href="#writings" onClick={closeMenu}>
-              <span>04</span> Essays &amp; Notes
+              <span>04</span> Essays &amp; Field Notes
             </a>
             <a href="#install" onClick={closeMenu}>
-              <span>05</span> Terminal (spatel)
+              <span>05</span> Live Terminal (spatel)
             </a>
             <a href="#/research" className="site-nav__drawer-research" onClick={closeMenu}>
-              <span>→</span> Full Research Monograph &amp; Commonplace Book
+              <span>→</span> Full Research Monograph &amp; Receipts
             </a>
           </nav>
         </>
@@ -1013,25 +869,19 @@ function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
   )
 }
 
-const HERO_LENSES: { key: CharsetKey; label: string }[] = [
-  { key: 'cinematic', label: 'cinematic' },
-  { key: 'braille', label: 'braille' },
-  { key: 'detailed', label: 'detailed' },
-  { key: 'blocks', label: 'blocks' },
-]
+function readInitialLightMode(): boolean {
+  try {
+    return localStorage.getItem('rp-theme-v2') === 'light'
+  } catch {
+    return false
+  }
+}
 
 function App() {
   const heroVideoSrc = '/ascii/hero-blackhole.mp4'
-  const heroPosterSrc = '/ascii/hero-blackhole-poster.webp'
   const aboutVideoSrc = '/ascii/about-flower.mp4'
-  const aboutPosterSrc = '/ascii/about-flower-poster.webp'
 
-  const [heroCharset, setHeroCharset] = useState<CharsetKey>('cinematic')
-  const [heroEdges, setHeroEdges] = useState(true)
-  const [heroBloom, setHeroBloom] = useState(true)
-  const [heroPlaying, setHeroPlaying] = useState(true)
-  const [aboutCharset, setAboutCharset] = useState<CharsetKey>('cinematic')
-
+  const [lightMode, setLightMode] = useState<boolean>(readInitialLightMode)
   const [activeWriting, setActiveWriting] = useState<WritingEntry | null>(() =>
     typeof window !== 'undefined' ? getWritingFromHash(window.location.hash) : null,
   )
@@ -1047,6 +897,23 @@ function App() {
 
   const openedViaPushRef = useRef(false)
   const triggerElementRef = useRef<HTMLElement | null>(null)
+
+  const toggleTheme = useCallback(() => {
+    setLightMode((prev) => {
+      const next = !prev
+      document.documentElement.classList.toggle('light-mode', next)
+      try {
+        localStorage.setItem('rp-theme-v2', next ? 'light' : 'dark')
+      } catch {
+        /* storage unavailable */
+      }
+      const themeMeta = document.getElementById('theme-color-meta')
+      if (themeMeta) {
+        themeMeta.setAttribute('content', next ? '#ffffff' : '#141414')
+      }
+      return next
+    })
+  }, [])
 
   const openWiki = useCallback((id: string) => {
     setWikiTrail((prev) => {
@@ -1138,7 +1005,7 @@ function App() {
   }, [])
 
   const activeWork = experienceCards[workIdx] ?? experienceCards[0]
-  const activeWorkHasWalkthrough = activeWork.video.renderMode === 'video'
+  const activeWorkHasWalkthrough = activeWork.video?.renderMode === 'video'
 
   const filteredWritings = useMemo(() => {
     if (writingCat === 'all') return writings
@@ -1150,36 +1017,32 @@ function App() {
 
   return (
     <div className="page-shell" id="top">
-      <SiteHeader onOpenWiki={openWiki} />
+      <SiteHeader
+        onOpenWiki={openWiki}
+        lightMode={lightMode}
+        onToggleTheme={toggleTheme}
+      />
 
       <main className="page-main">
-        {/* HERO — Pure living SOTA GPU ASCII cinema + progressive entry trail */}
+        {/* HERO — Pure living ASCII cinema + singular authorial thesis */}
         <section className="hero">
           <div className="hero__canvas" aria-hidden="true">
             <Video2Ascii
               key={`hero-${heroVideoSrc}`}
               src={heroVideoSrc}
-              poster={heroPosterSrc}
-              numColumns={192}
+              numColumns={176}
               colored={true}
-              blend={14}
+              blend={12}
               highlight={0}
-              brightness={1.12}
-              saturation={1.26}
-              bloom={heroBloom ? 0.36 : 0}
-              edgeAware={heroEdges}
-              lensing={0.62}
+              brightness={1.06}
               fitMode="ambient"
-              focalY={0.36}
+              focalY={0.38}
               posterTime={3.0}
               audioEffect={0}
-              enableMouse={true}
-              enableRipple={true}
-              listenWindowPointer={true}
-              trailLength={12}
-              rippleSpeed={34}
-              charset={heroCharset}
-              isPlaying={heroPlaying}
+              enableMouse={false}
+              enableRipple={false}
+              charset="detailed"
+              isPlaying={true}
               autoPlay={true}
               priority={true}
             />
@@ -1189,70 +1052,23 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                Building provable trust for autonomous AI, cryptography, and
-                markets.
+                Making autonomous AI, markets, and human archives answer to
+                verifiable evidence—not rhetoric.
               </h1>
 
+              <p className="hero__sub">
+                Researcher and systems builder working across formal admission
+                kernels, cryptographic assurance, market coherence, and
+                computational humanities.
+              </p>
+
               <div className="hero__actions">
-                <a href="#frontiers" className="btn-primary">
-                  Explore stream &amp; embeds
-                </a>
-                <a href="#/research" className="btn-quiet">
+                <a href="#/research" className="btn-primary">
                   Research monograph <span aria-hidden="true">→</span>
                 </a>
-                <a href="#install" className="btn-quiet">
-                  Live RPi5 terminal <span aria-hidden="true">↓</span>
+                <a href="#frontiers" className="btn-quiet">
+                  Selected proofs ↓
                 </a>
-              </div>
-
-              <div className="hero__trails" aria-label="Quick entry nodes">
-                <span className="hero__trails-label">Start a thread:</span>
-                <WikiChip id="evidence-bounded" label="Evidence-Bounded AI" onOpen={openWiki} />
-                <WikiChip id="holdout-ledger" label="Holdout Ledger" onOpen={openWiki} />
-                <WikiChip id="formasec" label="FormaSec" onOpen={openWiki} />
-                <WikiChip id="temporal-grid-safety" label="Discriminant Safety" onOpen={openWiki} />
-                <WikiChip id="statebook" label="Statebook" onOpen={openWiki} />
-              </div>
-            </div>
-
-            <div className="hero__cinema-bar" role="toolbar" aria-label="Hero GPU ASCII shader controls">
-              <span className="hero__cinema-kicker">kerr horizon · webgl2 · move or tap</span>
-              <div className="hero__cinema-group">
-                {HERO_LENSES.map((lens) => (
-                  <button
-                    key={lens.key}
-                    type="button"
-                    className={`hero__cinema-btn${heroCharset === lens.key ? ' is-active' : ''}`}
-                    onClick={() => setHeroCharset(lens.key)}
-                  >
-                    {lens.label}
-                  </button>
-                ))}
-                <span className="hero__cinema-sep" aria-hidden="true" />
-                <button
-                  type="button"
-                  className={`hero__cinema-btn${heroEdges ? ' is-active' : ''}`}
-                  onClick={() => setHeroEdges((v) => !v)}
-                  title="Toggle Sobel directional edge sculpting"
-                >
-                  edges
-                </button>
-                <button
-                  type="button"
-                  className={`hero__cinema-btn${heroBloom ? ' is-active' : ''}`}
-                  onClick={() => setHeroBloom((v) => !v)}
-                  title="Toggle phosphor bloom"
-                >
-                  bloom
-                </button>
-                <button
-                  type="button"
-                  className="hero__cinema-btn"
-                  onClick={() => setHeroPlaying((v) => !v)}
-                  aria-label={heroPlaying ? 'Pause hero ASCII cinema' : 'Play hero ASCII cinema'}
-                >
-                  {heroPlaying ? 'pause' : 'play'}
-                </button>
               </div>
             </div>
           </div>
@@ -1262,7 +1078,7 @@ function App() {
         <section className="ed-section" id="about">
           <div className="ed-section__head">
             <p className="ed-eyebrow">01 — Foundations</p>
-            <h2>Beyond the curriculum vitae.</h2>
+            <h2>First-person notes before the archive.</h2>
           </div>
 
           <div className="about-layout">
@@ -1271,40 +1087,23 @@ function App() {
                 <Video2Ascii
                   key={`about-${aboutVideoSrc}`}
                   src={aboutVideoSrc}
-                  poster={aboutPosterSrc}
-                  numColumns={116}
+                  numColumns={104}
                   colored={true}
-                  blend={10}
-                  highlight={12}
-                  brightness={1.14}
-                  saturation={1.24}
-                  bloom={0.32}
-                  edgeAware={true}
-                  lensing={0.48}
+                  blend={8}
+                  highlight={16}
+                  brightness={1.12}
                   posterTime={1.0}
                   audioEffect={0}
                   enableMouse={true}
                   enableRipple={true}
-                  charset={aboutCharset}
+                  charset="detailed"
                   isPlaying={true}
                   autoPlay={true}
                   enableSpacebarToggle={true}
                 />
               </div>
-              <figcaption className="about-figure__caption about-figure__caption--split">
-                <span>Interactive glyph study — move or tap across the frame.</span>
-                <span className="about-figure__lenses" role="group" aria-label="Glyph study lens">
-                  {(['cinematic', 'braille', 'detailed'] as CharsetKey[]).map((key) => (
-                    <button
-                      key={key}
-                      type="button"
-                      className={`about-lens-btn${aboutCharset === key ? ' is-active' : ''}`}
-                      onClick={() => setAboutCharset(key)}
-                    >
-                      {key}
-                    </button>
-                  ))}
-                </span>
+              <figcaption className="about-figure__caption">
+                Interactive glyph study — move or tap across the frame.
               </figcaption>
             </figure>
 
@@ -1314,33 +1113,45 @@ function App() {
                 symphony.”
               </blockquote>
 
-              <div className="about-columns">
-                {foundations.map((item) => (
-                  <div key={item.label} className="about-column">
-                    <h3>{item.label}</h3>
-                    <div className="about-column__content">
-                      <p>{item.body}</p>
-                      <div className="about-column__chip">
-                        <WikiChip id={item.wikiId} onOpen={openWiki} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="about-prose">
+                <p>
+                  I trained in economics and data science, beginning in sustainable
+                  development and environmental impact assessment—fields where a
+                  sloppy measurement model quietly warps every decision built atop
+                  it. That same seam pulled me toward verifiable AI, formal
+                  admission kernels, market coherence, and computational
+                  humanities: building small, checkable instruments that hold up
+                  when incentives or stakes turn adversarial.
+                </p>
+                <p>
+                  Every empirical claim on this site links back to a reproducible
+                  run, a cryptographic digest, or an honest ceiling. When a clean
+                  hypothesis breaks—whether a geometric probe ties plain PCA or a
+                  sacred-geography conjecture reverses under blind coding—the
+                  negative result stays in the ledger beside what held.
+                </p>
               </div>
 
               <div className="about-colophon">
                 <div className="about-colophon__item">
-                  <span>Reading touchstone</span>
-                  <a href={favoriteBlogHref} target="_blank" rel="noreferrer" className="text-link">
-                    Venkatesh Rao’s Psychohistory ↗
-                  </a>
+                  <span>Off-screen</span>
+                  <p className="about-colophon__text">
+                    Permaculture, DIY engineering, long runs, cycling, cooking,
+                    yoga, soccer, chess, Go, and Catan.
+                  </p>
                 </div>
 
                 <div className="about-colophon__item">
-                  <span>Portable archive</span>
-                  <a href="#install" className="text-link">
-                    spatel command-line companion ↓
+                  <span>Reading &amp; notes</span>
+                  <a
+                    href={favoriteBlogHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-link"
+                  >
+                    Venkatesh Rao’s Psychohistory ↗
                   </a>
+                  <WikiChip id="evidence-bounded" label="Commonplace Graph" onOpen={openWiki} />
                 </div>
 
                 <div className="about-colophon__item">
@@ -1358,12 +1169,12 @@ function App() {
           </div>
         </section>
 
-        {/* 02 — SELECTED WORK (Clean Interactive Chapter Stage) */}
+        {/* 02 — SELECTED WORK (Quiet Editorial Chapters, Clean Legibility) */}
         <section className="ed-section" id="archive">
           <div className="ed-section__head ed-section__head--split">
             <div>
               <p className="ed-eyebrow">02 — Selected Work</p>
-              <h2>Leadership, engineering, and stewardship.</h2>
+              <h2>Systems built, institutions stewarded.</h2>
             </div>
 
             <div className="work-switcher" role="tablist" aria-label="Selected work chapters">
@@ -1387,34 +1198,6 @@ function App() {
           </div>
 
           <article className="work-chapter work-chapter--staged" key={activeWork.title}>
-            {activeWork.secondaryVideo ? (
-              <div className="work-chapter__ambient" aria-hidden="true">
-                <Video2Ascii
-                  key={`${activeWork.title}-${activeWork.secondaryVideo.src}`}
-                  src={activeWork.secondaryVideo.src}
-                  poster={activeWork.secondaryVideo.poster}
-                  numColumns={activeWork.secondaryVideo.numColumns}
-                  colored={true}
-                  blend={activeWork.secondaryVideo.blend}
-                  highlight={activeWork.secondaryVideo.highlight}
-                  brightness={activeWork.secondaryVideo.brightness}
-                  saturation={1.2}
-                  bloom={0.26}
-                  edgeAware={true}
-                  fitMode={activeWork.secondaryVideo.fitMode}
-                  focalY={activeWork.secondaryVideo.focalY}
-                  posterTime={activeWork.secondaryVideo.posterTime}
-                  audioEffect={0}
-                  enableMouse={false}
-                  enableRipple={false}
-                  charset="cinematic"
-                  isPlaying={true}
-                  autoPlay={true}
-                />
-                <div className="work-chapter__wash" />
-              </div>
-            ) : null}
-
             <div className={`work-chapter__inner${activeWorkHasWalkthrough ? ' has-media' : ''}`}>
               <div className="work-chapter__prose">
                 <div className="work-chapter__meta">
@@ -1423,10 +1206,10 @@ function App() {
                 </div>
 
                 <h3>{activeWork.title}</h3>
-                <p className="work-chapter__summary">{activeWork.summary}</p>
+                <p className="work-chapter__summary">{activeWork.narrative}</p>
 
                 <ul className="work-chapter__points">
-                  {activeWork.details.map((detail) => (
+                  {activeWork.shipped.map((detail) => (
                     <li key={detail}>{detail}</li>
                   ))}
                 </ul>
@@ -1481,21 +1264,20 @@ function App() {
                 </div>
               </div>
 
-              {activeWorkHasWalkthrough ? (
+              {activeWorkHasWalkthrough && activeWork.video ? (
                 <LazyWalkthroughVideo title={activeWork.title} video={activeWork.video} />
               ) : null}
             </div>
           </article>
         </section>
 
-        {/* 03 — UNIFIED RESEARCH STREAM, LIVE EMBEDS & WIKI HOOKS */}
-        <ExplorerFeed
-          onOpenEssay={openWritingBySlug}
+        {/* 03 — VERIFIED RESEARCH & HONEST NULLS (Live SHA-256 Raw-Data Showcase) */}
+        <ProofShowcase
           onOpenWiki={openWiki}
           focusedDispatchRequest={focusedDispatchRequest}
         />
 
-        {/* 04 — WRITING (Filtered Table of Contents + Thread Wiki Chips) */}
+        {/* 04 — WRITING (Clean Typographic Index + Book-Grade Palatino Sheet) */}
         <section className="ed-section" id="writings">
           <div className="ed-section__head ed-section__head--split">
             <div>
@@ -1536,7 +1318,6 @@ function App() {
           <div className="essay-index" role="list" aria-label="Essay archive">
             {filteredWritings.map((writing) => {
               const globalIdx = writings.findIndex((w) => w.slug === writing.slug)
-              const notes = essayNotes[writing.slug]
               return (
                 <div
                   key={writing.slug}
@@ -1557,18 +1338,6 @@ function App() {
                   <div className="essay-row__body">
                     <h3>{writing.title}</h3>
                     <p>{writing.summary}</p>
-                    {notes?.threads.length ? (
-                      <div className="essay-row__chips">
-                        {notes.threads.slice(0, 3).map((tid) => (
-                          <WikiChip
-                            key={tid}
-                            id={tid}
-                            label={threadById(tid).title}
-                            onOpen={openWiki}
-                          />
-                        ))}
-                      </div>
-                    ) : null}
                   </div>
                   <span className="essay-row__meta">{writing.meta}</span>
                 </div>
@@ -1583,13 +1352,13 @@ function App() {
                 className="btn-quiet"
                 onClick={() => setWritingCat('all')}
               >
-                Browse all {writings.length} essays &amp; notes ↓
+                Read all {writings.length} essays &amp; notes ↓
               </button>
             </div>
           ) : null}
         </section>
 
-        {/* 05 — TERMINAL COMPANION */}
+        {/* 05 — LIVE SANDBOXED TERMINAL */}
         <section className="ed-section" id="install">
           <div className="ed-section__head ed-section__head--split">
             <div>
@@ -1599,12 +1368,11 @@ function App() {
 
             <div className="ed-lead">
               <p>
-                A zero-shell-escape terminal bridged from my{' '}
-                <code>Raspberry Pi 5</code> running <code>shaanpatel-cv-pico</code>{' '}
-                (with an instant in-browser grounded fallback). Ask about any
-                paper or confound in real time, run live <code>eprocess</code> &amp;{' '}
-                <code>psychohistory</code> tools, or launch high-resolution 2×4
-                Braille/ASCII portals from human psychohistory to universal history.
+                A read-only terminal bridged from my Raspberry Pi 5 running{' '}
+                <code>shaanpatel-cv-pico</code>, with an instant in-browser
+                fallback. Query any paper or confound live, run interactive
+                tools, or open eight Braille/ASCII worlds from human
+                psychohistory to deep time.
               </p>
             </div>
           </div>
@@ -1651,7 +1419,7 @@ function App() {
                 </div>
                 <div>
                   <dt>Ether Portals</dt>
-                  <dd>8 high-resolution interactive Braille/ASCII worlds from Psychohistory to Universal History.</dd>
+                  <dd>Eight interactive 2×4 Braille/ASCII worlds from Psychohistory to Universal History.</dd>
                 </div>
               </dl>
             </div>
@@ -1663,13 +1431,15 @@ function App() {
         <div className="colophon__inner">
           <div className="colophon__left">
             <span className="colophon__name">Shaan Patel</span>
-            <span className="colophon__note">Systems, Terminals &amp; Environments</span>
+            <a href="#/research" className="colophon__receipt">
+              14 monographs · 16 SHA-256 verified bundles · 20 ManimGX renders
+            </a>
           </div>
 
           <nav className="colophon__nav" aria-label="Footer">
             <a href="#top">Top ↑</a>
             <a href="#archive">Work</a>
-            <a href="#frontiers">Stream</a>
+            <a href="#frontiers">Proofs</a>
             <a href="#writings">Writing</a>
             <a href="#/research">Monograph</a>
           </nav>

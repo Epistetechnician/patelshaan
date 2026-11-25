@@ -4,6 +4,14 @@ import App from './App.tsx'
 const loadResearch = () => import('./ResearchPage.tsx')
 const ResearchModule = lazy(loadResearch)
 
+function readSavedLightMode(): boolean {
+  try {
+    return localStorage.getItem('rp-theme-v2') === 'light'
+  } catch {
+    return false
+  }
+}
+
 export default function Root() {
   const [hash, setHash] = useState(window.location.hash)
 
@@ -31,25 +39,11 @@ export default function Root() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('paper', isPaperRoute)
-    if (isPaperRoute) {
-      let saved: string | null = null
-      try {
-        saved = localStorage.getItem('rp-theme-v2')
-      } catch {
-        /* storage unavailable */
-      }
-      const isLight = saved === 'light'
-      document.documentElement.classList.toggle('light-mode', isLight)
-      const themeMeta = document.getElementById('theme-color-meta')
-      if (themeMeta) {
-        themeMeta.setAttribute('content', isLight ? '#ffffff' : '#141414')
-      }
-    } else {
-      document.documentElement.classList.remove('light-mode')
-      const themeMeta = document.getElementById('theme-color-meta')
-      if (themeMeta) {
-        themeMeta.setAttribute('content', '#08090a')
-      }
+    const isLight = readSavedLightMode()
+    document.documentElement.classList.toggle('light-mode', isLight)
+    const themeMeta = document.getElementById('theme-color-meta')
+    if (themeMeta) {
+      themeMeta.setAttribute('content', isLight ? '#ffffff' : '#141414')
     }
   }, [isPaperRoute])
 

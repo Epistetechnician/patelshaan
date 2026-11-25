@@ -5,19 +5,35 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --page-gutter: clamp(1.25rem, 4vw, 3.5rem);
 
-  --bg: #08090a;
-  --bg-subtle: #0d0e10;
-  --ink: #f0ede6;
-  --ink-secondary: #a7a39b;
-  --ink-muted: #706d66;
-  --rule: rgba(240, 237, 230, 0.11);
+  /* Unified charcoal dark palette (shared with #/research & PostAnimCanvas) */
+  --body-background: #141414;
+  --body-font-color: #f0ede6;
+  --color-link: #a8a8a8;
+  --gray-100: #1a1a1a;
+  --gray-200: #2e2e2e;
+  --gray-500: #666666;
+  --line: #5b8aa6;
+
+  --bg: var(--body-background);
+  --bg-subtle: var(--gray-100);
+  --surface-elevated: #181818;
+  --surface-backdrop: rgba(10, 10, 10, 0.8);
+  --nav-bg-scrolled: rgba(20, 20, 20, 0.9);
+  --ink: var(--body-font-color);
+  --ink-secondary: #b5b0a8;
+  --ink-muted: #7d7971;
+  --rule: rgba(240, 237, 230, 0.12);
   --rule-strong: rgba(240, 237, 230, 0.24);
   --accent: #dfd0b2;
+  --accent-soft: rgba(223, 208, 178, 0.12);
+  --code-bg: rgba(240, 237, 230, 0.065);
+  --hover-tint: rgba(240, 237, 230, 0.045);
 
   --font-serif: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'SFMono-Regular', ui-monospace, Menlo, Monaco, Consolas, monospace;
 
+  color-scheme: dark;
   font-family: var(--font-sans);
   line-height: 1.6;
   font-weight: 400;
@@ -27,6 +43,33 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.light-mode {
+  --body-background: #ffffff;
+  --body-font-color: #2c2724;
+  --color-link: #656565;
+  --gray-100: #f8f7f4;
+  --gray-200: #e7e3dc;
+  --gray-500: #9f9990;
+  --line: #4d7596;
+
+  --bg: var(--body-background);
+  --bg-subtle: var(--gray-100);
+  --surface-elevated: #fdfcfb;
+  --surface-backdrop: rgba(24, 21, 18, 0.44);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.92);
+  --ink: var(--body-font-color);
+  --ink-secondary: #58524c;
+  --ink-muted: #787169;
+  --rule: rgba(44, 39, 36, 0.12);
+  --rule-strong: rgba(44, 39, 36, 0.26);
+  --accent: #8a5a2b;
+  --accent-soft: rgba(138, 90, 43, 0.09);
+  --code-bg: rgba(44, 39, 36, 0.055);
+  --hover-tint: rgba(44, 39, 36, 0.04);
+
+  color-scheme: light;
 }
 
 * {

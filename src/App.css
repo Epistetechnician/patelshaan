@@ -1948,8 +1948,12 @@ button:focus-visible {
   .hero__actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
+    gap: 0.55rem;
     width: 100%;
+  }
+
+  .hero__actions .btn-primary {
+    grid-column: 1 / -1;
   }
 
   .hero__actions .btn-primary,
@@ -1958,6 +1962,10 @@ button:focus-visible {
     justify-content: center;
     padding: 0 0.75rem;
     font-size: 0.82rem;
+  }
+
+  .about-figure__stage {
+    aspect-ratio: 16 / 10;
   }
 
   .ed-section {
@@ -4152,13 +4160,11 @@ button:focus-visible {
 
 .ether-next-rail {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.44rem 0.95rem;
+  padding: 0.48rem 0.95rem;
   border-top: 1px solid rgba(240, 237, 230, 0.08);
   background: rgba(223, 208, 178, 0.025);
-  overflow-x: auto;
-  scrollbar-width: none;
 }
 
 .ether-next-rail::-webkit-scrollbar {
@@ -4167,6 +4173,7 @@ button:focus-visible {
 
 .ether-next-rail__label {
   flex-shrink: 0;
+  padding-top: 0.22rem;
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 0.65rem;
@@ -4178,7 +4185,7 @@ button:focus-visible {
   display: flex;
   align-items: center;
   gap: 0.36rem;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .ether-next-chip {
@@ -4504,13 +4511,791 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 720px) {
   .hero__cinema-bar {
-    padding: 0.44rem 0.58rem;
+    gap: 0.28rem;
+    padding: 0.36rem 0.5rem;
+  }
+
+  .hero__cinema-group {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .hero__cinema-group::-webkit-scrollbar {
+    display: none;
   }
 
   .hero__cinema-btn {
-    padding: 0.14rem 0.42rem;
+    flex: 0 0 auto;
+    padding: 0.14rem 0.44rem;
     font-size: 0.62rem;
+  }
+}
+
+
+/* ==========================================================================
+   Unified Editorial Monograph Layer (Dark #141414 + Light #ffffff)
+   Cohesive with #/research, nathan.rs typography, ProofShowcase & marginalia
+   ========================================================================== */
+
+/* ---------- Header & Theme Switch ---------- */
+
+.site-nav {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 12, 13, 0.78) 0%,
+    rgba(12, 12, 13, 0.34) 68%,
+    rgba(12, 12, 13, 0) 100%
+  );
+}
+
+/* Over the dark ASCII hero (unscrolled), keep nav light-on-dark in both themes */
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__wordmark {
+  color: #f0ede6;
+}
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__links a,
+.site-nav:not(.is-scrolled):not(.is-open) .sound-toggle__btn,
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__theme-btn,
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__mobile-link,
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__menu-trigger {
+  color: rgba(240, 237, 230, 0.78);
+}
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__links a:hover,
+.site-nav:not(.is-scrolled):not(.is-open) .sound-toggle__btn:hover,
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__theme-btn:hover {
+  color: #f0ede6;
+}
+.site-nav:not(.is-scrolled):not(.is-open) .site-nav__wiki-btn {
+  color: #dfd0b2;
+}
+
+.site-nav.is-scrolled,
+.site-nav.is-open {
+  background: var(--nav-bg-scrolled);
+  border-bottom-color: var(--rule);
+}
+
+.site-nav.is-scrolled .site-nav__links a,
+.site-nav.is-open .site-nav__links a,
+.site-nav.is-scrolled .sound-toggle__btn,
+.site-nav.is-open .sound-toggle__btn,
+.site-nav.is-scrolled .site-nav__mobile-link,
+.site-nav.is-open .site-nav__mobile-link {
+  color: var(--ink-secondary);
+}
+
+.site-nav.is-scrolled .site-nav__links a:hover,
+.site-nav.is-scrolled .sound-toggle__btn:hover {
+  color: var(--ink);
+}
+
+.site-nav__drawer {
+  background: var(--surface-elevated);
+}
+
+/* De-boxed quiet [[Wiki]] trigger in header */
+.site-nav__wiki-btn {
+  height: auto;
+  padding: 0.2rem 0.1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+}
+.site-nav__wiki-btn:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 4px;
+}
+
+/* Bare nathan.rs-style theme glyph (☼ / ☾) */
+.site-nav__theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  min-height: 2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 1.02rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 150ms ease, transform 150ms ease;
+}
+.site-nav__theme-btn:hover {
+  color: var(--ink);
+  transform: scale(1.08);
+}
+
+/* ---------- Hero (Intentional Dark-Cinema Plate in Both Themes) ---------- */
+
+.hero {
+  --bg: #08090a;
+  --ink: #f0ede6;
+  --ink-secondary: rgba(240, 237, 230, 0.76);
+  --rule-strong: rgba(240, 237, 230, 0.28);
+  background: #08090a;
+  color: #f0ede6;
+}
+
+.hero__intro {
+  max-width: 43rem;
+  gap: 1.25rem;
+}
+
+.hero__vignette {
+  background:
+    radial-gradient(
+      ellipse 64% 58% at 20% 86%,
+      rgba(8, 9, 10, 0.94) 0%,
+      rgba(8, 9, 10, 0.8) 44%,
+      rgba(8, 9, 10, 0.28) 74%,
+      rgba(8, 9, 10, 0) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 9, 10, 0.86) 0%,
+      rgba(8, 9, 10, 0.44) 11%,
+      rgba(8, 9, 10, 0) 24%,
+      rgba(8, 9, 10, 0.14) 64%,
+      rgba(8, 9, 10, 0.88) 100%
+    );
+}
+
+.hero__headline {
+  color: #f0ede6;
+  font-size: clamp(1.75rem, 3.2vw, 2.7rem);
+  line-height: 1.18;
+}
+
+.hero__sub {
+  margin: 0;
+  max-width: 54ch;
+  color: rgba(240, 237, 230, 0.86);
+  font-family: var(--font-serif);
+  font-size: clamp(1.02rem, 1.35vw, 1.16rem);
+  line-height: 1.58;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.95);
+}
+
+.hero .btn-primary {
+  gap: 0.45rem;
+  background: #f0ede6;
+  color: #141414;
+}
+
+.hero .btn-quiet {
+  border-color: rgba(240, 237, 230, 0.34);
+  background: rgba(10, 11, 12, 0.74);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #f0ede6;
+}
+.hero .btn-quiet:hover {
+  border-color: rgba(240, 237, 230, 0.62);
+  background: rgba(18, 19, 20, 0.86);
+}
+
+/* ---------- Shared Links & Buttons (Theme-Aware) ---------- */
+
+.btn-quiet {
+  background: transparent;
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+.btn-quiet:hover {
+  border-color: var(--ink);
+  background: var(--hover-tint);
+}
+
+.text-link {
+  color: var(--ink);
+  text-decoration-style: dotted;
+  text-decoration-color: var(--rule-strong);
+}
+.text-link:hover {
+  color: var(--accent);
+  text-decoration-style: solid;
+  text-decoration-color: var(--accent);
+}
+.text-link--muted {
+  color: var(--ink-secondary);
+}
+
+.inline-socials a {
+  border-bottom-color: var(--rule-strong);
+}
+
+.ed-lead code,
+.cli-panel__note code,
+.terminal-specs code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--ink);
+  background: var(--code-bg);
+  padding: 0.08em 0.34em;
+  border-radius: 3px;
+}
+
+/* ---------- De-boxed [[Wiki]] Marginalia ---------- */
+
+.wiki-chip {
+  padding: 0.04rem 0.08rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 3px;
+}
+
+.wiki-chip__br {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+}
+
+.wiki-chip:hover {
+  border-color: transparent;
+  background: transparent;
+  color: var(--accent);
+  text-decoration-style: solid;
+  text-decoration-color: var(--accent);
+}
+
+.wiki-chip:hover .wiki-chip__br {
+  color: var(--accent);
+}
+
+/* ---------- 01 — Foundations (Humanistic First-Person Prose) ---------- */
+
+.about-prose {
+  display: grid;
+  gap: 1.15rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.about-prose p {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.02rem, 1.2vw, 1.12rem);
+  line-height: 1.72;
+  color: var(--ink);
+  max-width: 58ch;
+}
+
+.about-prose p + p {
+  color: var(--ink-secondary);
+}
+
+.about-colophon__text {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 0.88rem;
+  line-height: 1.56;
+}
+
+/* ---------- 02 — Selected Work (Crisp Surface, Zero Busy Background) ---------- */
+
+.work-chapter {
+  background: var(--bg-subtle);
+  border: 1px solid var(--rule);
+}
+
+.work-chapter__summary {
+  font-family: var(--font-serif);
+  font-size: clamp(1.04rem, 1.25vw, 1.14rem);
+  line-height: 1.72;
+  color: var(--ink);
+  max-width: 60ch;
+}
+
+.work-chapter__points {
+  color: var(--ink-secondary);
+}
+
+.work-tab {
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--ink-secondary);
+}
+.work-tab:hover {
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+.work-tab.is-active {
+  background: var(--bg-subtle);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.work-link {
+  background: var(--bg);
+  border-color: var(--rule);
+}
+.work-link:hover {
+  border-color: var(--accent);
+}
+
+.work-chapter__wikis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+}
+
+/* ---------- 03 — Verified Research & Honest Nulls (ProofShowcase) ---------- */
+
+.proof-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2rem;
+}
+
+.proof-tab {
+  appearance: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.65rem 0 0.8rem;
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: 1.04rem;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.proof-tab__num {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+
+.proof-tab:hover {
+  color: var(--ink);
+}
+
+.proof-tab.is-active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.proof-tab.is-active .proof-tab__num {
+  color: var(--accent);
+}
+
+.proof-stage {
+  display: grid;
+  gap: 1.5rem;
+  padding-bottom: 2.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.proof-stage__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2.5rem;
+}
+
+.proof-stage__meta {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 44rem;
+}
+
+.proof-stage__domain {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.proof-stage__meta h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.42rem, 2.3vw, 1.95rem);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.proof-stage__stat {
+  display: grid;
+  gap: 0.2rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.proof-stage__stat strong {
+  font-family: var(--font-mono);
+  font-size: clamp(1.18rem, 1.8vw, 1.48rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.proof-stage__stat span {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+}
+
+.proof-stage__canvas {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 1.15rem 0 0.85rem;
+}
+
+.proof-stage__canvas figure {
+  margin: 0;
+}
+
+.proof-stage__canvas figcaption {
+  margin-top: 0.65rem;
+  color: var(--ink-muted);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.proof-stage__loading {
+  display: grid;
+  place-items: center;
+  min-height: 22rem;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.proof-stage__details {
+  display: grid;
+  gap: 1rem;
+  max-width: 68ch;
+}
+
+.proof-stage__prose {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.72;
+  color: var(--ink);
+}
+
+.proof-stage__ceiling {
+  margin: 0;
+  padding-left: 0.9rem;
+  border-left: 1.5px solid var(--rule-strong);
+  color: var(--ink-secondary);
+  font-size: 0.9rem;
+  line-height: 1.62;
+}
+
+.proof-stage__ceiling span {
+  display: inline-block;
+  margin-right: 0.6rem;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.proof-stage__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1.45rem;
+  padding-top: 0.25rem;
+}
+
+.proof-stage__bundle {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+}
+
+/* Honest Nulls Permanent Ledger */
+.null-ledger {
+  margin-top: 2.25rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.null-ledger__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+
+.null-ledger__eyebrow {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.null-ledger__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.null-ledger__row {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1.05fr) minmax(0, 1.35fr);
+  gap: 0.45rem 1.5rem;
+  align-items: baseline;
+  padding: 0.82rem 0;
+  border-bottom: 1px solid var(--rule);
+  transition: background 140ms ease;
+}
+
+.null-ledger__row:hover {
+  background: var(--hover-tint);
+}
+
+.null-ledger__figure {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.null-ledger__claim {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.null-ledger__row:hover .null-ledger__claim {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.null-ledger__detail {
+  color: var(--ink-secondary);
+  font-size: 0.87rem;
+  line-height: 1.5;
+}
+
+/* ---------- 04 — Writing Index & Book-Grade Reader (Dark + Light) ---------- */
+
+.essay-row {
+  padding: 1.2rem 0;
+}
+.essay-row:hover {
+  background: var(--hover-tint);
+}
+.essay-row__body p {
+  font-family: var(--font-serif);
+  font-size: 0.96rem;
+  line-height: 1.56;
+}
+
+.feed-channel {
+  border-color: var(--rule);
+  color: var(--ink-secondary);
+  background: transparent;
+}
+.feed-channel:hover {
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+.feed-channel.is-active {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: var(--bg-subtle);
+}
+
+.reader-modal__backdrop {
+  background: var(--surface-backdrop);
+}
+
+.reader-modal__sheet {
+  width: min(100%, 52rem);
+  background: var(--bg);
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.reader-modal__bar {
+  background: var(--bg);
+  border-bottom-color: var(--rule);
+}
+
+.reader-modal__header,
+.reader-modal__prose,
+.reader-after {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+.reader-modal__prose {
+  font-family: var(--font-serif);
+  color: var(--ink);
+  font-size: 1.08rem;
+  line-height: 1.76;
+}
+
+.reader-modal__prose h3 {
+  color: var(--ink);
+}
+
+.reader-modal__prose p,
+.reader-modal__prose ul,
+.reader-modal__prose ol {
+  color: var(--ink);
+}
+
+.reader-modal__prose em {
+  color: var(--ink);
+}
+
+.reader-modal__prose code {
+  color: var(--accent);
+  background: var(--code-bg);
+  border-color: var(--rule);
+}
+
+.reader-modal__prose a {
+  color: var(--accent);
+  text-decoration-color: var(--rule-strong);
+}
+
+.reader-modal__prose blockquote {
+  border-left-color: var(--accent);
+  color: var(--ink-secondary);
+}
+
+.reader-chip-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 0.85rem;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+/* ---------- 05 — Terminal & Light-Mode Surface Fidelity ---------- */
+
+/* Keep EtherTerminal a crisp dark-glass instrument even in light mode */
+.ether-terminal {
+  --bg: #060708;
+  --bg-subtle: #0c0e11;
+  --ink: #f0ede6;
+  --ink-secondary: #b5b0a8;
+  --ink-muted: #7d7971;
+  --rule: rgba(240, 237, 230, 0.12);
+  --rule-strong: rgba(240, 237, 230, 0.24);
+  --accent: #dfd0b2;
+  color: #f0ede6;
+  background: #060708;
+  border-color: var(--rule-strong);
+}
+
+.cmd-box {
+  background: var(--bg-subtle);
+  border-color: var(--rule-strong);
+}
+
+/* ---------- [[Wiki]] Drawer (Theme-Aware Dark + Light) ---------- */
+
+.wiki-drawer__scrim {
+  background: var(--surface-backdrop);
+}
+
+.wiki-drawer {
+  background: var(--bg);
+  border-left-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.wiki-drawer__topbar {
+  background: var(--bg-subtle);
+  border-bottom-color: var(--rule);
+}
+
+.wiki-breadcrumbs {
+  background: var(--bg-subtle);
+}
+
+.wiki-drawer__prose p,
+.wiki-drawer__subtitle {
+  font-family: var(--font-serif);
+  color: var(--ink-secondary);
+}
+
+.wiki-drawer__prose code,
+.wiki-drawer__subtitle code,
+.wiki-drawer__ceiling code,
+.wiki-drawer__stats dd code {
+  background: var(--code-bg);
+  color: var(--ink);
+}
+
+/* ---------- Footer Cryptographic Colophon ---------- */
+
+.colophon__receipt {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+  transition: color 150ms ease;
+}
+
+.colophon__receipt:hover {
+  color: var(--accent);
+}
+
+/* ---------- Responsive ProofShowcase & Null Ledger ---------- */
+
+@media (max-width: 900px) {
+  .proof-stage__stat {
+    text-align: left;
+  }
+
+  .null-ledger__row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
   }
 }

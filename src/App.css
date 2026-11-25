@@ -4430,6 +4430,27 @@ button:focus-visible {
     flex-wrap: wrap;
   }
 
+  .ether-portal__ticker {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: 0.28rem;
+  }
+
+  .ether-ticker__tag {
+    order: 1;
+  }
+
+  .ether-ticker__refresh {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .ether-ticker__text {
+    order: 3;
+    flex: 1 0 100%;
+    max-height: 5.5em;
+  }
+
   .ether-scrubber__ticks {
     display: none;
   }

@@ -408,6 +408,241 @@ export const PSYCHO_EPOCHS: EpochStop[] = [
   },
 ]
 
+export const KAILAS_STOPS: EpochStop[] = [
+  {
+    label: 'DARCHEN BASE',
+    shortLabel: '0 km',
+    time: '0.0 km · 4,670 m',
+    detail: 'south face approach · φ = 0.00 rad',
+    note: 'At Darchen (4,670 m), pilgrims step off calendar time and onto the 52 km spatial coordinate ring encircling Mount Kailas.',
+  },
+  {
+    label: 'TARBOCHE FLAGPOLE',
+    shortLabel: '8 km',
+    time: '8.0 km · 4,740 m',
+    detail: 'charnel ground · 84 mahasiddhas',
+    note: 'At Tarboche and the Choku valley mouth, narrative framing shifts from biographical travel into spatial ritual thresholds.',
+  },
+  {
+    label: 'DIRAPUK NORTH FACE',
+    shortLabel: '20 km',
+    time: '20.0 km · 5,080 m',
+    detail: 'sheer north pyramid · ཏི་སེ Ti Se',
+    note: 'Below the sheer black north face at Dirapuk, classical Tibetan and Bon Kangyur passages anchor cosmological perception directly to radial distance.',
+  },
+  {
+    label: 'DOLMA LA PASS',
+    shortLabel: '29 km',
+    time: '29.0 km · 5,630 m',
+    detail: 'summit saddle · Gauri Kund · α=0.86',
+    note: 'Crossing Dolma La at 5,630 m marks the kora inflection point where spatial phase φ = f(r) peaks across Thubron and indigenous accounts.',
+  },
+  {
+    label: 'ZUTULPUK CAVE',
+    shortLabel: '39 km',
+    time: '39.0 km · 4,820 m',
+    detail: 'east valley · Milarepa retreat',
+    note: 'Descending the eastern valley past Zutulpuk, pilgrims transition from high-pass intensity back toward linear valley duration.',
+  },
+  {
+    label: 'BARKHA LOOP CLOSURE',
+    shortLabel: '52 km',
+    time: '52.0 km · 4,670 m',
+    detail: 'circuit closed · φ = 2π rad',
+    note: 'Completing the 52 km circuit closes the spatial mandala — confirming the double dissociation against calendar-locked Hajj and Holy Land pilgrimages.',
+  },
+]
+
+export const HORIZON_STOPS: EpochStop[] = [
+  {
+    label: 'SCHWARZSCHILD LIMIT',
+    shortLabel: 'a*=0.00',
+    time: 'a* = 0.000 M',
+    detail: 'static horizon · r_ISCO = 3.0 r_s',
+    note: 'At zero spin, spacetime is spherically symmetric: the accretion glow forms a balanced ring without frame-dragging asymmetry.',
+  },
+  {
+    label: 'MODERATE SPIN',
+    shortLabel: 'a*=0.35',
+    time: 'a* = 0.350 M',
+    detail: 'ergosphere emerges · Doppler β = 0.28c',
+    note: 'As angular momentum rises, the approaching limb begins beaming brighter while background rays deflect asymmetrically around the shadow.',
+  },
+  {
+    label: 'RELATIVISTIC KERR',
+    shortLabel: 'a*=0.70',
+    time: 'a* = 0.700 M',
+    detail: 'r_ph = 1.6 r_s · Doppler β = 0.48c',
+    note: 'Frame dragging pulls equatorial plasma tighter toward the horizon, sharpening upper and lower gravitationally lensed Einstein arcs.',
+  },
+  {
+    label: 'THORNE SPIN CAP',
+    shortLabel: 'a*=0.95',
+    time: 'a* = 0.950 M',
+    detail: 'prograde ISCO tightens · β = 0.59c',
+    note: 'Near the Thorne radiative spin ceiling, the shadow flattens on the prograde edge and Doppler contrast dominates the photon ring.',
+  },
+  {
+    label: 'EXTREMAL KERR',
+    shortLabel: 'a*=0.998',
+    time: 'a* = 0.998 M',
+    detail: 'r_ph → 1.5 r_s · Doppler β = 0.62c',
+    note: 'At extremal spin a* = 0.998 M, light loops multiple times around the razor-thin photon sphere before escaping toward the observer.',
+  },
+]
+
+export const TESSERACT_STOPS: EpochStop[] = [
+  {
+    label: 'LOWER 4D BOUNDARY',
+    shortLabel: 'w=−1.0',
+    time: 'w = −1.00',
+    detail: 'inner 3-cell compressed · S³ south pole',
+    note: 'At w = −1.00, the hypercube projects from the far fourth-dimensional pole, compressing its inner cubic cell inside the outer frame.',
+  },
+  {
+    label: 'NEGATIVE HYPERPLANE',
+    shortLabel: 'w=−0.5',
+    time: 'w = −0.50',
+    detail: 'XW rotation −π/4 · Villarceau twist',
+    note: 'Tilting across the negative w-hyperplane reveals how orthogonal 4D edges shear into nested hexahedral frustums in 3D.',
+  },
+  {
+    label: 'EQUATORIAL 3-SLICE',
+    shortLabel: 'w=0.0',
+    time: 'w = 0.00',
+    detail: 'symmetric S³ equator · 16v/32e balanced',
+    note: 'At the equatorial slice w = 0, stereographic Hopf fibers thread symmetrically through all eight cubic boundary cells.',
+  },
+  {
+    label: 'POSITIVE HYPERPLANE',
+    shortLabel: 'w=+0.5',
+    time: 'w = +0.50',
+    detail: 'XW rotation +π/4 · dual cell emergence',
+    note: 'Passing into positive w-coordinates turns the inner cell outward — showing how lower-dimensional shadows hide higher-dimensional invariants.',
+  },
+  {
+    label: 'UPPER 4D BOUNDARY',
+    shortLabel: 'w=+1.0',
+    time: 'w = +1.00',
+    detail: 'full cell inversion · S³ north pole',
+    note: 'At w = +1.00, the tesseract completes its inside-out inversion through ℝ⁴ without ever breaking a single right angle in four dimensions.',
+  },
+]
+
+export const RULIAD_STOPS: EpochStop[] = [
+  {
+    label: 'GENESIS RULE',
+    shortLabel: 't=0',
+    time: 'STEP 0001',
+    detail: 'seed hyperedge · branching κ = 1.00',
+    note: 'A minimal local rewrite rule seeds the causal graph before multiway branches diverge into distinct observer histories.',
+  },
+  {
+    label: 'CAUSAL CONE',
+    shortLabel: 't=10²',
+    time: 'STEP 0128',
+    detail: 'light-cone foliation · low entanglement',
+    note: 'Causal edges knit into an emergent spacetime foliation where spacelike-separated rewrites commute cleanly.',
+  },
+  {
+    label: 'BRANCHIAL WEB',
+    shortLabel: 't=10³',
+    time: 'STEP 1024',
+    detail: 'multiway interference caustics · κ = 1.35',
+    note: 'Competing rewrite paths interfere across branchial space, creating caustic ridges where distinct computations reconverge.',
+  },
+  {
+    label: 'OBSERVER HORIZON',
+    shortLabel: 't=5×10³',
+    time: 'STEP 4800',
+    detail: 'coarse-grained equivalence classes',
+    note: 'Any computationally bounded observer must quotient equivalent branches — the same compression boundary formalised in our Lean 4 Kraft theorems.',
+  },
+  {
+    label: 'ASYMPTOTIC RULIAD',
+    shortLabel: 't=10⁴',
+    time: 'STEP 9999',
+    detail: 'entangled limit · maximal foliation',
+    note: 'In the asymptotic limit, all consistent rules coexist in one entangled hypergraph; only local verification receipts carve a legible path.',
+  },
+]
+
+export const LORENZ_STOPS: EpochStop[] = [
+  {
+    label: 'UNPROJECTED SFT',
+    shortLabel: 'KL 0.11',
+    time: 'λ_QR = 0.00',
+    detail: 'Arm B unprojected · replay KL = 0.1088',
+    note: 'Without orthogonal projection, weight updates perturb protected replay directions, driving replay KL drift to 0.1088 and 16.3% routing flips.',
+  },
+  {
+    label: 'PARTIAL DAMPING',
+    shortLabel: 'λ=0.25',
+    time: 'λ_QR = 0.25',
+    detail: 'subspace attenuation · KL ≈ 0.048',
+    note: 'Quarter-strength projection trims the largest replay perturbations while chaotic attractor lobes still bleed across the protection plane.',
+  },
+  {
+    label: 'MID-PROJECTION',
+    shortLabel: 'λ=0.50',
+    time: 'λ_QR = 0.50',
+    detail: '844 MoE bases active · KL ≈ 0.014',
+    note: 'Halfway into the QR nullspace, expert updates begin separating task gain from replay drift across layers 40–47.',
+  },
+  {
+    label: 'NEAR-ORTHOGONAL',
+    shortLabel: 'λ=0.85',
+    time: 'λ_QR = 0.85',
+    detail: 'first-layer flips → 0.0% · KL ≈ 0.002',
+    note: 'Near full orthogonality, first-layer MoE routing stabilizes completely while MATH-500 capability climbs sharply.',
+  },
+  {
+    label: 'QR NULLSPACE LOCK',
+    shortLabel: 'KL 0.0006',
+    time: 'λ_QR = 1.00',
+    detail: '||ΔW_⊥·Q|| = 1.06e-8 · 76.25% MATH-500',
+    note: 'Full QR-nullspace projection locks replay KL at 0.000605 (180× lower than Arm B) while lifting sealed MATH-500 from 39.75% to 76.25%.',
+  },
+]
+
+export const NOOSPHERE_STOPS: EpochStop[] = [
+  {
+    label: 'SEED NODE',
+    shortLabel: 'k=(1,1)',
+    time: 'mode k=(1,1,2)',
+    detail: 'isolated verifier · Ψ = 0.68',
+    note: 'A single verifiable node establishes local integrity, but commons stewardship requires legible coordination across peers.',
+  },
+  {
+    label: 'DYAD RESONANCE',
+    shortLabel: 'k=(2,3)',
+    time: 'mode k=(2,3,5)',
+    detail: 'bilateral signed receipts · Ψ = 0.76',
+    note: 'Paired principals exchange attenuated Biscuit capabilities and signed commitments without surrendering sovereignty.',
+  },
+  {
+    label: 'TRIAD HARMONIC',
+    shortLabel: 'k=(3,5)',
+    time: 'mode k=(3,5,8)',
+    detail: 'non-Euclidean lattice · Ψ = 0.84',
+    note: 'Quadratic preference discovery, retroactive outcome funding, and Ostrom rules interlock into a resonant civic mesh.',
+  },
+  {
+    label: 'CATHEDRAL VAULT',
+    shortLabel: 'k=(5,8)',
+    time: 'mode k=(5,8,13)',
+    detail: 'standing epistemic arches · Ψ = 0.91',
+    note: 'Independent replications reinforce shared truth across disciplines — AI containment, market coherence, and cultural archives alike.',
+  },
+  {
+    label: 'AKASHIC LATTICE',
+    shortLabel: 'k=(8,13)',
+    time: 'mode k=(8,13,21)',
+    detail: 'maximal coherence · Ψ = 0.97',
+    note: 'At maximal harmonic coherence, every claim carries its own replayable proof receipt across the collective lattice.',
+  },
+]
+
 export type ScrubberSpec = {
   minLabel: string
   maxLabel: string
@@ -421,7 +656,22 @@ export function getWorldScrubberSpec(world: WorldId): ScrubberSpec | null {
   if (world === 'psychohistory') {
     return { minLabel: '3000 BCE', maxLabel: '2026 CE', epochs: PSYCHO_EPOCHS }
   }
-  return null
+  if (world === 'kailas') {
+    return { minLabel: '0 km', maxLabel: '52 km', epochs: KAILAS_STOPS }
+  }
+  if (world === 'horizon') {
+    return { minLabel: 'a*=0', maxLabel: '0.998M', epochs: HORIZON_STOPS }
+  }
+  if (world === 'tesseract') {
+    return { minLabel: 'w=−1', maxLabel: 'w=+1', epochs: TESSERACT_STOPS }
+  }
+  if (world === 'ruliad') {
+    return { minLabel: 'Step 0', maxLabel: '10⁴', epochs: RULIAD_STOPS }
+  }
+  if (world === 'lorenz') {
+    return { minLabel: 'KL 0.11', maxLabel: '0.0006', epochs: LORENZ_STOPS }
+  }
+  return { minLabel: 'k=(1,1)', maxLabel: 'k=(8,13)', epochs: NOOSPHERE_STOPS }
 }
 
 export function getWorldEpochPhase(world: WorldId, cam: WorldCamera): number {
@@ -486,45 +736,78 @@ export function getWorldHud(world: WorldId, cam: WorldCamera): WorldHudInfo {
     }
   }
   if (world === 'tesseract') {
+    const phase = getWorldEpochPhase('tesseract', cam)
+    const idx = Math.min(TESSERACT_STOPS.length - 1, Math.floor(phase * TESSERACT_STOPS.length))
+    const ep = TESSERACT_STOPS[idx]
+    const wSlice = (phase * 2 - 1).toFixed(2)
     return {
-      epoch: `4D POLYCHORON · XW/YW/ZW ROTATION`,
-      coords: `w-slice=${Math.sin(cam.time * 0.5).toFixed(2)} · Hopf S³→S²`,
-      metric: `16v/32e + 18 Villarceau fibers`,
+      epoch: `${ep.label} · w = ${wSlice}`,
+      coords: ep.detail,
+      metric: `16v/32e + 16 Villarceau Hopf fibers`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
   if (world === 'kailas') {
-    const koraKm = ((cam.time * 2.1) % 52).toFixed(1)
+    const phase = getWorldEpochPhase('kailas', cam)
+    const idx = Math.min(KAILAS_STOPS.length - 1, Math.floor(phase * KAILAS_STOPS.length))
+    const ep = KAILAS_STOPS[idx]
+    const koraKm = (phase * 52).toFixed(1)
     return {
-      epoch: `MOUNT KAILAS · KORA ${koraKm} / 52.0 km`,
-      coords: `φ = f(r) · Dolma La 5,630m · α=0.86`,
-      metric: `2,626 passages · 282 Tibetan/Bon`,
+      epoch: `${ep.label} · KORA ${koraKm} / 52.0 km`,
+      coords: ep.detail,
+      metric: `2,626 passages · 282 Tibetan/Bon · α=0.86`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
   if (world === 'horizon') {
+    const phase = getWorldEpochPhase('horizon', cam)
+    const idx = Math.min(HORIZON_STOPS.length - 1, Math.floor(phase * HORIZON_STOPS.length))
+    const ep = HORIZON_STOPS[idx]
+    const aStar = (phase * 0.998).toFixed(3)
     return {
-      epoch: `KERR METRIC · a* = 0.998 M`,
-      coords: `r_ph = 1.5 r_s · Doppler β = 0.62c`,
+      epoch: `${ep.label} · a* = ${aStar} M`,
+      coords: ep.detail,
       metric: `inclination=${(18 + cam.pitch * 24).toFixed(1)}°`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
   if (world === 'ruliad') {
+    const phase = getWorldEpochPhase('ruliad', cam)
+    const idx = Math.min(RULIAD_STOPS.length - 1, Math.floor(phase * RULIAD_STOPS.length))
+    const ep = RULIAD_STOPS[idx]
     return {
-      epoch: `RULIAD FOLIATION · STEP ${Math.floor(cam.time * 18) % 9999}`,
-      coords: `branchial entanglement · multiway slice`,
-      metric: `observer horizon κ=${(1.2 + 0.3 * Math.sin(cam.time)).toFixed(2)}`,
+      epoch: `${ep.label} · ${ep.time}`,
+      coords: ep.detail,
+      metric: `observer horizon κ=${(1.0 + phase * 0.75).toFixed(2)}`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
   if (world === 'lorenz') {
+    const phase = getWorldEpochPhase('lorenz', cam)
+    const idx = Math.min(LORENZ_STOPS.length - 1, Math.floor(phase * LORENZ_STOPS.length))
+    const ep = LORENZ_STOPS[idx]
+    const klEst = (0.1088 * Math.pow(0.000605 / 0.1088, phase)).toFixed(4)
     return {
-      epoch: `LORENZ FLOW ∩ QR NULLSPACE`,
-      coords: `σ=10 ρ=28 β=8/3 · ||ΔW_⊥·Q||=1.06e-8`,
-      metric: `replay KL 0.000605 (180× lower)`,
+      epoch: `${ep.label} · λ_QR=${phase.toFixed(2)}`,
+      coords: ep.detail,
+      metric: `replay KL ≈ ${klEst} · 844 MoE bases`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
+  const phase = getWorldEpochPhase('noosphere', cam)
+  const idx = Math.min(NOOSPHERE_STOPS.length - 1, Math.floor(phase * NOOSPHERE_STOPS.length))
+  const ep = NOOSPHERE_STOPS[idx]
   return {
-    epoch: `NOOSPHERE AKASHIC LATTICE`,
-    coords: `harmonic modes k=(3,5,8) · non-Euclidean`,
-    metric: `coherence Ψ=${(0.82 + 0.14 * Math.sin(cam.time * 0.7)).toFixed(3)}`,
+    epoch: `${ep.label} · ${ep.time}`,
+    coords: ep.detail,
+    metric: `coherence Ψ=${(0.68 + phase * 0.29).toFixed(3)}`,
+    epochIndex: idx,
+    epochPhase: phase,
   }
 }
 
@@ -689,6 +972,7 @@ export class EtherFieldRenderer {
 
     if (world === 'tesseract') {
       // Soft ambient Hopf fibration ether backdrop + crisp 4D rotated tesseract + dual
+      const wBias = (getWorldEpochPhase('tesseract', cam) * 2 - 1) * Math.PI * 0.85
       const cx = pw * 0.5
       const cy = ph * 0.5
       const scale = Math.min(pw * 0.44, ph * 0.72) * zoom
@@ -698,7 +982,7 @@ export class EtherFieldRenderer {
       const steps = 64
       for (let f = 0; f < numFibers; f++) {
         const eta = 0.42 + (f / numFibers) * 0.85
-        const phi0 = (f / numFibers) * Math.PI * 2 + t * 0.22
+        const phi0 = (f / numFibers) * Math.PI * 2 + t * 0.22 + wBias * 0.35
         let prevX = 0
         let prevY = 0
         for (let s = 0; s <= steps; s++) {
@@ -709,12 +993,12 @@ export class EtherFieldRenderer {
           const w4 = Math.sin(xi - phi0) * Math.cos(eta)
 
           // Rotate in XW and YZ
-          const ca = Math.cos(t * 0.42 + yaw)
-          const sa = Math.sin(t * 0.42 + yaw)
+          const ca = Math.cos(t * 0.36 + yaw + wBias)
+          const sa = Math.sin(t * 0.36 + yaw + wBias)
           const rx = x4 * ca - w4 * sa
           const rw = x4 * sa + w4 * ca
-          const cb = Math.cos(t * 0.31 + pitch)
-          const sb = Math.sin(t * 0.31 + pitch)
+          const cb = Math.cos(t * 0.28 + pitch + wBias * 0.45)
+          const sb = Math.sin(t * 0.28 + pitch + wBias * 0.45)
           const ry = y4 * cb - z4 * sb
           const rz = y4 * sb + z4 * cb
 
@@ -737,13 +1021,13 @@ export class EtherFieldRenderer {
         y *= rScale
         z *= rScale
         w *= rScale
-        // XW rotation
-        const a1 = t * 0.55 + yaw
+        // XW rotation modulated by scrubbed w-hyperplane
+        const a1 = t * 0.42 + yaw + wBias
         const c1 = Math.cos(a1)
         const s1 = Math.sin(a1)
         ;[x, w] = [x * c1 - w * s1, x * s1 + w * c1]
         // YW rotation
-        const a2 = t * 0.38 + pitch
+        const a2 = t * 0.32 + pitch + wBias * 0.5
         const c2 = Math.cos(a2)
         const s2 = Math.sin(a2)
         ;[y, w] = [y * c2 - w * s2, y * s2 + w * c2]
@@ -788,8 +1072,10 @@ export class EtherFieldRenderer {
 
     if (world === 'kailas') {
       // Mount Kailas 3D pyramidal summit + concentric spatial mandala phi = f(r) rings
-      const ca = Math.cos(yaw + t * 0.14)
-      const sa = Math.sin(yaw + t * 0.14)
+      const koraPhase = getWorldEpochPhase('kailas', cam)
+      const koraRad = koraPhase * Math.PI * 2
+      const ca = Math.cos(yaw + koraRad * 0.35 + t * 0.08)
+      const sa = Math.sin(yaw + koraRad * 0.35 + t * 0.08)
       for (let py = 0; py < ph; py++) {
         const ny = (py / ph) * 2 - 1
         for (let px = 0; px < pw; px++) {
@@ -810,12 +1096,12 @@ export class EtherFieldRenderer {
           const koraRing = Math.exp(-Math.pow((r * 4.2) % 1 - 0.5, 2) * 95) * (r > 0.38 && r < 1.55 ? 0.65 : 0)
           const cardinalGate =
             Math.exp(-Math.pow(Math.sin(phi * 2), 2) * 120) * (r > 0.45 && r < 1.48 ? 0.42 : 0)
-          // Orbiting pilgrim light-packets along the kora circuit
-          const pilgrimAngle = (phi - t * 0.48 + Math.PI * 4) % (Math.PI * 2)
+          // Scrubbable pilgrim light-packet locked directly to 0 -> 52 km kora coordinate
+          const pilgrimDelta = Math.atan2(Math.sin(phi - koraRad), Math.cos(phi - koraRad))
           const pilgrim =
-            Math.exp(-Math.pow(r - 0.95, 2) * 90) *
-            Math.exp(-Math.pow(pilgrimAngle - 1.0, 2) * 18) *
-            1.15
+            Math.exp(-Math.pow(r - (0.92 + 0.08 * Math.sin(koraRad)), 2) * 85) *
+            Math.exp(-Math.pow(pilgrimDelta, 2) * 14) *
+            1.25
 
           // Elevation relief shading
           const strata = Math.abs(Math.sin(peakHeight * 18)) < 0.13 ? 0.58 : 0
@@ -843,16 +1129,18 @@ export class EtherFieldRenderer {
     }
 
     if (world === 'horizon') {
-      // Relativistic Kerr Event Horizon with gravitationally lensed upper/lower accretion arcs
+      // Relativistic Kerr Event Horizon with scrubbable spin a* in [0, 0.998 M]
+      const spin = getWorldEpochPhase('horizon', cam) * 0.998
       const inc = 0.24 + pitch * 0.22
+      const dragShift = spin * 0.085
       for (let py = 0; py < ph; py++) {
         const ny = ((py / ph) * 2 - 1) / zoom
         for (let px = 0; px < pw; px++) {
           const nx = (((px / pw) * 2 - 1) * aspect * 0.68) / zoom
-          const r = Math.hypot(nx, ny)
-          const theta = Math.atan2(ny, nx)
+          const r = Math.hypot(nx - dragShift, ny)
+          const theta = Math.atan2(ny, nx - dragShift)
 
-          const shadowR = 0.34
+          const shadowR = 0.37 - spin * 0.045
           // Gravitational bending warp
           const bend = (shadowR * shadowR) / Math.max(0.05, r * r)
           const diskY = ny / Math.max(0.14, inc)
@@ -861,8 +1149,8 @@ export class EtherFieldRenderer {
           // Primary equatorial accretion disk
           const swirl =
             0.55 +
-            0.45 * Math.sin(Math.atan2(diskY, nx) * 4 - t * 2.4 + diskR * 9.5) *
-              Math.cos(diskR * 14 - t * 1.6)
+            0.45 * Math.sin(Math.atan2(diskY, nx) * (3 + spin * 2) - t * (1.2 + spin * 1.8) + diskR * 9.5) *
+              Math.cos(diskR * 14 - t * (1.0 + spin))
           const mainDisk =
             Math.exp(-Math.pow(ny - Math.sin(nx * 2.2 + yaw) * 0.04, 2) * 85) *
             (diskR > shadowR * 0.95 && diskR < 1.35 ? 1 : 0) *
@@ -870,16 +1158,16 @@ export class EtherFieldRenderer {
             swirl
 
           // Lensed upper & lower Einstein halo (light bent from back side of disk over poles)
-          const haloR = shadowR * 1.14
+          const haloR = shadowR * (1.18 - spin * 0.05)
           const lensedHalo =
             Math.exp(-Math.pow(r - haloR, 2) * 135) *
-            (0.62 + 0.38 * Math.sin(theta * 3 + t * 2.1 + bend * 4))
+            (0.62 + 0.38 * Math.sin(theta * 3 + t * (1.2 + spin * 1.2) + bend * 4))
 
-          // Razor-sharp inner photon ring
-          const photonRing = Math.exp(-Math.pow(r - shadowR * 1.01, 2) * 420) * 1.15
+          // Razor-sharp inner photon ring (sharpens at extremal spin)
+          const photonRing = Math.exp(-Math.pow(r - shadowR * 1.01, 2) * (240 + spin * 220)) * (0.8 + spin * 0.4)
 
-          // Relativistic Doppler beaming (left approaching side brighter)
-          const doppler = 1.0 - nx * 0.42
+          // Relativistic Doppler beaming scales directly with spin a*
+          const doppler = 1.0 - nx * (0.08 + spin * 0.42)
 
           // Black hole shadow masks interior except foreground equatorial strip
           const inShadow = r < shadowR * 0.97 && Math.abs(ny) > 0.055
@@ -905,49 +1193,60 @@ export class EtherFieldRenderer {
 
     if (world === 'ruliad') {
       // Multiway branchial interference caustics + evolving hypergraph nodes
+      const phase = getWorldEpochPhase('ruliad', cam)
+      const waveSources = 3 + Math.round(phase * 4) // 3 → 7 causal branch sources
+      const freq = 10 + phase * 10
+      const branchThickness = 0.28 - phase * 0.12
       for (let py = 0; py < ph; py++) {
         const ny = ((py / ph) * 2 - 1) / zoom
         for (let px = 0; px < pw; px++) {
           const nx = (((px / pw) * 2 - 1) * aspect * 0.72) / zoom
           let wave = 0
-          for (let k = 0; k < 5; k++) {
-            const ang = (k / 5) * Math.PI * 2 + yaw * 0.5 + t * 0.14 * (k % 2 ? 1 : -1)
-            const ox = Math.cos(ang) * 0.65
-            const oy = Math.sin(ang) * 0.45
+          for (let k = 0; k < waveSources; k++) {
+            const ang =
+              (k / waveSources) * Math.PI * 2 +
+              yaw * 0.5 +
+              t * (0.1 + phase * 0.12) * (k % 2 ? 1 : -1)
+            const ox = Math.cos(ang) * (0.45 + phase * 0.32)
+            const oy = Math.sin(ang) * (0.32 + phase * 0.24)
             const d = Math.hypot(nx - ox, ny - oy)
-            wave += Math.sin(d * 15 - t * 2.2 + k * 1.3) / (0.65 + d * 1.3)
+            wave += Math.sin(d * freq - t * (1.6 + phase * 1.4) + k * 1.3) / (0.65 + d * 1.3)
           }
-          const caustic = Math.pow(Math.abs(Math.sin(wave * 1.4)), 3.0)
-          const branchLine = Math.abs(wave) < 0.22 ? 0.78 : 0
-          const envelope = Math.exp(-(nx * nx + ny * ny) * 0.32)
-          const val = (caustic * 0.62 + branchLine * 0.55) * envelope
+          const caustic = Math.pow(Math.abs(Math.sin(wave * (1.1 + phase * 0.6))), 3.0)
+          const branchLine = Math.abs(wave) < branchThickness ? 0.78 : 0
+          const envelope = Math.exp(-(nx * nx + ny * ny) * (0.48 - phase * 0.22))
+          const val = (caustic * (0.48 + phase * 0.3) + branchLine * 0.55) * envelope
           const idx = py * pw + px
           lum[idx] = Math.min(1, Math.max(0, val))
-          hue[idx] = wave * 0.85
+          hue[idx] = wave * 0.85 + phase * 0.5
         }
       }
-      // Overlay crisp multiway causal graph edges
+      // Overlay crisp multiway causal graph edges (layers grow with rewrite depth)
       const cx = pw * 0.5
       const cy = ph * 0.5
       const rScale = Math.min(pw, ph) * 0.42 * zoom
-      for (let layer = 0; layer < 4; layer++) {
-        const count = 4 + layer * 3
-        const rad = (layer + 1) * 0.26 * rScale
+      const layers = 2 + Math.round(phase * 3) // 2 → 5 causal layers
+      for (let layer = 0; layer < layers; layer++) {
+        const count = 4 + layer * (2 + Math.round(phase * 2))
+        const rad = ((layer + 1) / layers) * 1.04 * rScale
         for (let i = 0; i < count; i++) {
-          const a = (i / count) * Math.PI * 2 + t * 0.18 * (layer % 2 ? 1 : -1) + yaw
+          const a =
+            (i / count) * Math.PI * 2 +
+            t * (0.12 + phase * 0.14) * (layer % 2 ? 1 : -1) +
+            yaw
           const x = cx + Math.cos(a) * rad * 1.35
           const y = cy + Math.sin(a) * rad * 0.88
           this.plot(x, y, 1, layer * 0.7)
           if (layer > 0) {
-            const pCount = 4 + (layer - 1) * 3
-            const pRad = layer * 0.26 * rScale
+            const pCount = 4 + (layer - 1) * (2 + Math.round(phase * 2))
+            const pRad = (layer / layers) * 1.04 * rScale
             const pa =
               ((i % pCount) / pCount) * Math.PI * 2 +
-              t * 0.18 * ((layer - 1) % 2 ? 1 : -1) +
+              t * (0.12 + phase * 0.14) * ((layer - 1) % 2 ? 1 : -1) +
               yaw
             const px2 = cx + Math.cos(pa) * pRad * 1.35
             const py2 = cy + Math.sin(pa) * pRad * 0.88
-            this.drawLine(x, y, px2, py2, 0.55, layer * 0.5)
+            this.drawLine(x, y, px2, py2, 0.45 + phase * 0.25, layer * 0.5)
           }
         }
       }
@@ -956,11 +1255,14 @@ export class EtherFieldRenderer {
 
     if (world === 'lorenz') {
       // Lorenz chaotic strange attractor + glowing QR-nullspace orthogonal plane
+      // phase: 0 = unprojected KL 0.11 drift, 1 = locked orthogonal QR projection KL 0.0006
+      const phase = getWorldEpochPhase('lorenz', cam)
+      const drift = 1 - phase
       const cx = pw * 0.5
       const cy = ph * 0.5
       const scale = Math.min(pw * 0.36, ph * 0.56) * zoom
-      const ay = yaw + t * 0.35
-      const ax = pitch + 0.35
+      const ay = yaw + t * (0.28 + drift * 0.22)
+      const ax = pitch + 0.35 + drift * 0.18 * Math.sin(t * 0.9)
       const cyaw = Math.cos(ay)
       const syaw = Math.sin(ay)
       const cp = Math.cos(ax)
@@ -979,55 +1281,74 @@ export class EtherFieldRenderer {
         }
       }
 
-      // Draw orthogonal QR-nullspace protection grid plane (y = 0)
+      // Draw orthogonal QR-nullspace protection grid plane (y = 0); sharpens & brightens with phase
+      const planeIntensity = 0.08 + phase * 0.44
+      const planeHue = -1.2 + phase * 1.8
       for (let g = -5; g <= 5; g++) {
         const u = g * 0.28
-        const a = project3D(u, 0, -1.4)
-        const b = project3D(u, 0, 1.4)
-        this.drawLine(a.sx, a.sy, b.sx, b.sy, 0.28, -1.2)
-        const c = project3D(-1.4, 0, u)
-        const d = project3D(1.4, 0, u)
-        this.drawLine(c.sx, c.sy, d.sx, d.sy, 0.28, -1.2)
+        const warp = drift * 0.14 * Math.sin(g * 1.1 + t * 2.1)
+        const a = project3D(u, warp, -1.4)
+        const b = project3D(u, -warp, 1.4)
+        this.drawLine(a.sx, a.sy, b.sx, b.sy, planeIntensity, planeHue)
+        const c = project3D(-1.4, warp, u)
+        const d = project3D(1.4, -warp, u)
+        this.drawLine(c.sx, c.sy, d.sx, d.sy, planeIntensity, planeHue)
       }
 
-      // Draw animated Lorenz trajectories with moving head pulses
-      const headA = Math.floor(t * 75) % LORENZ_POINTS.length
+      // Draw animated Lorenz trajectories with moving head pulses; unprojected drift adds jitter
+      const headA = Math.floor(t * (65 + phase * 25)) % LORENZ_POINTS.length
       const headB = (headA + Math.floor(LORENZ_POINTS.length / 2)) % LORENZ_POINTS.length
-      let prev = project3D(LORENZ_POINTS[0][0], LORENZ_POINTS[0][1], LORENZ_POINTS[0][2])
+      const jitterPt = (pt: [number, number, number], idx: number) => {
+        if (drift < 0.01) return project3D(pt[0], pt[1], pt[2])
+        const j = drift * 0.16
+        return project3D(
+          pt[0] + Math.sin(idx * 0.37 + t * 3.1) * j,
+          pt[1] + Math.cos(idx * 0.29 - t * 2.7) * j,
+          pt[2] + Math.sin(idx * 0.43 + t * 2.3) * j,
+        )
+      }
+      let prev = jitterPt(LORENZ_POINTS[0], 0)
       for (let i = 1; i < LORENZ_POINTS.length; i++) {
-        const pt = LORENZ_POINTS[i]
-        const cur = project3D(pt[0], pt[1], pt[2])
+        const cur = jitterPt(LORENZ_POINTS[i], i)
         const distA = (headA - i + LORENZ_POINTS.length) % LORENZ_POINTS.length
         const distB = (headB - i + LORENZ_POINTS.length) % LORENZ_POINTS.length
         const pulse = Math.max(
           Math.exp(-distA * 0.045),
           Math.exp(-distB * 0.045),
         )
-        const intensity = Math.min(1, cur.depth * 0.55 + pulse * 0.72)
-        this.drawLine(prev.sx, prev.sy, cur.sx, cur.sy, intensity, pulse * 2.2)
+        const intensity = Math.min(1, cur.depth * (0.48 + phase * 0.16) + pulse * (0.65 + phase * 0.2))
+        this.drawLine(prev.sx, prev.sy, cur.sx, cur.sy, intensity, pulse * 2.2 - drift * 0.9)
         prev = cur
       }
       return
     }
 
     // Default: noosphere: Ethereal Cathedral of Minds (Akashic Lattice)
+    // phase: 0 = fundamental mode k=(1,1), 1 = rich Fibonacci harmonic lattice k=(8,13)
+    const phase = getWorldEpochPhase('noosphere', cam)
+    const modeN = 2 + Math.round(phase * 6) // 2 → 8 angular petals
+    const archFreqX = 3.2 + phase * 5.2
+    const archFreqY = 2.8 + phase * 4.4
+    const harmRadial = 6 + phase * 10
     for (let py = 0; py < ph; py++) {
       const ny = ((py / ph) * 2 - 1) / zoom
       for (let px = 0; px < pw; px++) {
         const nx = (((px / pw) * 2 - 1) * aspect * 0.72) / zoom
         // Cathedral vaulted arches + non-Euclidean resonant lattice
         const r = Math.hypot(nx, ny)
-        const z = 1.8 / (0.35 + Math.abs(nx) * 0.75 + Math.abs(ny) * 0.55) - t * 0.65
-        const arch = Math.cos(nx * 5.2 + Math.sin(z * 0.9 + yaw) * 0.9) * Math.cos(ny * 4.4 - z * 0.7)
+        const z = 1.8 / (0.35 + Math.abs(nx) * 0.75 + Math.abs(ny) * 0.55) - t * (0.5 + phase * 0.4)
+        const arch =
+          Math.cos(nx * archFreqX + Math.sin(z * 0.9 + yaw) * (0.6 + phase * 0.6)) *
+          Math.cos(ny * archFreqY - z * 0.7)
         const harmonic =
-          Math.sin(r * 10 - t * 1.9 + Math.atan2(ny, nx) * 3) * 0.5 +
-          Math.cos((nx * 3 - ny * 4) * 2.4 + t * 1.2) * 0.5
+          Math.sin(r * harmRadial - t * 1.9 + Math.atan2(ny, nx) * modeN) * 0.5 +
+          Math.cos((nx * (2 + phase * 3) - ny * (3 + phase * 3)) * 2.4 + t * 1.2) * 0.5
         const vault = Math.pow(Math.max(0, 1 - Math.abs(arch)), 4.0)
-        const node = Math.pow(Math.max(0, harmonic), 4.0) * Math.exp(-r * 0.65)
-        const val = vault * 0.65 * Math.exp(-r * 0.35) + node * 0.9
+        const node = Math.pow(Math.max(0, harmonic), 4.0 - phase * 1.0) * Math.exp(-r * (0.75 - phase * 0.25))
+        const val = vault * (0.55 + phase * 0.22) * Math.exp(-r * 0.35) + node * (0.78 + phase * 0.25)
         const idx = py * pw + px
         lum[idx] = Math.min(1, Math.max(0, val))
-        hue[idx] = z * 0.35 + harmonic * 1.4
+        hue[idx] = z * 0.35 + harmonic * (1.1 + phase * 0.6)
       }
     }
   }

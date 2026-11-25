@@ -23,7 +23,10 @@ import {
   PALETTE_ORDER,
   WORLD_BY_ID,
   WORLD_CATALOG,
+  WORLD_DEFAULT_NOTES,
+  getWorldEpochPhase,
   getWorldHud,
+  getWorldScrubberSpec,
   type PaletteId,
   type RenderMode,
   type WorldCamera,
@@ -49,8 +52,16 @@ type TerminalBlock = {
   promptHost?: string
 }
 
-const DEFAULT_PROD_WS = 'wss://raspberrypi.taila980b4.ts.net/spatel-terminal'
-const WS_STORAGE_KEY = 'spatel_rpi5_ws_url'
+type NarrationState = {
+  text: string
+  epoch: string
+  model: string
+  streaming: boolean
+}
+
+const DEFAULT_PROD_WS = 'wss://term.shaan4d.xyz/ws'
+const BACKUP_PROD_WS = 'wss://raspberrypi.taila980b4.ts.net/spatel-terminal'
+const WS_STORAGE_KEY = 'spatel_rpi5_ws_url_v2'
 
 function getInitialWsUrl(): string {
   if (typeof window === 'undefined') return DEFAULT_PROD_WS
@@ -69,6 +80,8 @@ function getInitialWsUrl(): string {
 }
 
 const EXPLORE_CHIPS: SuggestionItem[] = [
+  { label: 'verify receipts', command: 'verify' },
+  { label: 'search corpus', command: 'search QR nullspace replay KL' },
   { label: '5-stop tour', command: 'tour' },
   { label: 'research archive', command: 'research' },
   { label: 'psychohistory v2', command: 'psychohistory' },
@@ -77,7 +90,6 @@ const EXPLORE_CHIPS: SuggestionItem[] = [
   { label: 'e-process compare', command: 'eprocess compare' },
   { label: 'qr nullspace', command: 'qrproj' },
   { label: 'essays', command: 'essays' },
-  { label: 'scale timeline', command: 'timeline' },
 ]
 
 const ASK_CHIPS: SuggestionItem[] = [
@@ -185,14 +197,25 @@ export function EtherTerminal() {
   const [paused, setPaused] = useState(false)
   const [showHud, setShowHud] = useState(true)
   const [worldResLabel, setWorldResLabel] = useState('BRAILLE')
+  const [scrubberPhase, setScrubberPhase] = useState<number | null>(null)
+  const [worldPresence, setWorldPresence] = useState<Record<string, number>>({})
+  const [narration, setNarration] = useState<NarrationState>({
+    text: WORLD_DEFAULT_NOTES.universal,
+    epoch: '',
+    model: 'field note',
+    streaming: false,
+  })
   const [hudText, setHudText] = useState(() =>
     getWorldHud('universal', { yaw: 0, pitch: 0, zoom: 1, time: 0 }),
   )
 
   const wsRef = useRef<WebSocket | null>(null)
-  const connectRef = useRef<((url: string, silent?: boolean) => void) | null>(null)
+  const connectRef = useRef<((url: string, silent?: boolean, allowBackup?: boolean) => void) | null>(null)
   const manualDisconnectRef = useRef(false)
   const reconnectTimerRef = useRef<number | null>(null)
+  const narrateTimerRef = useRef<number | null>(null)
+  const lastNarratedKeyRef = useRef<string>('')
+  const activeWorldRef = useRef<WorldId | null>(null)
   const nextIdRef = useRef(2)
   const streamBlockIdRef = useRef<number | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -201,7 +224,7 @@ export function EtherTerminal() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const rendererRef = useRef<EtherFieldRenderer | null>(null)
-  const camRef = useRef<WorldCamera>({ yaw: 0, pitch: 0.12, zoom: 1, time: 0 })
+  const camRef = useRef<WorldCamera>({ yaw: 0, pitch: 0.12, zoom: 1, time: 0, epochPhase: null })
   const dragRef = useRef<{ active: boolean; x: number; y: number }>({
     active: false,
     x: 0,
@@ -250,8 +273,68 @@ export function EtherTerminal() {
     setPalette(meta.defaultPalette)
     setPaused(false)
     setDockTab('worlds')
-    camRef.current = { yaw: 0, pitch: 0.12, zoom: 1, time: 0 }
+    setScrubberPhase(null)
+    lastNarratedKeyRef.current = ''
+    camRef.current = { yaw: 0, pitch: 0.12, zoom: 1, time: 0, epochPhase: null }
+    setHudText(getWorldHud(worldId, camRef.current))
+    setNarration({
+      text: WORLD_DEFAULT_NOTES[worldId],
+      epoch: meta.span,
+      model: 'field note',
+      streaming: false,
+    })
   }, [])
+
+  const requestNarration = useCallback(
+    (worldId: WorldId, epoch: string, coords: string, force = false) => {
+      const key = `${worldId}|${epoch}`
+      if (!force && lastNarratedKeyRef.current === key) return
+      lastNarratedKeyRef.current = key
+
+      const scrubber = getWorldScrubberSpec(worldId)
+      let offlineNote = WORLD_DEFAULT_NOTES[worldId]
+      if (scrubber) {
+        const epMatch = scrubber.epochs.find((e) => epoch.includes(e.label))
+        if (epMatch) offlineNote = epMatch.note
+      }
+
+      const ws = wsRef.current
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'narrate', world: worldId, epoch, coords }))
+      } else {
+        setNarration({
+          text: offlineNote,
+          epoch,
+          model: 'field note',
+          streaming: false,
+        })
+      }
+    },
+    [],
+  )
+
+  const handleScrubPhase = useCallback((phase: number | null) => {
+    setScrubberPhase(phase)
+    camRef.current.epochPhase = phase
+    if (activeWorldRef.current) {
+      setHudText(getWorldHud(activeWorldRef.current, camRef.current))
+    }
+  }, [])
+
+  const stepScrubEpoch = useCallback(
+    (delta: number) => {
+      const worldId = activeWorldRef.current
+      if (!worldId) return
+      const spec = getWorldScrubberSpec(worldId)
+      if (!spec) return
+      const curPhase = getWorldEpochPhase(worldId, camRef.current)
+      const curIdx = Math.min(spec.epochs.length - 1, Math.floor(curPhase * spec.epochs.length))
+      const nextIdx = Math.max(0, Math.min(spec.epochs.length - 1, curIdx + delta))
+      const targetPhase = (nextIdx + 0.5) / spec.epochs.length
+      handleScrubPhase(targetPhase)
+    },
+    [handleScrubPhase],
+  )
 
   const clearReconnectTimer = useCallback(() => {
     if (reconnectTimerRef.current !== null) {
@@ -278,10 +361,11 @@ export function EtherTerminal() {
     setBusyLabel(null)
     setConnState('fallback')
     setTelemetry(null)
+    setWorldPresence({})
   }, [clearReconnectTimer])
 
   const connectToEndpoint = useCallback(
-    (targetUrl: string, silent = false) => {
+    (targetUrl: string, silent = false, allowBackup = false) => {
       manualDisconnectRef.current = false
       disconnectSocket()
       if (!/^wss?:\/\//i.test(targetUrl)) {
@@ -309,10 +393,28 @@ export function EtherTerminal() {
       try {
         ws = new WebSocket(targetUrl)
       } catch {
+        if (allowBackup && targetUrl !== BACKUP_PROD_WS) {
+          connectRef.current?.(BACKUP_PROD_WS, silent, false)
+          return
+        }
         setConnState('fallback')
         return
       }
       wsRef.current = ws
+
+      const failoverOrFallback = () => {
+        if (allowBackup && targetUrl !== BACKUP_PROD_WS && !manualDisconnectRef.current) {
+          connectRef.current?.(BACKUP_PROD_WS, silent, false)
+          return
+        }
+        setConnState('fallback')
+        if (!silent) {
+          appendBlock(
+            'output',
+            `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}) — instant local sandbox active.\x1b[0m\n`,
+          )
+        }
+      }
 
       const timeoutId = window.setTimeout(() => {
         if (!settled && ws.readyState !== WebSocket.OPEN) {
@@ -322,15 +424,9 @@ export function EtherTerminal() {
           } catch {
             /* ignore */
           }
-          setConnState('fallback')
-          if (!silent) {
-            appendBlock(
-              'output',
-              `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}) — instant local sandbox active.\x1b[0m\n`,
-            )
-          }
+          failoverOrFallback()
         }
-      }, 2800)
+      }, 2600)
 
       ws.onopen = () => {
         settled = true
@@ -339,6 +435,9 @@ export function EtherTerminal() {
         setConnState('live')
         streamBlockIdRef.current = null
         ws.send(JSON.stringify({ type: 'resize', cols: 96, rows: 28 }))
+        if (activeWorldRef.current) {
+          ws.send(JSON.stringify({ type: 'world_presence', world: activeWorldRef.current }))
+        }
       }
 
       ws.onmessage = (event) => {
@@ -348,6 +447,9 @@ export function EtherTerminal() {
             type?: string
             data?: unknown
             world?: string
+            epoch?: string
+            model?: string
+            worlds?: Record<string, number>
             active?: boolean
             label?: string
             items?: SuggestionItem[]
@@ -366,6 +468,29 @@ export function EtherTerminal() {
           } else if (msg.type === 'portal' && typeof msg.world === 'string') {
             const wid = resolveWorldId(msg.world)
             if (wid) openWorld(wid)
+          } else if (msg.type === 'presence' && msg.worlds && typeof msg.worlds === 'object') {
+            setWorldPresence(msg.worlds)
+          } else if (msg.type === 'narration_start') {
+            if (!msg.world || msg.world === activeWorldRef.current) {
+              setNarration({
+                text: '',
+                epoch: msg.epoch || '',
+                model: msg.model || 'shaanpatel-cv-pico',
+                streaming: true,
+              })
+            }
+          } else if (msg.type === 'narration_chunk' && typeof msg.data === 'string') {
+            if (!msg.world || msg.world === activeWorldRef.current) {
+              setNarration((prev) => ({
+                ...prev,
+                text: prev.text + msg.data,
+                streaming: true,
+              }))
+            }
+          } else if (msg.type === 'narration_end') {
+            if (!msg.world || msg.world === activeWorldRef.current) {
+              setNarration((prev) => ({ ...prev, streaming: false }))
+            }
           }
         } catch {
           appendStreamChunk(event.data)
@@ -376,7 +501,7 @@ export function EtherTerminal() {
         if (!settled) {
           settled = true
           window.clearTimeout(timeoutId)
-          setConnState('fallback')
+          failoverOrFallback()
         }
       }
 
@@ -387,9 +512,10 @@ export function EtherTerminal() {
           setBusyLabel(null)
           setConnState('fallback')
           setTelemetry(null)
+          setWorldPresence({})
           if (wasLive && !manualDisconnectRef.current) {
             reconnectTimerRef.current = window.setTimeout(() => {
-              connectRef.current?.(targetUrl, true)
+              connectRef.current?.(targetUrl, true, true)
             }, 3500)
           }
         }
@@ -403,8 +529,9 @@ export function EtherTerminal() {
   }, [connectToEndpoint])
 
   useEffect(() => {
+    const initial = getInitialWsUrl()
     const timerId = window.setTimeout(() => {
-      connectToEndpoint(getInitialWsUrl(), true)
+      connectToEndpoint(initial, true, initial === DEFAULT_PROD_WS)
     }, 0)
     return () => {
       window.clearTimeout(timerId)
@@ -412,6 +539,36 @@ export function EtherTerminal() {
       disconnectSocket()
     }
   }, [connectToEndpoint, disconnectSocket])
+
+  // Sync anonymous world traveler presence with RPi5 whenever entering/switching/exiting a world
+  useEffect(() => {
+    activeWorldRef.current = activeWorld
+    const ws = wsRef.current
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'world_presence', world: activeWorld }))
+    }
+  }, [activeWorld])
+
+  // Debounced live narration stream from shaanpatel-cv-pico as you enter or scrub epochs
+  useEffect(() => {
+    if (narrateTimerRef.current !== null) {
+      window.clearTimeout(narrateTimerRef.current)
+      narrateTimerRef.current = null
+    }
+    if (!activeWorld) return
+    const epoch = hudText.epoch
+    const coords = hudText.coords
+    const delayMs = lastNarratedKeyRef.current === '' ? 160 : 480
+    narrateTimerRef.current = window.setTimeout(() => {
+      requestNarration(activeWorld, epoch, coords)
+    }, delayMs)
+    return () => {
+      if (narrateTimerRef.current !== null) {
+        window.clearTimeout(narrateTimerRef.current)
+        narrateTimerRef.current = null
+      }
+    }
+  }, [activeWorld, hudText.epoch, hudText.coords, connState, requestNarration])
 
   // Smart autoscroll: only scroll when pinned near bottom
   useEffect(() => {
@@ -584,6 +741,20 @@ export function EtherTerminal() {
       } else if (e.key === 'i' || e.key === 'I') {
         const meta = WORLD_BY_ID[activeWorld]
         runLine(`Explain the science and philosophy behind ${meta.name} (${meta.span}).`)
+      } else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault()
+        const hud = getWorldHud(activeWorld, camRef.current)
+        requestNarration(activeWorld, hud.epoch, hud.coords, true)
+      } else if (e.key === '[' || e.key === 'ArrowLeft') {
+        if (getWorldScrubberSpec(activeWorld)) {
+          e.preventDefault()
+          stepScrubEpoch(-1)
+        }
+      } else if (e.key === ']' || e.key === 'ArrowRight') {
+        if (getWorldScrubberSpec(activeWorld)) {
+          e.preventDefault()
+          stepScrubEpoch(1)
+        }
       } else if (e.key === '+' || e.key === '=') {
         camRef.current.zoom = Math.min(2.8, camRef.current.zoom * 1.12)
       } else if (e.key === '-' || e.key === '_') {
@@ -595,7 +766,7 @@ export function EtherTerminal() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [activeWorld, openWorld, runLine])
+  }, [activeWorld, openWorld, requestNarration, runLine, stepScrubEpoch])
 
   // High-FPS high-resolution ASCII / Braille world animation loop
   useEffect(() => {
@@ -778,7 +949,7 @@ export function EtherTerminal() {
             type="text"
             value={endpointDraft}
             onChange={(e) => setEndpointDraft(e.target.value)}
-            placeholder="wss://raspberrypi.taila980b4.ts.net/spatel-terminal"
+            placeholder="wss://term.shaan4d.xyz/ws"
             spellCheck={false}
           />
           <button type="submit" className="ether-head-btn is-accent">
@@ -858,23 +1029,36 @@ export function EtherTerminal() {
               ))
             : null}
           {dockTab === 'worlds'
-            ? WORLD_CATALOG.map((w) => (
-                <button
-                  key={w.id}
-                  type="button"
-                  className={`terminal-prompt-chip terminal-prompt-chip--world${activeWorld === w.id ? ' is-active' : ''}`}
-                  onClick={() => openWorld(w.id)}
-                  title={`${w.name} — ${w.span}`}
-                >
-                  ✦ {w.shortLabel}
-                </button>
-              ))
+            ? WORLD_CATALOG.map((w) => {
+                const count = worldPresence[w.id] || 0
+                return (
+                  <button
+                    key={w.id}
+                    type="button"
+                    className={`terminal-prompt-chip terminal-prompt-chip--world${activeWorld === w.id ? ' is-active' : ''}`}
+                    onClick={() => openWorld(w.id)}
+                    title={`${w.name} — ${w.span}`}
+                  >
+                    ✦ {w.shortLabel}
+                    {count > 0 ? <span className="ether-world-count">· {count}</span> : null}
+                  </button>
+                )
+              })
             : null}
         </div>
       </div>
 
       {/* Main Viewport: High-Res World Portal OR Interactive Rich ANSI Shell */}
-      {activeWorld && activeWorldMeta ? (
+      {activeWorld && activeWorldMeta ? (() => {
+        const scrubber = getWorldScrubberSpec(activeWorld)
+        const activePhase = scrubber
+          ? (scrubberPhase ?? hudText.epochPhase ?? 0)
+          : 0
+        const activeEpochIdx = scrubber
+          ? Math.min(scrubber.epochs.length - 1, Math.floor(activePhase * scrubber.epochs.length))
+          : 0
+        const travelersHere = worldPresence[activeWorld] || (connState === 'live' ? 1 : 0)
+        return (
         <div className="ether-portal" ref={viewportRef}>
           <canvas
             ref={canvasRef}
@@ -892,6 +1076,11 @@ export function EtherTerminal() {
                 <div>
                   <span className="ether-portal__kicker">
                     WORLD 0{activeWorldMeta.index} / 08 · {worldResLabel}
+                    {travelersHere > 0 ? (
+                      <span className="ether-portal__presence">
+                        {' '}· ● {travelersHere} {travelersHere === 1 ? 'traveler' : 'travelers'} in {activeWorldMeta.id}
+                      </span>
+                    ) : null}
                   </span>
                   <strong>{activeWorldMeta.name}</strong>
                 </div>
@@ -901,58 +1090,118 @@ export function EtherTerminal() {
                 </div>
               </div>
 
-              <div className="ether-portal__hud ether-portal__hud--bottom">
-                <span className="ether-portal__caption">{activeWorldMeta.caption}</span>
-                <div className="ether-portal__controls">
-                  <button
-                    type="button"
-                    className="ether-hud-btn is-ask"
-                    onClick={() =>
-                      runLine(
-                        `Explain the science and meaning behind ${activeWorldMeta.name} (${activeWorldMeta.span}).`,
-                      )
-                    }
-                    title="Ask shaanpatel-cv-pico about this world"
-                  >
-                    [i] ask model
-                  </button>
-                  <button
-                    type="button"
-                    className="ether-hud-btn"
-                    onClick={() =>
-                      setRenderMode(
-                        (cur) => MODE_ORDER[(MODE_ORDER.indexOf(cur) + 1) % MODE_ORDER.length],
-                      )
-                    }
-                  >
-                    [m] {renderMode}
-                  </button>
-                  <button
-                    type="button"
-                    className="ether-hud-btn"
-                    onClick={() =>
-                      setPalette(
-                        (cur) =>
-                          PALETTE_ORDER[(PALETTE_ORDER.indexOf(cur) + 1) % PALETTE_ORDER.length],
-                      )
-                    }
-                  >
-                    [p] {palette}
-                  </button>
-                  <button
-                    type="button"
-                    className="ether-hud-btn"
-                    onClick={() => setPaused((p) => !p)}
-                  >
-                    {paused ? '[space] play' : '[space] pause'}
-                  </button>
-                  <button
-                    type="button"
-                    className="ether-hud-btn"
-                    onClick={() => setActiveWorld(null)}
-                  >
-                    [q] prompt
-                  </button>
+              <div className="ether-portal__bottom-stack">
+                {/* Interactive Epoch Scrubber for Universal History & Psychohistory */}
+                {scrubber ? (
+                  <div className="ether-portal__scrubber" role="group" aria-label="Epoch scrubber">
+                    <span className="ether-scrubber__edge">{scrubber.minLabel}</span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={999}
+                      value={Math.round(activePhase * 999)}
+                      onChange={(e) => handleScrubPhase(Number(e.target.value) / 999)}
+                      className="ether-scrubber__range"
+                      aria-label={`Scrub ${activeWorldMeta.name} epochs`}
+                    />
+                    <span className="ether-scrubber__edge">{scrubber.maxLabel}</span>
+                    <div className="ether-scrubber__ticks">
+                      {scrubber.epochs.map((ep, idx) => (
+                        <button
+                          key={ep.label}
+                          type="button"
+                          className={`ether-scrubber__tick${idx === activeEpochIdx ? ' is-active' : ''}`}
+                          onClick={() => handleScrubPhase((idx + 0.5) / scrubber.epochs.length)}
+                          title={`${ep.label} (${ep.time})`}
+                        >
+                          {ep.shortLabel}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className={`ether-hud-btn${scrubberPhase === null ? ' is-ask' : ''}`}
+                      onClick={() => handleScrubPhase(scrubberPhase === null ? activePhase : null)}
+                      title="Toggle automatic epoch drift vs locked scrub coordinate"
+                    >
+                      {scrubberPhase === null ? 'auto' : 'locked'}
+                    </button>
+                  </div>
+                ) : null}
+
+                {/* Split Live Narration Ticker + World Controls */}
+                <div className="ether-portal__hud ether-portal__hud--bottom">
+                  <div className="ether-portal__ticker" aria-live="polite">
+                    <span className={`ether-ticker__tag${narration.streaming ? ' is-streaming' : ''}`}>
+                      <span className="ether-ticker__dot" />
+                      {narration.model}
+                    </span>
+                    <span className="ether-ticker__text">
+                      {narration.text || activeWorldMeta.caption}
+                    </span>
+                    <button
+                      type="button"
+                      className="ether-ticker__refresh"
+                      onClick={() =>
+                        requestNarration(activeWorld, hudText.epoch, hudText.coords, true)
+                      }
+                      title="Stream fresh field note from shaanpatel-cv-pico ([n])"
+                    >
+                      [n]
+                    </button>
+                  </div>
+
+                  <div className="ether-portal__controls">
+                    <button
+                      type="button"
+                      className="ether-hud-btn is-ask"
+                      onClick={() =>
+                        runLine(
+                          `Explain the science and meaning behind ${activeWorldMeta.name} (${activeWorldMeta.span}).`,
+                        )
+                      }
+                      title="Ask shaanpatel-cv-pico about this world"
+                    >
+                      [i] ask
+                    </button>
+                    <button
+                      type="button"
+                      className="ether-hud-btn"
+                      onClick={() =>
+                        setRenderMode(
+                          (cur) => MODE_ORDER[(MODE_ORDER.indexOf(cur) + 1) % MODE_ORDER.length],
+                        )
+                      }
+                    >
+                      [m] {renderMode}
+                    </button>
+                    <button
+                      type="button"
+                      className="ether-hud-btn"
+                      onClick={() =>
+                        setPalette(
+                          (cur) =>
+                            PALETTE_ORDER[(PALETTE_ORDER.indexOf(cur) + 1) % PALETTE_ORDER.length],
+                        )
+                      }
+                    >
+                      [p] {palette}
+                    </button>
+                    <button
+                      type="button"
+                      className="ether-hud-btn"
+                      onClick={() => setPaused((p) => !p)}
+                    >
+                      {paused ? '[space] play' : '[space] pause'}
+                    </button>
+                    <button
+                      type="button"
+                      className="ether-hud-btn"
+                      onClick={() => setActiveWorld(null)}
+                    >
+                      [q] prompt
+                    </button>
+                  </div>
                 </div>
               </div>
             </>
@@ -966,7 +1215,8 @@ export function EtherTerminal() {
             </button>
           )}
         </div>
-      ) : (
+        )
+      })() : (
         <div
           className="ether-scroll"
           ref={scrollRef}

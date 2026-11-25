@@ -270,37 +270,193 @@ export type WorldCamera = {
   pitch: number
   zoom: number
   time: number
+  /** Optional scrubbed epoch coordinate in [0, 1] for scrubbable journeys */
+  epochPhase?: number | null
 }
 
 export type WorldHudInfo = {
   epoch: string
   coords: string
   metric: string
+  epochIndex?: number
+  epochPhase?: number
 }
 
-const UNIVERSAL_EPOCHS = [
-  { label: 'PLANCK FOAM', time: 't = 10⁻⁴³ s', temp: 'T ≈ 1.4×10³² K', scale: 'a ~ 10⁻³⁵ m' },
-  { label: 'COSMIC INFLATION', time: 't = 10⁻³² s', temp: 'T ≈ 10²⁷ K', scale: 'e⁶⁰ expansion' },
-  { label: 'CMB LAST SCATTERING', time: 't = 380 kyr', temp: 'T = 3,000 K', scale: 'z = 1,089' },
-  { label: 'COSMIC DAWN · POP III', time: 't = 180 Myr', temp: 'T = 60 K', scale: 'z = 20' },
-  { label: 'GALACTIC FILAMENTS', time: 't = 3.2 Gyr', temp: 'T = 8.4 K', scale: 'z = 2.1' },
-  { label: 'SOLAR ACCRETION', time: 't = 9.2 Gyr', temp: 'T = 3.9 K', scale: '4.6 Gyr ago' },
-  { label: 'BIOSPHERE & COGNITION', time: 't = 13.79 Gyr', temp: 'T = 2.725 K', scale: 'z = 0.00' },
-  { label: 'NOOSPHERE · 2026 CE', time: 't = 13.80 Gyr', temp: 'T = 2.725 K', scale: 'shaan4d.xyz' },
-  { label: 'BLACK HOLE ERA', time: 't = 10⁴⁰ yr', temp: 'T → 10⁻²⁹ K', scale: 'Hawking glow' },
+export type EpochStop = {
+  label: string
+  shortLabel: string
+  time: string
+  detail: string
+  note: string
+}
+
+export const UNIVERSAL_EPOCHS: EpochStop[] = [
+  {
+    label: 'PLANCK FOAM',
+    shortLabel: '10⁻⁴³s',
+    time: 't = 10⁻⁴³ s',
+    detail: 'scale a ~ 10⁻³⁵ m · T ≈ 1.4×10³² K',
+    note: 'At the Planck wall, geometry dissolves into quantum foam — the UV boundary where classical spacetime ceases to be a smooth manifold.',
+  },
+  {
+    label: 'COSMIC INFLATION',
+    shortLabel: '10⁻³²s',
+    time: 't = 10⁻³² s',
+    detail: 'e⁶⁰ expansion · T ≈ 10²⁷ K',
+    note: 'Exponential vacuum expansion stretches microscopic quantum fluctuations across super-horizon scales, seeding every future galaxy.',
+  },
+  {
+    label: 'CMB LAST SCATTERING',
+    shortLabel: '380 kyr',
+    time: 't = 380 kyr',
+    detail: 'z = 1,089 · T = 3,000 K',
+    note: 'Photons decouple from neutral hydrogen, freezing a crisp acoustic snapshot of the early universe onto the cosmic microwave sky.',
+  },
+  {
+    label: 'COSMIC DAWN · POP III',
+    shortLabel: '180 Myr',
+    time: 't = 180 Myr',
+    detail: 'z = 20 · T = 60 K',
+    note: 'First metal-free stars ignite inside dark matter minihalos, ending the dark ages and forging the first heavy elements.',
+  },
+  {
+    label: 'GALACTIC FILAMENTS',
+    shortLabel: '3.2 Gyr',
+    time: 't = 3.2 Gyr',
+    detail: 'z = 2.1 · T = 8.4 K',
+    note: 'Gravity weaves matter into luminous cosmic web filaments and voids at peak star-formation noon.',
+  },
+  {
+    label: 'SOLAR ACCRETION',
+    shortLabel: '9.2 Gyr',
+    time: 't = 9.2 Gyr',
+    detail: '4.6 Gyr ago · T = 3.9 K',
+    note: 'A metal-enriched molecular cloud collapses into the Sun and protoplanetary disk — third-generation stardust assembling planets.',
+  },
+  {
+    label: 'BIOSPHERE & COGNITION',
+    shortLabel: '13.79 Gyr',
+    time: 't = 13.79 Gyr',
+    detail: 'z = 0.00 · T = 2.725 K',
+    note: 'Self-replicating chemistry crosses into nervous systems and symbolic compression — matter beginning to audit its own models.',
+  },
+  {
+    label: 'NOOSPHERE · 2026 CE',
+    shortLabel: '2026 CE',
+    time: 't = 13.80 Gyr',
+    detail: 'shaan4d.xyz · T = 2.725 K',
+    note: 'Machine-verified proofs, sealed holdout ledgers, and multi-agent cognition emerge inside a tiny 2.725 K corner of the light-cone.',
+  },
+  {
+    label: 'BLACK HOLE ERA',
+    shortLabel: '10⁴⁰ yr',
+    time: 't = 10⁴⁰ yr',
+    detail: 'Hawking glow · T → 10⁻²⁹ K',
+    note: 'After stars extinguish, spinning Kerr horizons become the final heat engines, slowly radiating their entropy into deep time.',
+  },
 ]
 
-const PSYCHO_EPOCHS = [
-  { label: 'SUMERIAN LEDGERS', time: '3000 BCE', metric: 'clay accounting · first statebooks' },
-  { label: 'AXIAL AGE REFORM', time: '500 BCE', metric: 'symbolic compression across Eurasia' },
-  { label: 'AMSTERDAM BOURSE', time: '1602 CE', metric: 'continuous joint-stock price discovery' },
-  { label: 'BRETTON WOODS BREAK', time: '1971 CE', metric: 'floating macro regime bifurcation' },
-  { label: 'MULTI-LEG OBSTRUCTION', time: '2026 CE', metric: 'AUROC 0.9810 · E_t = 1.00e12 certified' },
+export const PSYCHO_EPOCHS: EpochStop[] = [
+  {
+    label: 'SUMERIAN LEDGERS',
+    shortLabel: '3000 BCE',
+    time: '3000 BCE',
+    detail: 'clay accounting · first statebooks',
+    note: 'Before poetry, writing begins as barley and silver accounting on cuneiform tablets — humanity’s first verifiable statebooks.',
+  },
+  {
+    label: 'AXIAL AGE REFORM',
+    shortLabel: '500 BCE',
+    time: '500 BCE',
+    detail: 'symbolic compression across Eurasia',
+    note: 'Coinage, alphabetic literacy, and formal logic co-emerge across Greece, India, and China — compressing institutional trust.',
+  },
+  {
+    label: 'SONG JIAOZI NOTES',
+    shortLabel: '1024 CE',
+    time: '1024 CE',
+    detail: 'first state-backed paper credit ledger',
+    note: 'Sichuan merchants and the Song state decouple settlement from heavy coin, inventing the first scalable credit-coherence challenge.',
+  },
+  {
+    label: 'AMSTERDAM BOURSE',
+    shortLabel: '1602 CE',
+    time: '1602 CE',
+    detail: 'continuous joint-stock price discovery',
+    note: 'Continuous secondary trading turns collective expectation into a live geometric signal — and births the first multi-leg arbitrage.',
+  },
+  {
+    label: 'PEEL BANK CHARTER',
+    shortLabel: '1844 CE',
+    time: '1844 CE',
+    detail: 'central bank reserve discipline',
+    note: 'Industrial liquidity cycles force explicit reserve rules, separating monetary issuance from discretionary credit expansion.',
+  },
+  {
+    label: 'BRETTON WOODS BREAK',
+    shortLabel: '1971 CE',
+    time: '1971 CE',
+    detail: 'floating macro regime bifurcation',
+    note: 'Floating fiat currencies couple global bond yields, volatility indices, and expectations into a single high-dimensional macro manifold.',
+  },
+  {
+    label: 'MULTI-LEG OBSTRUCTION',
+    shortLabel: '2026 CE',
+    time: '2026 CE',
+    detail: 'AUROC 0.9810 · E_t = 1.00e12 certified',
+    note: 'Across 1,673 real Polymarket & Kalshi events, coherence obstructions + causal FRED macro certify extreme mispricing corrections at E_t = 1e12.',
+  },
 ]
+
+export type ScrubberSpec = {
+  minLabel: string
+  maxLabel: string
+  epochs: EpochStop[]
+}
+
+export function getWorldScrubberSpec(world: WorldId): ScrubberSpec | null {
+  if (world === 'universal') {
+    return { minLabel: '10⁻⁴³ s', maxLabel: '10⁴⁰ yr', epochs: UNIVERSAL_EPOCHS }
+  }
+  if (world === 'psychohistory') {
+    return { minLabel: '3000 BCE', maxLabel: '2026 CE', epochs: PSYCHO_EPOCHS }
+  }
+  return null
+}
+
+export function getWorldEpochPhase(world: WorldId, cam: WorldCamera): number {
+  if (typeof cam.epochPhase === 'number' && Number.isFinite(cam.epochPhase)) {
+    return Math.max(0, Math.min(0.9999, cam.epochPhase))
+  }
+  if (world === 'universal') {
+    return (((cam.time * 0.055 + (cam.zoom - 1) * 0.25) % 1) + 1) % 1
+  }
+  if (world === 'psychohistory') {
+    return (((cam.time * 0.065) % 1) + 1) % 1
+  }
+  return (((cam.time * 0.05) % 1) + 1) % 1
+}
+
+export const WORLD_DEFAULT_NOTES: Record<WorldId, string> = {
+  psychohistory: PSYCHO_EPOCHS[PSYCHO_EPOCHS.length - 1].note,
+  universal: UNIVERSAL_EPOCHS[2].note,
+  tesseract:
+    'Stereographic S³ Hopf fibers thread a rotating 4D hypercube — lifting dimensions reveals orthogonal structure hidden in 2D shadows.',
+  kailas:
+    'Around Mount Kailas’s 52 km kora, pilgrimage phenomenology locks to radial spatial phase φ = f(r) across 2,626 blind-labeled passages (α = 0.86, p = 0.0022).',
+  horizon:
+    'Near r_ph = 1.5 r_s, Kerr frame dragging bends back-side plasma into upper and lower Einstein arcs while Doppler beaming brightens the approaching limb.',
+  ruliad:
+    'Branchial space holds all entangled multiway evaluations — any bounded observer only sees a coarse foliation, echoing anytime-valid holdout bounds.',
+  lorenz:
+    'Chaotic twin-lobe flow evolves while the invariant QR-nullspace plane remains untouched — the geometry behind Track 5’s 180× lower replay KL (0.000605).',
+  noosphere:
+    'Standing wave harmonics across collective memory nodes — durable commons pair quadratic preference discovery with Ostrom-legible stewardship.',
+}
 
 export function getWorldHud(world: WorldId, cam: WorldCamera): WorldHudInfo {
   if (world === 'universal') {
-    const phase = ((cam.time * 0.065 + (cam.zoom - 1) * 0.35) % 1 + 1) % 1
+    const phase = getWorldEpochPhase('universal', cam)
     const idx = Math.min(
       UNIVERSAL_EPOCHS.length - 1,
       Math.floor(phase * UNIVERSAL_EPOCHS.length),
@@ -308,19 +464,25 @@ export function getWorldHud(world: WorldId, cam: WorldCamera): WorldHudInfo {
     const ep = UNIVERSAL_EPOCHS[idx]
     return {
       epoch: `${ep.label} · ${ep.time}`,
-      coords: `scale ${ep.scale} · ${ep.temp}`,
+      coords: ep.detail,
       metric: `θ=${cam.yaw.toFixed(2)} φ=${cam.pitch.toFixed(2)} zoom=${cam.zoom.toFixed(2)}×`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
   if (world === 'psychohistory') {
-    const idx =
-      Math.floor(((cam.time * 0.08) % 1 + 1) % 1 * PSYCHO_EPOCHS.length) %
-      PSYCHO_EPOCHS.length
+    const phase = getWorldEpochPhase('psychohistory', cam)
+    const idx = Math.min(
+      PSYCHO_EPOCHS.length - 1,
+      Math.floor(phase * PSYCHO_EPOCHS.length),
+    )
     const ep = PSYCHO_EPOCHS[idx]
     return {
       epoch: `${ep.label} (${ep.time})`,
-      coords: ep.metric,
+      coords: ep.detail,
       metric: `holdout n=669 · Lean4 1673/1673`,
+      epochIndex: idx,
+      epochPhase: phase,
     }
   }
   if (world === 'tesseract') {
@@ -426,6 +588,9 @@ export class EtherFieldRenderer {
 
     if (world === 'psychohistory') {
       // 3D undulating probability obstruction manifold + e-process shockwaves
+      const epochPhase = getWorldEpochPhase('psychohistory', cam)
+      const eraFreq = 1.0 + epochPhase * 1.45
+      const shockBoost = 0.55 + epochPhase * 0.65
       const cy = Math.cos(yaw * 0.65)
       const sy = Math.sin(yaw * 0.65)
       for (let py = 0; py < ph; py++) {
@@ -435,15 +600,17 @@ export class EtherFieldRenderer {
           // Perspective ground plane projection
           const depth = 1.45 / Math.max(0.16, ny + 1.18 - pitch * 0.25)
           const wx = (nx * depth * cy - depth * sy) / zoom
-          const wz = (nx * depth * sy + depth * cy) / zoom - t * 0.85
+          const wz = (nx * depth * sy + depth * cy) / zoom - t * 0.85 - epochPhase * 9.0
 
-          // Secular historical wave + multi-leg obstruction ridge
+          // Secular historical wave + multi-leg obstruction ridge modulated by scrubbed era
           const secular =
-            Math.sin(wx * 1.4 + t * 0.35) * Math.cos(wz * 0.9) * 0.45 +
-            Math.sin((wx + wz) * 2.2 - t * 0.8) * 0.22
-          const ridge = Math.exp(-Math.pow(wx - Math.sin(wz * 0.55) * 1.3, 2) * 1.8) * 0.65
-          const shockDist = Math.hypot(wx * 0.9, ((wz + t * 0.85) % 4.2) - 2.1)
-          const shock = Math.exp(-Math.pow(shockDist - (t * 1.35) % 3.6, 2) * 14) * 0.85
+            Math.sin(wx * 1.3 * eraFreq + t * 0.35) * Math.cos(wz * 0.9) * 0.45 +
+            Math.sin((wx + wz) * 2.0 * eraFreq - t * 0.8) * 0.22
+          const ridge =
+            Math.exp(-Math.pow(wx - Math.sin(wz * 0.55 + epochPhase * 3.1) * 1.3, 2) * (1.4 + epochPhase * 1.2)) *
+            (0.55 + epochPhase * 0.28)
+          const shockDist = Math.hypot(wx * 0.9, ((wz + t * 0.85 + epochPhase * 9.0) % 4.2) - 2.1)
+          const shock = Math.exp(-Math.pow(shockDist - (t * 1.35) % 3.6, 2) * 14) * shockBoost
 
           // Crisp topographic grid & contour lines
           const gridX = Math.abs(Math.sin(wx * Math.PI * 1.35))
@@ -470,15 +637,17 @@ export class EtherFieldRenderer {
 
           const idx = py * pw + px
           lum[idx] = Math.min(1, Math.max(0, val))
-          hue[idx] = shock * 2.2 + ridge * 0.9 - secular * 0.5
+          hue[idx] = shock * 2.2 + ridge * 0.9 - secular * 0.5 + epochPhase * 1.6
         }
       }
       return
     }
 
     if (world === 'universal') {
-      // Logarithmic cosmic light-cone & evolving cosmic web across 13.8 Gyr+
-      const epochPhase = ((t * 0.065 + (zoom - 1) * 0.35) % 1 + 1) % 1
+      // Logarithmic cosmic light-cone & evolving cosmic web across 10^-43 s -> 10^40 yr
+      const epochPhase = getWorldEpochPhase('universal', cam)
+      const isBlackHoleEra = Math.max(0, (epochPhase - 0.82) / 0.18)
+      const isPlanckEra = Math.max(0, 1 - epochPhase * 5.0)
       for (let py = 0; py < ph; py++) {
         const ny = (py / ph) * 2 - 1
         for (let px = 0; px < pw; px++) {
@@ -488,9 +657,9 @@ export class EtherFieldRenderer {
           const r = Math.hypot(rx, ry) + 1e-4
           const theta = Math.atan2(ry, rx)
 
-          // Tunnel logarithmic depth coordinate
-          const logZ = 1.65 / (r + 0.14) - t * 1.25
-          const spiral = theta * 3.0 + logZ * 1.15 - t * 0.35
+          // Tunnel logarithmic depth coordinate tied directly to scrubbed cosmic epoch
+          const logZ = 1.65 / (r + 0.14) - t * 0.95 - epochPhase * 14.0
+          const spiral = theta * (2.0 + Math.round(epochPhase * 3.0)) + logZ * 1.15 - t * 0.35
 
           // Cosmic web filaments + expanding epoch rings
           const filamentA = Math.sin(spiral) * Math.cos(logZ * 2.1 + Math.sin(theta * 5) * 0.7)
@@ -499,16 +668,20 @@ export class EtherFieldRenderer {
 
           // Light-cone horizon rings
           const ring = Math.pow(Math.max(0, Math.cos(logZ * Math.PI * 1.5)), 10)
-          // Core singularity / Planck brilliance at center
-          const core = Math.exp(-r * r * (14 - epochPhase * 6)) * (1.15 - epochPhase * 0.35)
+          // Core singularity (blazing at Planck foam, dark Hawking ring in Black Hole era)
+          const core =
+            isBlackHoleEra > 0.15
+              ? Math.exp(-Math.pow(r - 0.22, 2) * 180) * 0.95 * isBlackHoleEra
+              : Math.exp(-r * r * (12 - isPlanckEra * 7)) * (1.05 + isPlanckEra * 0.55)
+          const bhMask = isBlackHoleEra > 0.35 && r < 0.19 ? 1 - isBlackHoleEra * 0.92 : 1
           // Background galaxies / stars
           const h = Math.sin(Math.floor(theta * 24) * 19.1 + Math.floor(logZ * 4) * 91.7) * 43758.5453
-          const star = h - Math.floor(h) > 0.96 ? 0.75 * Math.min(1, r * 2.2) : 0
+          const star = h - Math.floor(h) > 0.96 ? 0.75 * Math.min(1, r * 2.2) * (1 - isPlanckEra * 0.6) : 0
 
-          const val = core + web * 0.72 * Math.min(1, r * 2.4) + ring * 0.38 + star
+          const val = (core + web * (0.72 - isBlackHoleEra * 0.35) * Math.min(1, r * 2.4) + ring * 0.38 + star) * bhMask
           const idx = py * pw + px
           lum[idx] = Math.min(1, Math.max(0, val))
-          hue[idx] = epochPhase * 3.2 + r * 1.4 + filamentA
+          hue[idx] = epochPhase * 3.6 + r * 1.4 + filamentA
         }
       }
       return

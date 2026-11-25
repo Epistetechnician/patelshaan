@@ -46,6 +46,9 @@ const VIOLET = '\x1b[38;2;184;164;236m'
 const ESC = String.fromCharCode(27)
 const SGR_RE = new RegExp(`${ESC}\\[([0-9;]*)m`, 'g')
 const CLICKABLE_CMD_PREFIXES = [
+  'verify',
+  'search ',
+  'search',
   'tour',
   'worlds',
   'travel ',
@@ -445,6 +448,14 @@ const WORLD_ALIASES: Record<string, WorldId> = {
 }
 
 export const SHELL_COMMANDS = [
+  'verify',
+  'verify arc-membrane',
+  'verify psychohistory',
+  'verify holdout-ledger',
+  'search',
+  'search --essays',
+  'search --research',
+  'search --kailas',
   'tour',
   'help',
   'ask',
@@ -474,9 +485,9 @@ export const SHELL_COMMANDS = [
 ]
 
 export const DEFAULT_SUGGESTIONS: SuggestionItem[] = [
+  { label: 'Verify Ed25519 receipts', command: 'verify' },
+  { label: 'Search corpus (QR nullspace)', command: 'search QR nullspace replay KL' },
   { label: 'Start 5-stop tour', command: 'tour' },
-  { label: 'Ask: What connects your research?', command: 'ask What connects your work across AI safety, markets, and Kailas?' },
-  { label: 'Compare e-process null vs signal', command: 'eprocess compare' },
   { label: '✦ Universal History', command: 'travel universal' },
 ]
 
@@ -577,6 +588,8 @@ export function executeLocalCommand(
       ansi: [
         boxHeader('COMMAND INDEX', 'click any highlighted `command` or type naturally'),
         `  ${GOLD}<any question>${R}        Talk to Shaan's personal model (live RPi5 or grounded RAG)`,
+        `  \`${GOLD}verify${R}\`               Live SHA-256 / Ed25519 receipt check (\`arc-membrane\`, \`psychohistory\`, \`holdout-ledger\`)`,
+        `  ${GOLD}search <query>${R}        Full-text search across essays, research & Kailas (\`--essays|--research|--kailas\`)`,
         `  \`${GOLD}tour${R}\`                 Guided 5-stop walkthrough of work, nulls, math & worlds`,
         `  \`${GOLD}worlds${R}\`               Catalog of 8 high-resolution multidimensional ASCII portals`,
         `  ${GOLD}travel <world>${R}        Enter a world (\`psychohistory\`, \`universal\`, \`tesseract\`, \`kailas\`,`,
@@ -592,6 +605,57 @@ export function executeLocalCommand(
         `  \`${GOLD}status${R}\` / \`${GOLD}ls${R}\`       Telemetry & read-only virtual corpus`,
       ].join('\n') + '\n',
       suggestions: DEFAULT_SUGGESTIONS,
+    }
+  }
+
+  if (cmd === 'verify') {
+    const repo = (args[0] || 'all').toLowerCase()
+    const rows = [
+      boxHeader('PINNED CRYPTOGRAPHIC RECEIPTS (LOCAL FALLBACK)', 'connect to RPi5 for live Ed25519+SHA256 replay'),
+      `  ${EMERALD}✓${R} ${GOLD}arc-membrane${R}     Ed25519+SHA256  ${CYAN}20cd04d3362929a9${R}  ${MUTED}Track 5 MATH-500 (305/400 = 76.25%, KL=0.000605)${R}`,
+      `  ${EMERALD}✓${R} ${GOLD}psychohistory${R}    SHA256-canon    ${CYAN}46cf0c111c0e4769${R}  ${MUTED}1,673 real events · frozen split 529523bc4dd6 · 0 overlap${R}`,
+      `  ${EMERALD}✓${R} ${GOLD}holdout-ledger${R}   SHA256-file     ${CYAN}8aef95dbe960abe7${R}  ${MUTED}59,200 confirmatory runs · 0/59,200 false certs · H1–H9 PASS${R}`,
+      '',
+      `  ${MUTED}Target \`${repo}\` · Run \`${GOLD}connect ${wsUrl}${MUTED}\` to execute live byte-level verification on Raspberry Pi 5.${R}`,
+    ]
+    return {
+      ansi: rows.join('\n') + '\n',
+      suggestions: [
+        { label: 'Reconnect RPi5', command: `connect ${wsUrl}` },
+        { label: 'Search corpus', command: 'search QR nullspace replay KL' },
+        { label: '✦ Universal History', command: 'travel universal' },
+      ],
+    }
+  }
+
+  if (cmd === 'search' || cmd === 'find' || cmd === 'grep') {
+    const q = args.filter((a) => !a.startsWith('-')).join(' ').trim()
+    if (!q) {
+      return {
+        ansi:
+          boxHeader('CORPUS SEARCH (LOCAL FALLBACK)', 'live SQLite FTS5 runs on RPi5 /data mount') +
+          `\n  ${INK}Usage: \`${GOLD}search <query>${INK}\` (on Pi 5, searches 4,327 indexed chunks across essays, research & Kailas).${R}\n`,
+        suggestions: [
+          { label: 'Search: QR nullspace', command: 'search QR nullspace' },
+          { label: 'Search: Kailas mandala', command: 'search Kailas mandala' },
+          { label: 'Verify receipts', command: 'verify' },
+        ],
+      }
+    }
+    const docs = retrieveLocal(q)
+    const lines = [
+      boxHeader(`SEARCH (LOCAL): ${q}`, 'connect to RPi5 for full 4,327-chunk SQLite FTS5 index'),
+      ...docs.map(
+        (d) =>
+          `  ${CYAN}[LOCAL]${R} ${BRIGHT}${d.title}${R}\n    ${MUTED}locator :${R} ${GOLD}corpus:${d.id}${R}\n    ${INK}${d.body}${R}`,
+      ),
+    ]
+    return {
+      ansi: lines.join('\n') + '\n',
+      suggestions: [
+        { label: 'Reconnect RPi5 for FTS5', command: `connect ${wsUrl}` },
+        { label: 'Verify receipts', command: 'verify' },
+      ],
     }
   }
 

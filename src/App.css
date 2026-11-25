@@ -325,24 +325,29 @@ button:focus-visible {
   pointer-events: none;
   background:
     radial-gradient(
-      ellipse at 22% 84%,
-      rgba(8, 9, 10, 0.92) 0%,
-      rgba(8, 9, 10, 0.68) 42%,
-      rgba(8, 9, 10, 0.14) 74%,
-      rgba(8, 9, 10, 0) 100%
+      ellipse at 18% 88%,
+      rgba(6, 7, 8, 0.88) 0%,
+      rgba(6, 7, 8, 0.56) 38%,
+      rgba(6, 7, 8, 0.08) 68%,
+      rgba(6, 7, 8, 0) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(8, 9, 10, 0.55) 0%,
-      rgba(8, 9, 10, 0) 20%,
-      rgba(8, 9, 10, 0.18) 65%,
-      rgba(8, 9, 10, 0.88) 100%
+      rgba(6, 7, 8, 0.42) 0%,
+      rgba(6, 7, 8, 0) 18%,
+      rgba(6, 7, 8, 0.12) 66%,
+      rgba(6, 7, 8, 0.84) 100%
     );
 }
 
 .hero__content {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem 2.5rem;
   width: 100%;
   max-width: 86rem;
   margin-inline: auto;
@@ -4233,4 +4238,105 @@ button:focus-visible {
 .ether-hud-btn.is-ask {
   border-color: rgba(126, 214, 168, 0.48);
   color: #a8e8c6;
+}
+
+/* ---------- SOTA Hero Cinema Bar & About Glyph Lens Controls ---------- */
+
+.hero__cinema-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.42rem;
+  padding: 0.52rem 0.72rem;
+  border: 1px solid rgba(223, 208, 178, 0.2);
+  background: rgba(6, 7, 9, 0.64);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  max-width: 100%;
+}
+
+.hero__cinema-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(223, 208, 178, 0.72);
+}
+
+.hero__cinema-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.28rem;
+}
+
+.hero__cinema-btn,
+.about-lens-btn {
+  padding: 0.16rem 0.48rem;
+  border: 1px solid rgba(240, 237, 230, 0.14);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(220, 216, 206, 0.74);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+}
+
+.hero__cinema-btn:hover,
+.about-lens-btn:hover {
+  border-color: rgba(223, 208, 178, 0.45);
+  color: #f4f1ea;
+}
+
+.hero__cinema-btn.is-active,
+.about-lens-btn.is-active {
+  border-color: rgba(223, 208, 178, 0.6);
+  background: rgba(223, 208, 178, 0.14);
+  color: var(--accent);
+}
+
+.hero__cinema-sep {
+  width: 1px;
+  height: 0.85rem;
+  margin: 0 0.16rem;
+  background: rgba(240, 237, 230, 0.16);
+}
+
+.about-figure__caption--split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+}
+
+.about-figure__lenses {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+@media (max-width: 900px) {
+  .hero__cinema-bar {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .hero__cinema-group {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 540px) {
+  .hero__cinema-bar {
+    padding: 0.44rem 0.58rem;
+  }
+
+  .hero__cinema-btn {
+    padding: 0.14rem 0.42rem;
+    font-size: 0.62rem;
+  }
 }

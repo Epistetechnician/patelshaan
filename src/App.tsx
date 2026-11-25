@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ExplorerFeed } from './ExplorerFeed'
 import { WikiChip, WikiDrawer } from './WikiDrawer'
 import { EtherTerminal } from './components/EtherTerminal'
-import Video2Ascii from './components/LocalVideo2Ascii'
+import Video2Ascii, { type CharsetKey } from './components/LocalVideo2Ascii'
 import { WorkList } from './components/WorkList'
 import { getField } from './field'
 import { essayNotes, threadById } from './humanities'
@@ -448,6 +448,7 @@ const experienceCards: ExperienceCard[] = [
     ],
     secondaryVideo: {
       src: '/ascii/lorenz.mp4',
+      poster: '/ascii/lorenz-poster.webp',
       label: 'lorenz attractor',
       caption: 'Lorenz chaotic system in ASCII',
       stats: 'rendered',
@@ -476,6 +477,7 @@ const experienceCards: ExperienceCard[] = [
     ],
     video: {
       src: '/ascii/npc-skyline.mp4',
+      poster: '/ascii/npc-skyline-poster.webp',
       label: 'markets / skyline',
       caption: 'Skyline ASCII study',
       stats: 'synced',
@@ -486,6 +488,7 @@ const experienceCards: ExperienceCard[] = [
     },
     secondaryVideo: {
       src: '/ascii/npc-skyline.mp4',
+      poster: '/ascii/npc-skyline-poster.webp',
       label: 'npc skyline',
       caption: 'Skyline in ASCII',
       stats: 'rendered',
@@ -519,6 +522,7 @@ const experienceCards: ExperienceCard[] = [
     ],
     video: {
       src: '/ascii/public-goods-nature.mp4',
+      poster: '/ascii/public-goods-nature-poster.webp',
       label: 'commons',
       caption: 'Canopy in ASCII',
       stats: 'alive',
@@ -529,6 +533,7 @@ const experienceCards: ExperienceCard[] = [
     },
     secondaryVideo: {
       src: '/ascii/public-goods-nature.mp4',
+      poster: '/ascii/public-goods-nature-poster.webp',
       label: 'canopy',
       caption: 'Forest canopy in ASCII',
       stats: 'rendered',
@@ -1008,9 +1013,24 @@ function SiteHeader({ onOpenWiki }: { onOpenWiki: (id: string) => void }) {
   )
 }
 
+const HERO_LENSES: { key: CharsetKey; label: string }[] = [
+  { key: 'cinematic', label: 'cinematic' },
+  { key: 'braille', label: 'braille' },
+  { key: 'detailed', label: 'detailed' },
+  { key: 'blocks', label: 'blocks' },
+]
+
 function App() {
   const heroVideoSrc = '/ascii/hero-blackhole.mp4'
+  const heroPosterSrc = '/ascii/hero-blackhole-poster.webp'
   const aboutVideoSrc = '/ascii/about-flower.mp4'
+  const aboutPosterSrc = '/ascii/about-flower-poster.webp'
+
+  const [heroCharset, setHeroCharset] = useState<CharsetKey>('cinematic')
+  const [heroEdges, setHeroEdges] = useState(true)
+  const [heroBloom, setHeroBloom] = useState(true)
+  const [heroPlaying, setHeroPlaying] = useState(true)
+  const [aboutCharset, setAboutCharset] = useState<CharsetKey>('cinematic')
 
   const [activeWriting, setActiveWriting] = useState<WritingEntry | null>(() =>
     typeof window !== 'undefined' ? getWritingFromHash(window.location.hash) : null,
@@ -1133,25 +1153,33 @@ function App() {
       <SiteHeader onOpenWiki={openWiki} />
 
       <main className="page-main">
-        {/* HERO — Pure living ASCII cinema + progressive entry trail */}
+        {/* HERO — Pure living SOTA GPU ASCII cinema + progressive entry trail */}
         <section className="hero">
           <div className="hero__canvas" aria-hidden="true">
             <Video2Ascii
               key={`hero-${heroVideoSrc}`}
               src={heroVideoSrc}
-              numColumns={176}
+              poster={heroPosterSrc}
+              numColumns={192}
               colored={true}
-              blend={12}
+              blend={14}
               highlight={0}
-              brightness={1.06}
+              brightness={1.12}
+              saturation={1.26}
+              bloom={heroBloom ? 0.36 : 0}
+              edgeAware={heroEdges}
+              lensing={0.62}
               fitMode="ambient"
-              focalY={0.38}
+              focalY={0.36}
               posterTime={3.0}
               audioEffect={0}
-              enableMouse={false}
-              enableRipple={false}
-              charset="detailed"
-              isPlaying={true}
+              enableMouse={true}
+              enableRipple={true}
+              listenWindowPointer={true}
+              trailLength={12}
+              rippleSpeed={34}
+              charset={heroCharset}
+              isPlaying={heroPlaying}
               autoPlay={true}
               priority={true}
             />
@@ -1172,6 +1200,9 @@ function App() {
                 <a href="#/research" className="btn-quiet">
                   Research monograph <span aria-hidden="true">→</span>
                 </a>
+                <a href="#install" className="btn-quiet">
+                  Live RPi5 terminal <span aria-hidden="true">↓</span>
+                </a>
               </div>
 
               <div className="hero__trails" aria-label="Quick entry nodes">
@@ -1181,6 +1212,47 @@ function App() {
                 <WikiChip id="formasec" label="FormaSec" onOpen={openWiki} />
                 <WikiChip id="temporal-grid-safety" label="Discriminant Safety" onOpen={openWiki} />
                 <WikiChip id="statebook" label="Statebook" onOpen={openWiki} />
+              </div>
+            </div>
+
+            <div className="hero__cinema-bar" role="toolbar" aria-label="Hero GPU ASCII shader controls">
+              <span className="hero__cinema-kicker">kerr horizon · webgl2 · move or tap</span>
+              <div className="hero__cinema-group">
+                {HERO_LENSES.map((lens) => (
+                  <button
+                    key={lens.key}
+                    type="button"
+                    className={`hero__cinema-btn${heroCharset === lens.key ? ' is-active' : ''}`}
+                    onClick={() => setHeroCharset(lens.key)}
+                  >
+                    {lens.label}
+                  </button>
+                ))}
+                <span className="hero__cinema-sep" aria-hidden="true" />
+                <button
+                  type="button"
+                  className={`hero__cinema-btn${heroEdges ? ' is-active' : ''}`}
+                  onClick={() => setHeroEdges((v) => !v)}
+                  title="Toggle Sobel directional edge sculpting"
+                >
+                  edges
+                </button>
+                <button
+                  type="button"
+                  className={`hero__cinema-btn${heroBloom ? ' is-active' : ''}`}
+                  onClick={() => setHeroBloom((v) => !v)}
+                  title="Toggle phosphor bloom"
+                >
+                  bloom
+                </button>
+                <button
+                  type="button"
+                  className="hero__cinema-btn"
+                  onClick={() => setHeroPlaying((v) => !v)}
+                  aria-label={heroPlaying ? 'Pause hero ASCII cinema' : 'Play hero ASCII cinema'}
+                >
+                  {heroPlaying ? 'pause' : 'play'}
+                </button>
               </div>
             </div>
           </div>
@@ -1199,23 +1271,40 @@ function App() {
                 <Video2Ascii
                   key={`about-${aboutVideoSrc}`}
                   src={aboutVideoSrc}
-                  numColumns={104}
+                  poster={aboutPosterSrc}
+                  numColumns={116}
                   colored={true}
-                  blend={8}
-                  highlight={16}
-                  brightness={1.12}
+                  blend={10}
+                  highlight={12}
+                  brightness={1.14}
+                  saturation={1.24}
+                  bloom={0.32}
+                  edgeAware={true}
+                  lensing={0.48}
                   posterTime={1.0}
                   audioEffect={0}
                   enableMouse={true}
                   enableRipple={true}
-                  charset="detailed"
+                  charset={aboutCharset}
                   isPlaying={true}
                   autoPlay={true}
                   enableSpacebarToggle={true}
                 />
               </div>
-              <figcaption className="about-figure__caption">
-                Interactive glyph study — move or tap across the frame.
+              <figcaption className="about-figure__caption about-figure__caption--split">
+                <span>Interactive glyph study — move or tap across the frame.</span>
+                <span className="about-figure__lenses" role="group" aria-label="Glyph study lens">
+                  {(['cinematic', 'braille', 'detailed'] as CharsetKey[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`about-lens-btn${aboutCharset === key ? ' is-active' : ''}`}
+                      onClick={() => setAboutCharset(key)}
+                    >
+                      {key}
+                    </button>
+                  ))}
+                </span>
               </figcaption>
             </figure>
 
@@ -1303,18 +1392,22 @@ function App() {
                 <Video2Ascii
                   key={`${activeWork.title}-${activeWork.secondaryVideo.src}`}
                   src={activeWork.secondaryVideo.src}
+                  poster={activeWork.secondaryVideo.poster}
                   numColumns={activeWork.secondaryVideo.numColumns}
                   colored={true}
                   blend={activeWork.secondaryVideo.blend}
                   highlight={activeWork.secondaryVideo.highlight}
                   brightness={activeWork.secondaryVideo.brightness}
+                  saturation={1.2}
+                  bloom={0.26}
+                  edgeAware={true}
                   fitMode={activeWork.secondaryVideo.fitMode}
                   focalY={activeWork.secondaryVideo.focalY}
                   posterTime={activeWork.secondaryVideo.posterTime}
                   audioEffect={0}
                   enableMouse={false}
                   enableRipple={false}
-                  charset="detailed"
+                  charset="cinematic"
                   isPlaying={true}
                   autoPlay={true}
                 />

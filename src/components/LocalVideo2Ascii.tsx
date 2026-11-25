@@ -10,12 +10,13 @@ import {
 } from 'react'
 
 const CHAR_WIDTH_RATIO = 0.6
-const ATLAS_CELL_W = 32
-const ATLAS_CELL_H = 56
+const ATLAS_CELL_W = 48
+const ATLAS_CELL_H = 80
 const OUTPUT_DPR_LIMIT = 2
-const CONTRAST_BOOST = 1.08
+const CONTRAST_BOOST = 1.14
 const MAX_TRAIL_LENGTH = 16
 const MAX_RIPPLES = 6
+const EDGE_GLYPHS = ['─', '│', '/', '\\'] as const
 
 function isCrossOriginSrc(src: string): boolean {
   if (typeof window === 'undefined') return false
@@ -28,9 +29,11 @@ function isCrossOriginSrc(src: string): boolean {
 }
 
 export const ASCII_CHARSETS = {
+  cinematic: { name: 'Cinematic', chars: ' .·:;-=+*xX#$%@' },
+  braille: { name: 'Braille', chars: ' ⠁⠃⠇⠏⠟⠿⡿⣿' },
   standard: { name: 'Standard', chars: ' .:-=+*#%@' },
   blocks: { name: 'Blocks', chars: ' ░▒▓█' },
-  minimal: { name: 'Minimal', chars: ' .oO@' },
+  minimal: { name: 'Minimal', chars: ' .·:oO@' },
   binary: { name: 'Binary', chars: ' █' },
   detailed: {
     name: 'Detailed',
@@ -45,13 +48,19 @@ export type CharsetKey = keyof typeof ASCII_CHARSETS
 
 export type VideoToAsciiProps = {
   src: string
+  poster?: string
   numColumns?: number
   colored?: boolean
   blend?: number
   highlight?: number
   brightness?: number
+  saturation?: number
+  bloom?: number
+  edgeAware?: boolean
+  lensing?: number
   charset?: CharsetKey
   enableMouse?: boolean
+  listenWindowPointer?: boolean
   trailLength?: number
   enableRipple?: boolean
   rippleSpeed?: number
@@ -94,6 +103,7 @@ uniform sampler2D u_asciiAtlas;
 
 uniform vec2 u_gridSize;
 uniform float u_numChars;
+uniform float u_totalAtlasChars;
 uniform vec2 u_uvOffset;
 uniform vec2 u_uvScale;
 uniform float u_featherY;
@@ -103,6 +113,10 @@ uniform float u_blend;
 uniform float u_highlight;
 uniform float u_brightness;
 uniform float u_contrast;
+uniform float u_saturation;
+uniform float u_bloom;
+uniform float u_edgeAware;
+uniform float u_lensing;
 
 uniform vec2 u_mouse;
 uniform vec2 u_trail[16];
@@ -116,32 +130,55 @@ uniform float u_rippleSpeed;
 in vec2 v_texCoord;
 out vec4 fragColor;
 
+vec3 sampleVideo(vec2 uv) {
+  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+    return vec3(0.0);
+  }
+  vec3 c = texture(u_video, clamp(uv, 0.001, 0.999)).rgb;
+  if (u_featherY > 0.0) {
+    float fadeTop = smoothstep(0.0, u_featherY, uv.y);
+    float fadeBottom = smoothstep(0.0, u_featherY, 1.0 - uv.y);
+    float fadeSide = smoothstep(0.0, 0.045, uv.x) * smoothstep(0.0, 0.045, 1.0 - uv.x);
+    c *= fadeTop * fadeBottom * fadeSide;
+  }
+  return c;
+}
+
+float luma(vec3 c) {
+  return dot(c, vec3(0.2126, 0.7152, 0.0722));
+}
+
+// ACES filmic tone curve preserves rich obsidian blacks & luminous highlight roll-off
+vec3 acesFilm(vec3 x) {
+  const float a = 2.51;
+  const float b = 0.03;
+  const float c = 2.43;
+  const float d = 0.59;
+  const float e = 0.14;
+  return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
+}
+
 void main() {
   vec2 cellCoord = floor(v_texCoord * u_gridSize);
   vec2 cellCenter = (cellCoord + 0.5) / u_gridSize;
-  vec2 videoUV = u_uvOffset + cellCenter * u_uvScale;
 
-  bool inBounds = videoUV.x >= 0.0 && videoUV.x <= 1.0 && videoUV.y >= 0.0 && videoUV.y <= 1.0;
-  vec3 videoRgb = vec3(0.0);
-
-  if (inBounds) {
-    videoRgb = texture(u_video, clamp(videoUV, 0.001, 0.999)).rgb;
-    if (u_featherY > 0.0) {
-      float fadeTop = smoothstep(0.0, u_featherY, videoUV.y);
-      float fadeBottom = smoothstep(0.0, u_featherY, 1.0 - videoUV.y);
-      float fadeSide = smoothstep(0.0, 0.04, videoUV.x) * smoothstep(0.0, 0.04, 1.0 - videoUV.x);
-      videoRgb *= fadeTop * fadeBottom * fadeSide;
-    }
-  }
-
-  // Interactive pointer & trail glow
+  // Interactive gravitational lensing & harmonic trail/ripple warp
+  vec2 warpedCenter = cellCenter;
   float cursorGlow = 0.0;
-  float cursorRadius = 5.5;
+  float cursorRadius = 6.2;
   if (u_mouse.x >= 0.0) {
     vec2 mouseCell = floor(u_mouse * u_gridSize);
-    float dist = length(cellCoord - mouseCell);
+    vec2 delta = cellCoord - mouseCell;
+    float dist = length(delta);
+    if (dist <= cursorRadius * 1.45 && u_lensing > 0.001) {
+      float falloff = exp(-dist * dist / (cursorRadius * cursorRadius * 0.65));
+      vec2 dir = dist > 0.001 ? delta / dist : vec2(0.0);
+      // Subtle Einstein-ring deflection + gentle tangent swirl
+      vec2 swirl = vec2(-dir.y, dir.x);
+      warpedCenter -= (dir * 0.011 + swirl * 0.0045) * falloff * u_lensing;
+    }
     if (dist <= cursorRadius) {
-      cursorGlow += (1.0 - dist / cursorRadius) * 0.65;
+      cursorGlow += pow(1.0 - dist / cursorRadius, 1.35) * 0.72;
     }
   }
 
@@ -151,15 +188,15 @@ void main() {
     if (tp.x < 0.0) continue;
     vec2 tCell = floor(tp * u_gridSize);
     float tDist = length(cellCoord - tCell);
-    float tRadius = cursorRadius * 0.78;
+    float tRadius = cursorRadius * 0.8;
     if (tDist <= tRadius) {
       float fade = 1.0 - float(i) / float(max(u_trailLength, 1));
-      cursorGlow += (1.0 - tDist / tRadius) * 0.35 * fade;
+      cursorGlow += (1.0 - tDist / tRadius) * 0.36 * fade;
     }
   }
-  cursorGlow = min(cursorGlow, 0.85);
+  cursorGlow = min(cursorGlow, 0.92);
 
-  // Expanding click / tap ripples
+  // Expanding click / tap harmonic ripples with subtle UV displacement
   float rippleGlow = 0.0;
   if (u_rippleEnabled > 0.5) {
     for (int i = 0; i < 6; i++) {
@@ -168,42 +205,126 @@ void main() {
       float age = u_time - rp.z;
       if (age < 0.0) continue;
       vec2 rCell = floor(rp.xy * u_gridSize);
-      float dist = length(cellCoord - rCell);
+      vec2 rDelta = cellCoord - rCell;
+      float dist = length(rDelta);
       float ringPos = age * u_rippleSpeed;
-      float ringWidth = 3.2;
+      float ringWidth = 3.6;
       float band = 1.0 - clamp(abs(dist - ringPos) / ringWidth, 0.0, 1.0);
-      float lifeFade = clamp(1.0 - age / 1.35, 0.0, 1.0);
-      rippleGlow += band * band * lifeFade * 0.55;
+      float lifeFade = clamp(1.0 - age / 1.45, 0.0, 1.0);
+      float strength = band * band * lifeFade;
+      rippleGlow += strength * 0.65;
+      if (u_lensing > 0.001 && dist > 0.01) {
+        warpedCenter += (rDelta / dist) * (strength * 0.0065 * u_lensing);
+      }
     }
-    rippleGlow = min(rippleGlow, 0.9);
+    rippleGlow = min(rippleGlow, 0.95);
   }
 
-  float rawLum = dot(videoRgb, vec3(0.2126, 0.7152, 0.0722)) * u_brightness;
-  // Filmic shoulder roll-off prevents bright highlights from clipping into flat glyph walls
-  float tonedLum = (rawLum / (1.0 + 0.22 * rawLum)) * 1.22;
+  vec2 videoUV = u_uvOffset + warpedCenter * u_uvScale;
+  bool inBounds = videoUV.x >= 0.0 && videoUV.x <= 1.0 && videoUV.y >= 0.0 && videoUV.y <= 1.0;
+
+  // 5-tap sub-cell integration preserves razor-thin photon rings & fine petals
+  vec2 cellStep = u_uvScale / u_gridSize;
+  vec2 sub = cellStep * 0.28;
+  vec3 cCenter = sampleVideo(videoUV);
+  vec3 c0 = sampleVideo(videoUV + vec2(-sub.x, -sub.y));
+  vec3 c1 = sampleVideo(videoUV + vec2( sub.x, -sub.y));
+  vec3 c2 = sampleVideo(videoUV + vec2(-sub.x,  sub.y));
+  vec3 c3 = sampleVideo(videoUV + vec2( sub.x,  sub.y));
+  vec3 videoRgb = cCenter * 0.44 + (c0 + c1 + c2 + c3) * 0.14;
+
+  // Multi-tap neighbor sampling for Sobel edge sculpting + soft phosphor bloom
+  vec3 nL = sampleVideo(videoUV + vec2(-cellStep.x, 0.0));
+  vec3 nR = sampleVideo(videoUV + vec2( cellStep.x, 0.0));
+  vec3 nU = sampleVideo(videoUV + vec2(0.0, -cellStep.y));
+  vec3 nD = sampleVideo(videoUV + vec2(0.0,  cellStep.y));
+  vec3 nUL = sampleVideo(videoUV + vec2(-cellStep.x, -cellStep.y));
+  vec3 nUR = sampleVideo(videoUV + vec2( cellStep.x, -cellStep.y));
+  vec3 nDL = sampleVideo(videoUV + vec2(-cellStep.x,  cellStep.y));
+  vec3 nDR = sampleVideo(videoUV + vec2( cellStep.x,  cellStep.y));
+
+  float lL = luma(nL);
+  float lR = luma(nR);
+  float lU = luma(nU);
+  float lD = luma(nD);
+  float lUL = luma(nUL);
+  float lUR = luma(nUR);
+  float lDL = luma(nDL);
+  float lDR = luma(nDR);
+
+  float gx = (lUR + 2.0 * lR + lDR) - (lUL + 2.0 * lL + lDL);
+  float gy = (lDL + 2.0 * lD + lDR) - (lUL + 2.0 * lU + lUR);
+  float edgeMag = length(vec2(gx, gy));
+
+  // Soft wide phosphor bloom from luminous neighbor filaments
+  vec3 bloomCol = vec3(0.0);
+  if (u_bloom > 0.001) {
+    vec3 bRing = (nL + nR + nU + nD) * 0.17 + (nUL + nUR + nDL + nDR) * 0.08;
+    float bMask = smoothstep(0.32, 0.92, luma(bRing));
+    bloomCol = bRing * bMask * u_bloom;
+  }
+
+  // Perceptual saturation lift + subtle unsharp micro-contrast
+  float baseLuma = luma(videoRgb);
+  vec3 vividRgb = mix(vec3(baseLuma), videoRgb, u_saturation);
+  float rawLum = baseLuma * u_brightness;
+  float edgeBoost = u_edgeAware > 0.5 ? min(edgeMag * 0.24, 0.22) : 0.0;
+  float tonedLum = (rawLum / (1.0 + 0.18 * rawLum)) * 1.18 + edgeBoost;
   float contrasted = (tonedLum - 0.5) * u_contrast + 0.5;
-  float interactiveLift = (cursorGlow * 0.22 + rippleGlow * 0.28) * step(0.005, rawLum + 0.04);
+  float interactiveLift = (cursorGlow * 0.24 + rippleGlow * 0.30) * step(0.004, rawLum + 0.05);
   float lum = clamp(contrasted + interactiveLift, 0.0, 1.0);
 
+  // Select luminance glyph OR directional edge glyph on crisp high-gradient contours
   float charIndex = inBounds ? floor(lum * (u_numChars - 0.001)) : 0.0;
+  bool useDirectionalEdge =
+    inBounds &&
+    u_edgeAware > 0.5 &&
+    edgeMag > 0.34 &&
+    lum > 0.16 &&
+    lum < 0.88 &&
+    u_totalAtlasChars >= (u_numChars + 4.0);
+
+  if (useDirectionalEdge) {
+    // Tangent angle perpendicular to gradient (gx, gy)
+    float angle = atan(gy, gx) + 1.5707963;
+    float normAng = mod(angle + 3.1415926, 3.1415926) / 3.1415926; // 0..1
+    float dirIdx = 0.0; // '─' horizontal
+    if (normAng < 0.125 || normAng >= 0.875) {
+      dirIdx = 0.0; // ─
+    } else if (normAng < 0.375) {
+      dirIdx = 3.0; // \
+    } else if (normAng < 0.625) {
+      dirIdx = 1.0; // │
+    } else {
+      dirIdx = 2.0; // /
+    }
+    charIndex = u_numChars + dirIdx;
+  }
+
   vec2 cellPos = fract(v_texCoord * u_gridSize);
-  // Half-texel inset prevents horizontal bleeding between adjacent atlas glyphs
   float safeX = clamp(cellPos.x, 0.5 / ${ATLAS_CELL_W}.0, 1.0 - 0.5 / ${ATLAS_CELL_W}.0);
   float safeY = clamp(cellPos.y, 0.5 / ${ATLAS_CELL_H}.0, 1.0 - 0.5 / ${ATLAS_CELL_H}.0);
-  vec2 atlasUV = vec2((charIndex + safeX) / u_numChars, safeY);
+  vec2 atlasUV = vec2((charIndex + safeX) / u_totalAtlasChars, safeY);
   float glyphAlpha = texture(u_asciiAtlas, atlasUV).r;
 
-  vec3 tintColor = u_colored == 1 ? videoRgb : vec3(0.639, 1.0, 0.639);
-  vec3 accentBoost = mix(tintColor, max(tintColor, vec3(0.55, 0.92, 0.84)), (cursorGlow + rippleGlow) * 0.45);
+  // Filmic color grade with warm obsidian-gold interactive resonance
+  vec3 graded = acesFilm(vividRgb * (0.95 + 0.28 * u_brightness) + bloomCol * 0.45);
+  vec3 tintColor = u_colored == 1 ? graded : vec3(0.875, 0.816, 0.698) * max(lum, 0.12);
+  vec3 accentBoost = mix(
+    tintColor,
+    max(tintColor * 1.25, vec3(0.875, 0.816, 0.698)),
+    (cursorGlow * 0.52 + rippleGlow * 0.62)
+  );
 
-  // Exact match with Canvas2D: background blend + optional highlight cell rect + glyph fill
-  vec3 baseBg = videoRgb * u_blend;
+  // Obsidian ground + subtle ambient blend + luminous glyph + soft phosphor halo
+  vec3 obsidian = vec3(0.024, 0.027, 0.031);
+  vec3 baseBg = mix(obsidian, graded, u_blend) + bloomCol * 0.36;
   float highlightAlpha = u_highlight * 0.45;
-  vec3 cellBg = mix(baseBg, videoRgb, highlightAlpha);
+  vec3 cellBg = mix(baseBg, graded, highlightAlpha);
   vec3 finalRgb = mix(cellBg, accentBoost, glyphAlpha);
-  finalRgb += (cursorGlow * 0.14 + rippleGlow * 0.2) * accentBoost;
+  finalRgb += (cursorGlow * 0.16 + rippleGlow * 0.24) * accentBoost + bloomCol * (0.28 * glyphAlpha);
 
-  fragColor = vec4(finalRgb, 1.0);
+  fragColor = vec4(clamp(finalRgb, 0.0, 1.0), 1.0);
 }
 `
 
@@ -296,11 +417,13 @@ type GlResources = {
   videoTex: WebGLTexture
   atlasTex: WebGLTexture
   atlasCharsetKey: string
+  totalAtlasChars: number
   uniforms: {
     u_video: WebGLUniformLocation | null
     u_asciiAtlas: WebGLUniformLocation | null
     u_gridSize: WebGLUniformLocation | null
     u_numChars: WebGLUniformLocation | null
+    u_totalAtlasChars: WebGLUniformLocation | null
     u_uvOffset: WebGLUniformLocation | null
     u_uvScale: WebGLUniformLocation | null
     u_featherY: WebGLUniformLocation | null
@@ -309,6 +432,10 @@ type GlResources = {
     u_highlight: WebGLUniformLocation | null
     u_brightness: WebGLUniformLocation | null
     u_contrast: WebGLUniformLocation | null
+    u_saturation: WebGLUniformLocation | null
+    u_bloom: WebGLUniformLocation | null
+    u_edgeAware: WebGLUniformLocation | null
+    u_lensing: WebGLUniformLocation | null
     u_mouse: WebGLUniformLocation | null
     u_trailLength: WebGLUniformLocation | null
     u_trail: Array<WebGLUniformLocation | null>
@@ -332,8 +459,9 @@ function compileGlShader(gl: WebGL2RenderingContext, source: string, type: numbe
 }
 
 function buildAtlasTexture(gl: WebGL2RenderingContext, chars: string[]) {
+  const allChars = [...chars, ...EDGE_GLYPHS]
   const atlasCanvas = document.createElement('canvas')
-  atlasCanvas.width = ATLAS_CELL_W * chars.length
+  atlasCanvas.width = ATLAS_CELL_W * allChars.length
   atlasCanvas.height = ATLAS_CELL_H
   const ctx = atlasCanvas.getContext('2d')
   if (!ctx) return null
@@ -341,14 +469,14 @@ function buildAtlasTexture(gl: WebGL2RenderingContext, chars: string[]) {
   ctx.fillStyle = '#000'
   ctx.fillRect(0, 0, atlasCanvas.width, atlasCanvas.height)
   ctx.fillStyle = '#fff'
-  ctx.font = `500 ${Math.round(ATLAS_CELL_H * 0.88)}px "SFMono-Regular", ui-monospace, Menlo, Monaco, Consolas, monospace`
+  ctx.font = `500 ${Math.round(ATLAS_CELL_H * 0.86)}px "SFMono-Regular", ui-monospace, Menlo, Monaco, Consolas, monospace`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
 
-  for (let i = 0; i < chars.length; i += 1) {
-    const ch = chars[i] ?? ' '
+  for (let i = 0; i < allChars.length; i += 1) {
+    const ch = allChars[i] ?? ' '
     if (ch !== ' ') {
-      ctx.fillText(ch, i * ATLAS_CELL_W + ATLAS_CELL_W * 0.5, ATLAS_CELL_H * 0.53)
+      ctx.fillText(ch, i * ATLAS_CELL_W + ATLAS_CELL_W * 0.5, ATLAS_CELL_H * 0.52)
     }
   }
 
@@ -362,7 +490,16 @@ function buildAtlasTexture(gl: WebGL2RenderingContext, chars: string[]) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-  return tex
+  const aniso = gl.getExtension('EXT_texture_filter_anisotropic')
+  if (aniso) {
+    const maxAniso = gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT) as number
+    gl.texParameterf(
+      gl.TEXTURE_2D,
+      aniso.TEXTURE_MAX_ANISOTROPY_EXT,
+      Math.min(4, maxAniso || 1),
+    )
+  }
+  return { tex, totalChars: allChars.length }
 }
 
 function createGlResources(
@@ -429,13 +566,14 @@ function createGlResources(
   gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0)
 
   const videoTex = gl.createTexture()
-  const atlasTex = buildAtlasTexture(gl, chars)
-  if (!videoTex || !atlasTex) {
+  const atlasResult = buildAtlasTexture(gl, chars)
+  if (!videoTex || !atlasResult) {
     if (videoTex) gl.deleteTexture(videoTex)
-    if (atlasTex) gl.deleteTexture(atlasTex)
+    if (atlasResult) gl.deleteTexture(atlasResult.tex)
     gl.deleteProgram(program)
     return null
   }
+  const { tex: atlasTex, totalChars: totalAtlasChars } = atlasResult
 
   gl.bindTexture(gl.TEXTURE_2D, videoTex)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
@@ -450,6 +588,7 @@ function createGlResources(
     u_asciiAtlas: get('u_asciiAtlas'),
     u_gridSize: get('u_gridSize'),
     u_numChars: get('u_numChars'),
+    u_totalAtlasChars: get('u_totalAtlasChars'),
     u_uvOffset: get('u_uvOffset'),
     u_uvScale: get('u_uvScale'),
     u_featherY: get('u_featherY'),
@@ -458,6 +597,10 @@ function createGlResources(
     u_highlight: get('u_highlight'),
     u_brightness: get('u_brightness'),
     u_contrast: get('u_contrast'),
+    u_saturation: get('u_saturation'),
+    u_bloom: get('u_bloom'),
+    u_edgeAware: get('u_edgeAware'),
+    u_lensing: get('u_lensing'),
     u_mouse: get('u_mouse'),
     u_trailLength: get('u_trailLength'),
     u_trail: Array.from({ length: MAX_TRAIL_LENGTH }, (_, i) => get(`u_trail[${i}]`)),
@@ -479,6 +622,7 @@ function createGlResources(
     videoTex,
     atlasTex,
     atlasCharsetKey: charsetKey,
+    totalAtlasChars,
     uniforms,
   }
 }
@@ -497,13 +641,19 @@ function disposeGlResources(res: GlResources | null) {
 
 export default function LocalVideo2Ascii({
   src,
+  poster,
   numColumns,
   colored = true,
   blend = 0,
   highlight = 0,
   brightness = 1,
+  saturation = 1.18,
+  bloom = 0.28,
+  edgeAware = true,
+  lensing = 0,
   charset = 'standard',
   enableMouse = false,
+  listenWindowPointer = false,
   trailLength = 10,
   enableRipple = false,
   rippleSpeed = 36,
@@ -524,6 +674,8 @@ export default function LocalVideo2Ascii({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const posterImgRef = useRef<HTMLImageElement | null>(null)
+  const posterUploadedRef = useRef(false)
   const sampleCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const glResRef = useRef<GlResources | null>(null)
   const fallback2dRef = useRef(false)
@@ -595,6 +747,7 @@ export default function LocalVideo2Ascii({
   useEffect(() => {
     lastUploadedVideoTimeRef.current = -1
     hasUploadedTextureRef.current = false
+    posterUploadedRef.current = false
     forceRedrawRef.current = true
     hasRenderedFrameRef.current = false
     loadedSrcRef.current = null
@@ -602,6 +755,31 @@ export default function LocalVideo2Ascii({
     pauseRecoveryCountRef.current = 0
     fpsWindowRef.current = { lastTimestamp: 0, frames: 0 }
   }, [src])
+
+  // Load lightweight WebP poster immediately so frame 0 renders crisp GPU ASCII before video buffers
+  useEffect(() => {
+    posterImgRef.current = null
+    posterUploadedRef.current = false
+    if (!poster) return
+    let cancelled = false
+    const img = new Image()
+    if (isCrossOriginSrc(poster)) {
+      img.crossOrigin = 'anonymous'
+    }
+    img.decoding = 'async'
+    img.onload = () => {
+      if (cancelled || img.naturalWidth === 0 || img.naturalHeight === 0) return
+      posterImgRef.current = img
+      forceRedrawRef.current = true
+      window.requestAnimationFrame((ts) => {
+        if (!cancelled) drawFrameRef.current(ts)
+      })
+    }
+    img.src = poster
+    return () => {
+      cancelled = true
+    }
+  }, [poster])
 
   useEffect(() => {
     return () => {
@@ -711,7 +889,9 @@ export default function LocalVideo2Ascii({
   const drawCanvas2DFallback = useCallback(
     (
       canvas: HTMLCanvasElement,
-      video: HTMLVideoElement,
+      source: HTMLVideoElement | HTMLImageElement,
+      sourceWidth: number,
+      sourceHeight: number,
       width: number,
       height: number,
       dpr: number,
@@ -722,14 +902,14 @@ export default function LocalVideo2Ascii({
       if (!ctx) return false
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      ctx.fillStyle = '#000'
+      ctx.fillStyle = '#060708'
       ctx.fillRect(0, 0, width, height)
 
       const uv = computeUvTransform(
         width,
         height,
-        video.videoWidth,
-        video.videoHeight,
+        sourceWidth,
+        sourceHeight,
         fitMode,
         focalY,
       )
@@ -743,17 +923,17 @@ export default function LocalVideo2Ascii({
       const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true })
       if (!sampleCtx) return false
 
-      sampleCtx.fillStyle = '#000'
+      sampleCtx.fillStyle = '#060708'
       sampleCtx.fillRect(0, 0, cols, rows)
 
-      const sx = clamp(uv.offsetX, 0, 1) * video.videoWidth
-      const sy = clamp(uv.offsetY, 0, 1) * video.videoHeight
-      const sw = clamp(uv.scaleX, 0.01, 1) * video.videoWidth
-      const sh = clamp(uv.scaleY, 0.01, 1) * video.videoHeight
+      const sx = clamp(uv.offsetX, 0, 1) * sourceWidth
+      const sy = clamp(uv.offsetY, 0, 1) * sourceHeight
+      const sw = clamp(uv.scaleX, 0.01, 1) * sourceWidth
+      const sh = clamp(uv.scaleY, 0.01, 1) * sourceHeight
       const dy = uv.offsetY < 0 ? (-uv.offsetY / uv.scaleY) * rows : 0
       const dh = Math.min(rows - dy, rows / Math.max(uv.scaleY, 1))
 
-      sampleCtx.drawImage(video, sx, sy, sw, sh, 0, dy, cols, dh)
+      sampleCtx.drawImage(source, sx, sy, sw, sh, 0, dy, cols, dh)
       const imageData = sampleCtx.getImageData(0, 0, cols, rows).data
 
       const charWidth = width / cols
@@ -806,13 +986,26 @@ export default function LocalVideo2Ascii({
         return false
       }
 
-      if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
+      const videoReady =
+        video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0
+      const posterImg = posterImgRef.current
+      const posterReady =
+        !videoReady &&
+        posterImg !== null &&
+        posterImg.complete &&
+        posterImg.naturalWidth > 0 &&
+        posterImg.naturalHeight > 0
+
+      if (!videoReady && !posterReady) {
         return false
       }
 
-      if (usesLoopWindow && !video.paused) {
+      if (videoReady && usesLoopWindow && !video.paused) {
         syncToSegment(video)
       }
+
+      const sourceWidth = videoReady ? video.videoWidth : posterImg!.naturalWidth
+      const sourceHeight = videoReady ? video.videoHeight : posterImg!.naturalHeight
 
       const width = Math.max(1, container.clientWidth)
       const height = Math.max(1, container.clientHeight)
@@ -830,10 +1023,12 @@ export default function LocalVideo2Ascii({
       }
 
       const hasActiveInteraction = timestamp < interactionActiveUntilRef.current
-      const videoAdvanced = video.currentTime !== lastUploadedVideoTimeRef.current
+      const videoAdvanced = videoReady && video.currentTime !== lastUploadedVideoTimeRef.current
+      const needsPosterUpload = posterReady && !posterUploadedRef.current
 
       if (
         !videoAdvanced &&
+        !needsPosterUpload &&
         !forceRedrawRef.current &&
         !hasActiveInteraction &&
         hasRenderedFrameRef.current
@@ -853,11 +1048,13 @@ export default function LocalVideo2Ascii({
           res = createGlResources(canvas, chars, charset)
           glResRef.current = res
           hasUploadedTextureRef.current = false
+          posterUploadedRef.current = false
         } else if (res.atlasCharsetKey !== charset) {
           const nextAtlas = buildAtlasTexture(res.gl, chars)
           if (nextAtlas) {
             res.gl.deleteTexture(res.atlasTex)
-            res.atlasTex = nextAtlas
+            res.atlasTex = nextAtlas.tex
+            res.totalAtlasChars = nextAtlas.totalChars
             res.atlasCharsetKey = charset
           }
         }
@@ -872,12 +1069,21 @@ export default function LocalVideo2Ascii({
 
           gl.activeTexture(gl.TEXTURE0)
           gl.bindTexture(gl.TEXTURE_2D, res.videoTex)
-          if (videoAdvanced || !hasUploadedTextureRef.current) {
+          if (videoReady && (videoAdvanced || !hasUploadedTextureRef.current)) {
             try {
               gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
               gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)
               lastUploadedVideoTimeRef.current = video.currentTime
               hasUploadedTextureRef.current = true
+              posterUploadedRef.current = true
+            } catch {
+              return false
+            }
+          } else if (posterReady && !posterUploadedRef.current) {
+            try {
+              gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+              gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, posterImg!)
+              posterUploadedRef.current = true
             } catch {
               return false
             }
@@ -889,14 +1095,15 @@ export default function LocalVideo2Ascii({
           const uv = computeUvTransform(
             width,
             height,
-            video.videoWidth,
-            video.videoHeight,
+            sourceWidth,
+            sourceHeight,
             fitMode,
             focalY,
           )
 
           gl.uniform2f(uniforms.u_gridSize, cols, rows)
           gl.uniform1f(uniforms.u_numChars, chars.length)
+          gl.uniform1f(uniforms.u_totalAtlasChars, res.totalAtlasChars)
           gl.uniform2f(uniforms.u_uvOffset, uv.offsetX, uv.offsetY)
           gl.uniform2f(uniforms.u_uvScale, uv.scaleX, uv.scaleY)
           gl.uniform1f(uniforms.u_featherY, uv.featherY)
@@ -906,6 +1113,10 @@ export default function LocalVideo2Ascii({
           gl.uniform1f(uniforms.u_highlight, clamp(highlight / 100, 0, 1))
           gl.uniform1f(uniforms.u_brightness, brightness)
           gl.uniform1f(uniforms.u_contrast, CONTRAST_BOOST)
+          gl.uniform1f(uniforms.u_saturation, saturation)
+          gl.uniform1f(uniforms.u_bloom, bloom)
+          gl.uniform1f(uniforms.u_edgeAware, edgeAware ? 1 : 0)
+          gl.uniform1f(uniforms.u_lensing, lensing)
 
           const mp = enableMouse ? mousePosRef.current : { x: -1, y: -1 }
           gl.uniform2f(uniforms.u_mouse, mp.x, mp.y)
@@ -947,8 +1158,21 @@ export default function LocalVideo2Ascii({
       }
 
       if (fallback2dRef.current) {
-        lastUploadedVideoTimeRef.current = video.currentTime
-        drew = drawCanvas2DFallback(canvas, video, width, height, dpr, cols, rows)
+        if (videoReady) {
+          lastUploadedVideoTimeRef.current = video.currentTime
+        }
+        posterUploadedRef.current = true
+        drew = drawCanvas2DFallback(
+          canvas,
+          videoReady ? video : posterImg!,
+          sourceWidth,
+          sourceHeight,
+          width,
+          height,
+          dpr,
+          cols,
+          rows,
+        )
       }
 
       if (drew) {
@@ -963,18 +1187,22 @@ export default function LocalVideo2Ascii({
     },
     [
       blend,
+      bloom,
       brightness,
       chars,
       charset,
       colored,
       drawCanvas2DFallback,
+      edgeAware,
       enableMouse,
       enableRipple,
       fitMode,
       focalY,
       highlight,
+      lensing,
       numColumns,
       rippleSpeed,
+      saturation,
       syncToSegment,
       trailLength,
       usesLoopWindow,
@@ -1465,6 +1693,59 @@ export default function LocalVideo2Ascii({
     },
     [enableSpacebarToggle],
   )
+
+  // Non-blocking window pointer bridge for full-bleed background stages (e.g. Hero)
+  useEffect(() => {
+    if (!listenWindowPointer || (!enableMouse && !enableRipple)) return
+
+    const pointInside = (clientX: number, clientY: number) => {
+      const container = containerRef.current
+      if (!container) return null
+      const rect = container.getBoundingClientRect()
+      if (
+        rect.width <= 0 ||
+        rect.height <= 0 ||
+        clientX < rect.left ||
+        clientX > rect.right ||
+        clientY < rect.top ||
+        clientY > rect.bottom
+      ) {
+        return null
+      }
+      return updatePointerNorm(clientX, clientY)
+    }
+
+    const onMove = (event: globalThis.PointerEvent) => {
+      if (!enableMouse) return
+      const pt = pointInside(event.clientX, event.clientY)
+      if (!pt && mousePosRef.current.x >= 0) {
+        mousePosRef.current = { x: -1, y: -1 }
+        trailRef.current = []
+        forceRedrawRef.current = true
+      }
+    }
+
+    const onDown = (event: globalThis.PointerEvent) => {
+      if (!enableRipple) return
+      const pt = pointInside(event.clientX, event.clientY)
+      if (pt) spawnRipple(pt.x, pt.y)
+    }
+
+    const onLeave = () => {
+      mousePosRef.current = { x: -1, y: -1 }
+      trailRef.current = []
+      forceRedrawRef.current = true
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('pointerdown', onDown, { passive: true })
+    window.addEventListener('blur', onLeave)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('blur', onLeave)
+    }
+  }, [enableMouse, enableRipple, listenWindowPointer, spawnRipple, updatePointerNorm])
 
   return (
     <div

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { WikiChip, WikiDrawer } from './WikiDrawer'
 import { EtherTerminal } from './components/EtherTerminal'
-import Video2Ascii from './components/LocalVideo2Ascii'
+import Video2Ascii, { type CharsetKey } from './components/LocalVideo2Ascii'
 import { ProofShowcase } from './components/ProofShowcase'
 import { WorkList } from './components/WorkList'
 import { getField } from './field'
@@ -141,6 +141,7 @@ type YouTubePlayer = {
   getPlayerState: () => number
   pauseVideo: () => void
   playVideo: () => void
+  setVolume?: (volume: number) => void
   unMute?: () => void
 }
 
@@ -169,12 +170,14 @@ declare global {
 
 const landingMusicVideoId = 'oe8kgXNqLFI'
 
-/** Strictly opt-in ambient audio: loads YouTube iframe only after explicit click. */
+/** Auto-playing ambient audio with synchronous first-gesture unlock for mobile/strict browsers. */
 function AmbientSoundControl() {
   const playerHostRef = useRef<HTMLDivElement | null>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
   const readyRef = useRef(false)
-  const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('idle')
+  const userMutedRef = useRef(false)
+  const pendingPlayOnReadyRef = useRef(true)
+  const [playback, setPlayback] = useState<'idle' | 'loading' | 'playing' | 'paused'>('loading')
 
   const startPlayer = useCallback((host: HTMLDivElement, isDisposed: () => boolean) => {
     let readyTimeoutTimer: number | undefined
@@ -212,8 +215,11 @@ function AmbientSoundControl() {
             if (isDisposed()) return
             readyRef.current = true
             clearTimer()
-            target.unMute?.()
-            target.playVideo()
+            if (!userMutedRef.current && pendingPlayOnReadyRef.current) {
+              target.unMute?.()
+              target.setVolume?.(70)
+              target.playVideo()
+            }
           },
           onAutoplayBlocked: () => {
             if (isDisposed()) return
@@ -238,7 +244,7 @@ function AmbientSoundControl() {
 
     readyTimeoutTimer = window.setTimeout(() => {
       if (!isDisposed() && !readyRef.current) {
-        setPlayback('idle')
+        setPlayback('paused')
       }
     }, 6000)
 
@@ -247,7 +253,11 @@ function AmbientSoundControl() {
       return clearTimer
     }
 
-    const handleApiReady = () => createPlayer()
+    const prevReady = window.onYouTubeIframeAPIReady
+    const handleApiReady = () => {
+      prevReady?.()
+      createPlayer()
+    }
     window.onYouTubeIframeAPIReady = handleApiReady
 
     if (!document.getElementById('youtube-iframe-api')) {
@@ -267,24 +277,63 @@ function AmbientSoundControl() {
     return () => {
       clearTimer()
       if (window.onYouTubeIframeAPIReady === handleApiReady) {
-        window.onYouTubeIframeAPIReady = undefined
+        window.onYouTubeIframeAPIReady = prevReady
       }
     }
   }, [])
 
+  // Mount and attempt autoplay immediately; unlock on first tap/click/key anywhere if mobile blocks initial autoplay
   useEffect(() => {
     const host = playerHostRef.current
+    if (!host) return
+    let disposed = false
+    const cleanupPlayer = startPlayer(host, () => disposed)
+
+    const onFirstInteraction = (event: Event) => {
+      if (disposed || userMutedRef.current) return
+      // Don't hijack clicks directly on the Sound toggle button itself
+      const target = event.target as HTMLElement | null
+      if (target?.closest('.sound-toggle')) return
+
+      pendingPlayOnReadyRef.current = true
+      const player = playerRef.current
+      if (player && readyRef.current) {
+        try {
+          if (player.getPlayerState?.() !== 1) {
+            player.unMute?.()
+            player.setVolume?.(70)
+            player.playVideo()
+          }
+        } catch {
+          /* wait for next gesture or onReady */
+        }
+      }
+    }
+
+    window.addEventListener('touchend', onFirstInteraction, { passive: true })
+    window.addEventListener('pointerup', onFirstInteraction, { passive: true })
+    window.addEventListener('click', onFirstInteraction, { passive: true })
+    window.addEventListener('keydown', onFirstInteraction, { passive: true })
+
     return () => {
+      disposed = true
+      cleanupPlayer?.()
+      window.removeEventListener('touchend', onFirstInteraction)
+      window.removeEventListener('pointerup', onFirstInteraction)
+      window.removeEventListener('click', onFirstInteraction)
+      window.removeEventListener('keydown', onFirstInteraction)
       readyRef.current = false
       playerRef.current?.destroy()
       playerRef.current = null
-      host?.replaceChildren()
+      host.replaceChildren()
     }
-  }, [])
+  }, [startPlayer])
 
   const toggleSound = () => {
     const player = playerRef.current
     if (!player || !readyRef.current) {
+      userMutedRef.current = false
+      pendingPlayOnReadyRef.current = true
       const host = playerHostRef.current
       if (!player && host) {
         setPlayback('loading')
@@ -294,10 +343,15 @@ function AmbientSoundControl() {
     }
 
     if (playback === 'playing') {
+      userMutedRef.current = true
+      pendingPlayOnReadyRef.current = false
       player.pauseVideo()
       setPlayback('paused')
     } else {
+      userMutedRef.current = false
+      pendingPlayOnReadyRef.current = true
       player.unMute?.()
+      player.setVolume?.(70)
       player.playVideo()
     }
   }
@@ -328,13 +382,13 @@ function AmbientSoundControl() {
 const experienceCards: ExperienceCard[] = [
   {
     shortTab: 'Halo Labs',
-    eyebrow: '2025 — 2026',
+    eyebrow: '2025 - 2026',
     title: 'Halo Labs',
     role: 'Co-Founder & Head of AI',
     narrative:
       'At Halo Labs I worked on the hardest seam in confidential finance: how to make private settlement and autonomous execution provable to counterparties who should never have to trust an operator. That meant pairing trusted execution environments with zero-knowledge verification, writing the protocol documentation developers actually build from, and shipping a light client that makes privacy legible.',
     shipped: [
-      'Architected Halo Verus—verifiable AI execution binding TEE hardware attestation to zero-knowledge proofs.',
+      'Architected Halo Verus, verifiable AI execution binding TEE hardware attestation to zero-knowledge proofs.',
       'Authored protocol architecture documentation and light-client onboarding guides.',
       'Built infrastructure partnerships across Phala, Fairblocks, and confidential-compute ecosystem teams.',
     ],
@@ -365,15 +419,15 @@ const experienceCards: ExperienceCard[] = [
   },
   {
     shortTab: 'NPC Capital',
-    eyebrow: '2024 — 2025',
+    eyebrow: '2024 - 2025',
     title: 'NPC Capital',
     role: 'Full-Stack Developer & Researcher',
     narrative:
-      'In liquid digital-asset markets, mispricing is rarely an absence of data—it is a failure of accounting across venues with incompatible settlement clocks. Alongside Polygon and Hyperliquid validators, I built the telemetry and portfolio interfaces that kept capital allocation anchored to live on-chain state rather than lagging spreadsheets.',
+      'In liquid digital-asset markets, mispricing is rarely an absence of data. It is a failure of accounting across venues with incompatible settlement clocks. Alongside Polygon and Hyperliquid validators, I built the telemetry and portfolio interfaces that kept capital allocation anchored to live on-chain state rather than lagging spreadsheets.',
     shipped: [
       'Designed operator and investor heads-up displays surfacing live cross-venue portfolio risk.',
       'Built cross-chain telemetry pipelines grounding allocation decisions in verifiable on-chain state.',
-      'Evaluated real-yield validator economics directly with Hyperliquid operators—seed work for Statebook.',
+      'Evaluated real-yield validator economics directly with Hyperliquid operators, laying the groundwork for Statebook.',
     ],
     links: [
       {
@@ -391,15 +445,15 @@ const experienceCards: ExperienceCard[] = [
   },
   {
     shortTab: 'Public Goods',
-    eyebrow: '2022 — 2024',
+    eyebrow: '2022 - 2024',
     title: 'Public Goods & Open Source',
     role: 'Solana Foundation · Celo · Dream DAO · Eco DAO',
     narrative:
       'Before formal kernels and verifiable models, I spent two years inside open-source institutions asking why public goods either endure or quietly decay. The answer was almost always legibility: clear developer tooling, transparent funding mechanisms, and governance rules that survive contact with real incentives.',
     shipped: [
-      'Solana Foundation — tightened SDK versioning, reference examples, and hands-on developer lessons.',
-      'Celo — shaped public-goods funding strategy around account abstraction and quadratic funding.',
-      'Dream DAO & Eco DAO — co-stewarded builder cohorts, governance tooling, and ecological primitives.',
+      'Solana Foundation: tightened SDK versioning, reference examples, and hands-on developer lessons.',
+      'Celo: shaped public-goods funding strategy around account abstraction and quadratic funding.',
+      'Dream DAO & Eco DAO: co-stewarded builder cohorts, governance tooling, and ecological primitives.',
     ],
     wikiIds: ['commons', 'ostrom', 'mauss', 'playbox'],
   },
@@ -575,9 +629,38 @@ function LazyWalkthroughVideo({
     el.setAttribute('playsinline', '')
     el.setAttribute('webkit-playsinline', 'true')
 
+    let removeGestureFallback: (() => void) | null = null
+
+    const clearGesture = () => {
+      removeGestureFallback?.()
+      removeGestureFallback = null
+    }
+
+    const attachGesture = () => {
+      if (removeGestureFallback) return
+      const onGesture = () => {
+        if (!isVisible) return
+        el.play()
+          .then(clearGesture)
+          .catch(() => undefined)
+      }
+      window.addEventListener('touchend', onGesture, { passive: true })
+      window.addEventListener('pointerup', onGesture, { passive: true })
+      window.addEventListener('click', onGesture, { passive: true })
+      removeGestureFallback = () => {
+        window.removeEventListener('touchend', onGesture)
+        window.removeEventListener('pointerup', onGesture)
+        window.removeEventListener('click', onGesture)
+      }
+    }
+
     const tryPlay = () => {
       if (isVisible) {
-        void el.play().catch(() => undefined)
+        el.play()
+          .then(clearGesture)
+          .catch(() => {
+            attachGesture()
+          })
       } else {
         el.pause()
       }
@@ -594,6 +677,7 @@ function LazyWalkthroughVideo({
     tryPlay()
 
     return () => {
+      clearGesture()
       el.removeEventListener('canplay', tryPlay)
       el.removeEventListener('ended', onEnded)
     }
@@ -877,9 +961,24 @@ function readInitialLightMode(): boolean {
   }
 }
 
+const HERO_LENSES: { key: CharsetKey; label: string }[] = [
+  { key: 'cinematic', label: 'cinematic' },
+  { key: 'braille', label: 'braille' },
+  { key: 'detailed', label: 'detailed' },
+  { key: 'blocks', label: 'blocks' },
+]
+
 function App() {
   const heroVideoSrc = '/ascii/hero-blackhole.mp4'
+  const heroPosterSrc = '/ascii/hero-blackhole-poster.webp'
   const aboutVideoSrc = '/ascii/about-flower.mp4'
+  const aboutPosterSrc = '/ascii/about-flower-poster.webp'
+
+  const [heroCharset, setHeroCharset] = useState<CharsetKey>('cinematic')
+  const [heroEdges, setHeroEdges] = useState(true)
+  const [heroBloom, setHeroBloom] = useState(true)
+  const [heroPlaying, setHeroPlaying] = useState(true)
+  const [aboutCharset, setAboutCharset] = useState<CharsetKey>('cinematic')
 
   const [lightMode, setLightMode] = useState<boolean>(readInitialLightMode)
   const [activeWriting, setActiveWriting] = useState<WritingEntry | null>(() =>
@@ -1024,25 +1123,33 @@ function App() {
       />
 
       <main className="page-main">
-        {/* HERO — Pure living ASCII cinema + singular authorial thesis */}
+        {/* HERO — Pure living SOTA GPU ASCII cinema + singular authorial thesis */}
         <section className="hero">
           <div className="hero__canvas" aria-hidden="true">
             <Video2Ascii
               key={`hero-${heroVideoSrc}`}
               src={heroVideoSrc}
-              numColumns={176}
+              poster={heroPosterSrc}
+              numColumns={192}
               colored={true}
-              blend={12}
+              blend={14}
               highlight={0}
-              brightness={1.06}
+              brightness={1.12}
+              saturation={1.26}
+              bloom={heroBloom ? 0.36 : 0}
+              edgeAware={heroEdges}
+              lensing={0.62}
               fitMode="ambient"
-              focalY={0.38}
+              focalY={0.36}
               posterTime={3.0}
               audioEffect={0}
-              enableMouse={false}
-              enableRipple={false}
-              charset="detailed"
-              isPlaying={true}
+              enableMouse={true}
+              enableRipple={true}
+              listenWindowPointer={true}
+              trailLength={12}
+              rippleSpeed={34}
+              charset={heroCharset}
+              isPlaying={heroPlaying}
               autoPlay={true}
               priority={true}
             />
@@ -1069,6 +1176,50 @@ function App() {
                 <a href="#frontiers" className="btn-quiet">
                   Selected proofs ↓
                 </a>
+                <a href="#install" className="btn-quiet">
+                  Live RPi5 terminal ↓
+                </a>
+              </div>
+            </div>
+
+            <div className="hero__cinema-bar" role="toolbar" aria-label="Hero GPU ASCII shader controls">
+              <span className="hero__cinema-kicker">kerr horizon · webgl2 · move or tap</span>
+              <div className="hero__cinema-group">
+                {HERO_LENSES.map((lens) => (
+                  <button
+                    key={lens.key}
+                    type="button"
+                    className={`hero__cinema-btn${heroCharset === lens.key ? ' is-active' : ''}`}
+                    onClick={() => setHeroCharset(lens.key)}
+                  >
+                    {lens.label}
+                  </button>
+                ))}
+                <span className="hero__cinema-sep" aria-hidden="true" />
+                <button
+                  type="button"
+                  className={`hero__cinema-btn${heroEdges ? ' is-active' : ''}`}
+                  onClick={() => setHeroEdges((v) => !v)}
+                  title="Toggle Sobel directional edge sculpting"
+                >
+                  edges
+                </button>
+                <button
+                  type="button"
+                  className={`hero__cinema-btn${heroBloom ? ' is-active' : ''}`}
+                  onClick={() => setHeroBloom((v) => !v)}
+                  title="Toggle phosphor bloom"
+                >
+                  bloom
+                </button>
+                <button
+                  type="button"
+                  className="hero__cinema-btn"
+                  onClick={() => setHeroPlaying((v) => !v)}
+                  aria-label={heroPlaying ? 'Pause hero ASCII cinema' : 'Play hero ASCII cinema'}
+                >
+                  {heroPlaying ? 'pause' : 'play'}
+                </button>
               </div>
             </div>
           </div>
@@ -1087,23 +1238,40 @@ function App() {
                 <Video2Ascii
                   key={`about-${aboutVideoSrc}`}
                   src={aboutVideoSrc}
-                  numColumns={104}
+                  poster={aboutPosterSrc}
+                  numColumns={116}
                   colored={true}
-                  blend={8}
-                  highlight={16}
-                  brightness={1.12}
+                  blend={10}
+                  highlight={12}
+                  brightness={1.14}
+                  saturation={1.24}
+                  bloom={0.32}
+                  edgeAware={true}
+                  lensing={0.48}
                   posterTime={1.0}
                   audioEffect={0}
                   enableMouse={true}
                   enableRipple={true}
-                  charset="detailed"
+                  charset={aboutCharset}
                   isPlaying={true}
                   autoPlay={true}
                   enableSpacebarToggle={true}
                 />
               </div>
-              <figcaption className="about-figure__caption">
-                Interactive glyph study — move or tap across the frame.
+              <figcaption className="about-figure__caption about-figure__caption--split">
+                <span>Interactive glyph study — move or tap across the frame.</span>
+                <span className="about-figure__lenses" role="group" aria-label="Glyph study lens">
+                  {(['cinematic', 'braille', 'detailed'] as CharsetKey[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`about-lens-btn${aboutCharset === key ? ' is-active' : ''}`}
+                      onClick={() => setAboutCharset(key)}
+                    >
+                      {key}
+                    </button>
+                  ))}
+                </span>
               </figcaption>
             </figure>
 
@@ -1169,11 +1337,11 @@ function App() {
           </div>
         </section>
 
-        {/* 02 — SELECTED WORK (Quiet Editorial Chapters, Clean Legibility) */}
+        {/* 02 · SELECTED WORK (Quiet Editorial Chapters, Clean Legibility) */}
         <section className="ed-section" id="archive">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">02 — Selected Work</p>
+              <p className="ed-eyebrow">02 · Selected Work</p>
               <h2>Systems built, institutions stewarded.</h2>
             </div>
 
@@ -1271,17 +1439,17 @@ function App() {
           </article>
         </section>
 
-        {/* 03 — VERIFIED RESEARCH & HONEST NULLS (Live SHA-256 Raw-Data Showcase) */}
+        {/* 03 · VERIFIED RESEARCH & HONEST NULLS (Live SHA-256 Raw-Data Showcase) */}
         <ProofShowcase
           onOpenWiki={openWiki}
           focusedDispatchRequest={focusedDispatchRequest}
         />
 
-        {/* 04 — WRITING (Clean Typographic Index + Book-Grade Palatino Sheet) */}
+        {/* 04 · WRITING (Clean Typographic Index + Book-Grade Palatino Sheet) */}
         <section className="ed-section" id="writings">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">04 — Writing</p>
+              <p className="ed-eyebrow">04 · Writing</p>
               <h2>Essays and field notes.</h2>
             </div>
 
@@ -1289,7 +1457,7 @@ function App() {
               <p>
                 Long-form notes on AI assurance, mechanistic interpretability
                 nulls, market coherence, sacred economics, and public-goods
-                institutions—written with their negative results intact.
+                institutions, written with their negative results intact.
               </p>
             </div>
           </div>
@@ -1358,11 +1526,11 @@ function App() {
           ) : null}
         </section>
 
-        {/* 05 — LIVE SANDBOXED TERMINAL */}
+        {/* 05 · LIVE SANDBOXED TERMINAL */}
         <section className="ed-section" id="install">
           <div className="ed-section__head ed-section__head--split">
             <div>
-              <p className="ed-eyebrow">05 — Live Sandboxed Terminal</p>
+              <p className="ed-eyebrow">05 · Live Sandboxed Terminal</p>
               <h2>Talk to the personal model &amp; step through the ether.</h2>
             </div>
 

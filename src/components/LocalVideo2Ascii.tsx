@@ -673,6 +673,7 @@ export default function LocalVideo2Ascii({
   const animationFrameRef = useRef<number | null>(null)
   const lastUploadedVideoTimeRef = useRef(-1)
   const lastUploadTimestampRef = useRef(0)
+  const uploadFailCountRef = useRef(0)
   const hasUploadedTextureRef = useRef(false)
   const forceRedrawRef = useRef(true)
   const hasRenderedFrameRef = useRef(false)
@@ -697,11 +698,6 @@ export default function LocalVideo2Ascii({
     () => priority || !playOnlyWhenVisible || typeof IntersectionObserver === 'undefined',
   )
   const [hasRenderedFrame, setHasRenderedFrame] = useState(false)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
-    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false,
-  )
 
   if (prevIsPlaying !== isPlaying) {
     setPrevIsPlaying(isPlaying)
@@ -717,32 +713,34 @@ export default function LocalVideo2Ascii({
   }
 
   const chars = useMemo(() => [...ASCII_CHARSETS[charset].chars], [charset])
-  const shouldPlay =
-    localPlaying && !prefersReducedMotion && (!playOnlyWhenVisible || isVisible)
+  const shouldPlay = localPlaying && (!playOnlyWhenVisible || isVisible)
   const segments = useMemo(
     () => normalizeSegments(playSegments, loopStart, loopEnd),
     [loopEnd, loopStart, playSegments],
   )
   const usesLoopWindow = segments.length > 0
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-      return
+  const setVideoNode = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node
+    if (node) {
+      // Set DOM properties + attributes synchronously at element creation before autoplay evaluation
+      node.muted = true
+      node.defaultMuted = true
+      node.playsInline = true
+      node.setAttribute('muted', '')
+      node.setAttribute('playsinline', '')
+      node.setAttribute('webkit-playsinline', 'true')
     }
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const onChange = () => setPrefersReducedMotion(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
   }, [])
 
   useEffect(() => {
     lastUploadedVideoTimeRef.current = -1
     lastUploadTimestampRef.current = 0
+    uploadFailCountRef.current = 0
     hasUploadedTextureRef.current = false
     posterUploadedRef.current = false
     forceRedrawRef.current = true
     hasRenderedFrameRef.current = false
-    loadedSrcRef.current = null
     inFlightPlayRef.current = false
     pauseRecoveryCountRef.current = 0
     fpsWindowRef.current = { lastTimestamp: 0, frames: 0 }
@@ -1078,9 +1076,15 @@ export default function LocalVideo2Ascii({
               gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)
               lastUploadedVideoTimeRef.current = video.currentTime
               lastUploadTimestampRef.current = timestamp
+              uploadFailCountRef.current = 0
               hasUploadedTextureRef.current = true
               posterUploadedRef.current = true
             } catch {
+              uploadFailCountRef.current += 1
+              if (uploadFailCountRef.current >= 2) {
+                fallback2dRef.current = true
+                forceRedrawRef.current = true
+              }
               return false
             }
           } else if (posterReady && !posterUploadedRef.current) {
@@ -1220,21 +1224,19 @@ export default function LocalVideo2Ascii({
   }, [drawFrame])
 
   const shouldPlayRef = useRef(shouldPlay)
-  const prefersReducedMotionRef = useRef(prefersReducedMotion)
   useEffect(() => {
     shouldPlayRef.current = shouldPlay
-    prefersReducedMotionRef.current = prefersReducedMotion
-  }, [prefersReducedMotion, shouldPlay])
+  }, [shouldPlay])
 
   useEffect(() => {
     forceRedrawRef.current = true
-    if (!shouldPlay || prefersReducedMotion) {
+    if (!shouldPlay) {
       const id = window.requestAnimationFrame((ts) => {
         drawFrameRef.current(ts)
       })
       return () => window.cancelAnimationFrame(id)
     }
-  }, [drawFrame, prefersReducedMotion, shouldPlay])
+  }, [drawFrame, shouldPlay])
 
   // Main render loop (always rAF when visible/interactive — avoids iOS Safari rVFC stalls on loop/resume)
   useEffect(() => {
@@ -1325,7 +1327,7 @@ export default function LocalVideo2Ascii({
     const attachGestureFallback = () => {
       if (removeGestureFallback) return
       const onGesture = () => {
-        if (cancelled || prefersReducedMotionRef.current) {
+        if (cancelled) {
           clearGestureFallback()
           return
         }
@@ -1342,20 +1344,23 @@ export default function LocalVideo2Ascii({
           clearGestureFallback()
         }
       }
-      window.addEventListener('touchstart', onGesture, { passive: true })
-      window.addEventListener('pointerdown', onGesture, { passive: true })
+      // touchend / pointerup / click satisfy iOS Safari user-activation rules (touchstart alone does not)
+      window.addEventListener('touchend', onGesture, { passive: true })
+      window.addEventListener('pointerup', onGesture, { passive: true })
       window.addEventListener('click', onGesture, { passive: true })
+      window.addEventListener('keydown', onGesture, { passive: true })
       removeGestureFallback = () => {
-        window.removeEventListener('touchstart', onGesture)
-        window.removeEventListener('pointerdown', onGesture)
+        window.removeEventListener('touchend', onGesture)
+        window.removeEventListener('pointerup', onGesture)
         window.removeEventListener('click', onGesture)
+        window.removeEventListener('keydown', onGesture)
       }
     }
 
     const attemptPlay = () => {
       if (cancelled) return
 
-      if (prefersReducedMotionRef.current || (!autoPlay && !shouldPlayRef.current)) {
+      if (!autoPlay && !shouldPlayRef.current) {
         video.pause()
         seekForStaticFrame()
         return
@@ -1383,9 +1388,8 @@ export default function LocalVideo2Ascii({
           .catch((error: unknown) => {
             inFlightPlayRef.current = false
             const name = error instanceof Error ? error.name : ''
-            // Do not seek/interrupt on AbortError (e.g. concurrent load or visibility toggle)
             if (name === 'AbortError') return
-            // iOS Low Power Mode or autoplay gate: show static frame and wait for gesture
+            // iOS Low Power Mode or strict autoplay gate: show poster/frame and unlock on first tap
             if (!hasRenderedFrameRef.current) {
               seekForStaticFrame()
             }
@@ -1397,7 +1401,11 @@ export default function LocalVideo2Ascii({
     }
 
     configureInlineMuted()
-    if (loadedSrcRef.current !== src) {
+    // Only call video.load() when src dynamically switches after a prior src was already loaded;
+    // calling load() on first mount/lazy-enable aborts the browser's native autoplay fetch on iOS.
+    if (loadedSrcRef.current === null) {
+      loadedSrcRef.current = src
+    } else if (loadedSrcRef.current !== src) {
       loadedSrcRef.current = src
       video.load()
     }
@@ -1405,8 +1413,6 @@ export default function LocalVideo2Ascii({
     const handleLoadedMetadata = () => {
       if (usesLoopWindow) {
         syncToSegment(video)
-      } else if (prefersReducedMotionRef.current) {
-        seekForStaticFrame()
       }
     }
 
@@ -1447,7 +1453,7 @@ export default function LocalVideo2Ascii({
     }
 
     const handleEnded = () => {
-      if (!shouldPlayRef.current || prefersReducedMotionRef.current) return
+      if (!shouldPlayRef.current) return
       try {
         video.currentTime = usesLoopWindow ? (segments[0]?.start ?? 0) : 0
       } catch {
@@ -1468,7 +1474,6 @@ export default function LocalVideo2Ascii({
       if (
         cancelled ||
         !shouldPlayRef.current ||
-        prefersReducedMotionRef.current ||
         document.visibilityState !== 'visible' ||
         video.ended ||
         video.readyState < 2
@@ -1783,9 +1788,9 @@ export default function LocalVideo2Ascii({
         onTouchEnd={enableMouse ? handleTouchEnd : undefined}
       >
         <video
-          ref={videoRef}
+          ref={setVideoNode}
           src={shouldLoadVideo ? src : undefined}
-          autoPlay={(autoPlay || shouldPlay) && !prefersReducedMotion}
+          autoPlay={autoPlay || shouldPlay}
           muted
           loop={!usesLoopWindow}
           preload={priority ? 'auto' : shouldLoadVideo ? 'auto' : 'none'}
@@ -1800,7 +1805,9 @@ export default function LocalVideo2Ascii({
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            opacity: 0.004,
+            // Keep >= 0.02 so iOS WebKit compositor never culls layer as invisible;
+            // opaque WebGL canvas at zIndex 1 covers it completely.
+            opacity: 0.02,
             zIndex: 0,
             pointerEvents: 'none',
           }}

@@ -424,7 +424,7 @@ const FEATURED_SLUGS = [
 ]
 
 /* ============================================================================
-   MAIN RESEARCH INDEX (#/research) — Zero-fluff nathan.rs design + 4K banner
+   MAIN RESEARCH INDEX (#/research): Zero-fluff nathan.rs design + 4K banner
    ============================================================================ */
 export function ResearchIndex({ thread }: { thread?: string }) {
   const [query, setQuery] = useState('')
@@ -490,7 +490,7 @@ export function ResearchIndex({ thread }: { thread?: string }) {
               <img
                 className="home-vignette-spiral"
                 src="/illustrations/fibonacci-spiral-vignette.webp"
-                alt="Fibonacci Spiral — illuminated medieval Iranian and Mughal geometric artwork by Anita Chowdry (2012), floating horizontally on transparent ground"
+                alt="Fibonacci Spiral: illuminated medieval Iranian and Mughal geometric artwork by Anita Chowdry (2012), floating horizontally on transparent ground"
               />
             </figure>
 
@@ -648,7 +648,7 @@ function FieldPage({ field }: { field: FieldStrand }) {
 }
 
 /* ============================================================================
-   REPOSITORY MONOGRAPH PAGE (#/research/<slug>) — Pure nathan.rs/posts style
+   REPOSITORY MONOGRAPH PAGE (#/research/<slug>): Pure nathan.rs/posts style
    ============================================================================ */
 function RepoPage({ repo }: { repo: ResearchRepo }) {
   const essay = useMemo(() => getEssay(repo.slug), [repo.slug])

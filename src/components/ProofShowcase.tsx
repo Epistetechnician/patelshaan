@@ -56,7 +56,7 @@ const PROOFS: ProofEntry[] = [
     metricLabel: 'false holdout certificates · Python / Rust / Lean parity',
     animId: 'holdout-broker-waterfall',
     prose:
-      'When an autonomous loop grades itself against a static benchmark, standard confidence bounds break silently. Bit-priced holdout ledgers held zero false certificates across 59,200 confirmatory runs, while our FormaSec admission kernel matched 600/600 across Python, Kani-checked Rust, and Lean 4—paired with a trajectory gate that separates 33.7% admitted from 7.1% rejected Gemma-4 SWE runs and blocks 83/83 injected test-tamper mutations.',
+      'When an autonomous loop grades itself against a static benchmark, standard confidence bounds break silently. Bit-priced holdout ledgers held zero false certificates across 59,200 confirmatory runs, while our FormaSec admission kernel matched 600/600 across Python, Kani-checked Rust, and Lean 4, paired with a trajectory gate that separates 33.7% admitted from 7.1% rejected Gemma-4 SWE runs and blocks 83/83 injected test-tamper mutations.',
     ceiling:
       'Empirical-Bernstein width gain narrows toward Hoeffding on high-variance binary SWE tasks, and the 238-trace trajectory lift is retrospective across 34 tasks pending prospective out-of-sample Track A.',
     bundleFile: 'holdout-eprocess.json',
@@ -98,7 +98,7 @@ const PROOFS: ProofEntry[] = [
     metricLabel: 'norm-matched PCA vs. J-space · Polymarket partition gap',
     animId: 'jspace-pca-equiv',
     prose:
-      'On 2,000 H100 prompts across OLMo-2-7B and Llama-3.1-8B, once perturbation norms are matched, plain PCA tracks Jacobian-space drift almost identically (r = 0.855 on DPO, 0.854 on Instruct)—a clean geometric null we refused to bury. The same accounting discipline runs in Statebook, where a signed read-only audit of 188 active Polymarket contracts surfaces a 6.30% cross-outcome partition residual.',
+      'On 2,000 H100 prompts across OLMo-2-7B and Llama-3.1-8B, once perturbation norms are matched, plain PCA tracks Jacobian-space drift almost identically (r = 0.855 on DPO, 0.854 on Instruct), a clean geometric null we refused to bury. The same accounting discipline runs in Statebook, where a signed read-only audit of 188 active Polymarket contracts surfaces a 6.30% cross-outcome partition residual.',
     ceiling:
       'Interpretability equivalence covers checkpoints ≤8B and eight planted flaw families; Statebook is a read-only coherence specification and does not execute trades or hold collateral.',
     bundleFile: 'jspace-equivalence.json',
@@ -170,14 +170,14 @@ export function ProofShowcase({
     <section className="ed-section" id="frontiers">
       <div className="ed-section__head ed-section__head--split">
         <div>
-          <p className="ed-eyebrow">03 — Verified Research &amp; Honest Nulls</p>
+          <p className="ed-eyebrow">03 · Verified Research &amp; Honest Nulls</p>
           <h2>Measured on real runs, verified to the byte.</h2>
         </div>
 
         <div className="ed-lead">
           <p>
             Four flagship strands rendered straight from SHA-256-indexed GPU, Lean 4,
-            and corpus bundles—hover any figure to inspect individual problems,
+            and corpus bundles. Hover any figure to inspect individual problems,
             trajectories, or prompts.
           </p>
         </div>

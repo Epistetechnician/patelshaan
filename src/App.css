@@ -4277,10 +4277,13 @@ button:focus-visible {
   right: auto;
   bottom: auto;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
-  justify-content: space-between;
-  gap: 0.55rem;
-  flex-wrap: nowrap;
+  gap: 0.36rem;
+}
+
+.ether-portal__bottom-stack .ether-portal__controls {
+  justify-content: flex-end;
 }
 
 .ether-portal__scrubber {
@@ -4389,10 +4392,10 @@ button:focus-visible {
   flex: 1 1 auto;
   min-width: 0;
   color: #e6e0d4;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: normal;
+  word-break: break-word;
+  max-height: 3.9em;
+  overflow-y: auto;
 }
 
 .ether-ticker__refresh {

@@ -4841,23 +4841,94 @@ button:focus-visible {
   line-height: 1.56;
 }
 
-/* ---------- 02: Selected Work (Crisp Surface, Zero Busy Background) ---------- */
+/* ---------- 02: Selected Work (Dark-Cinema Living GPU ASCII Stage) ---------- */
 
-.work-chapter {
-  background: var(--bg-subtle);
+.work-chapter--staged {
+  --bg: #08090a;
+  --bg-subtle: #0d0f12;
+  --ink: #f0ede6;
+  --ink-secondary: rgba(240, 237, 230, 0.8);
+  --ink-muted: rgba(240, 237, 230, 0.56);
+  --rule: rgba(240, 237, 230, 0.14);
+  --rule-strong: rgba(240, 237, 230, 0.28);
+  --accent: #dfd0b2;
+  background: #08090a;
+  color: #f0ede6;
   border: 1px solid var(--rule);
 }
 
-.work-chapter__summary {
+.work-chapter--staged .work-chapter__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.work-chapter--staged .work-chapter__ambient .video-to-ascii {
+  opacity: 0.92;
+}
+
+.work-chapter--staged .work-chapter__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      95deg,
+      rgba(8, 9, 10, 0.94) 0%,
+      rgba(8, 9, 10, 0.85) 44%,
+      rgba(8, 9, 10, 0.4) 74%,
+      rgba(8, 9, 10, 0.16) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 9, 10, 0.55) 0%,
+      rgba(8, 9, 10, 0.08) 32%,
+      rgba(8, 9, 10, 0.12) 72%,
+      rgba(8, 9, 10, 0.72) 100%
+    );
+}
+
+.work-chapter--staged .work-chapter__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.work-chapter--staged .work-chapter__prose h3,
+.work-chapter--staged .work-chapter__summary {
+  color: #f0ede6;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.75);
+}
+
+.work-chapter--staged .work-chapter__summary {
   font-family: var(--font-serif);
   font-size: clamp(1.04rem, 1.25vw, 1.14rem);
   line-height: 1.72;
-  color: var(--ink);
-  max-width: 60ch;
+  max-width: 58ch;
 }
 
-.work-chapter__points {
-  color: var(--ink-secondary);
+.work-chapter--staged .work-chapter__points {
+  color: rgba(240, 237, 230, 0.82);
+}
+
+.work-chapter--staged .work-link {
+  background: rgba(10, 11, 13, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-color: rgba(240, 237, 230, 0.18);
+  color: #f0ede6;
+}
+.work-chapter--staged .work-link:hover {
+  border-color: #dfd0b2;
+  background: rgba(16, 17, 20, 0.86);
+}
+
+.work-chapter--staged .work-reel__frame {
+  border-color: rgba(240, 237, 230, 0.18);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+.work-chapter--staged .work-reel__caption {
+  color: rgba(240, 237, 230, 0.66);
 }
 
 .work-tab {
@@ -4875,18 +4946,40 @@ button:focus-visible {
   color: var(--ink);
 }
 
-.work-link {
-  background: var(--bg);
-  border-color: var(--rule);
-}
-.work-link:hover {
-  border-color: var(--accent);
-}
-
 .work-chapter__wikis {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem 0.9rem;
+}
+
+/* Quiet optical controls (no pill HUD clutter) */
+.hero__cinema-bar {
+  background: rgba(8, 9, 10, 0.56);
+  border: 1px solid rgba(240, 237, 230, 0.12);
+  border-radius: 2px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hero__cinema-btn,
+.about-lens-btn {
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  padding: 0.12rem 0.22rem;
+}
+
+.hero__cinema-btn.is-active,
+.about-lens-btn.is-active {
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+.proof-stage__film {
+  padding: 0.25rem 0 0.15rem;
 }
 
 /* ---------- 03: Verified Research & Honest Nulls (ProofShowcase) ---------- */

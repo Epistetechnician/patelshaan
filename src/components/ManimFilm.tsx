@@ -51,7 +51,7 @@ export function ManimFilm({ film }: { film: ManimFilmSpec }) {
           setPlaying(false)
         }
       },
-      { threshold: 0.25 },
+      { threshold: 0.2 },
     )
     io.observe(v)
     return () => io.disconnect()
@@ -69,62 +69,85 @@ export function ManimFilm({ film }: { film: ManimFilmSpec }) {
     }
   }
 
+  const replay = () => {
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = 0
+    void v.play()
+    setPlaying(true)
+  }
+
   const cycleRate = () => {
     const next = rate === 1 ? 0.5 : rate === 0.5 ? 1.5 : 1
     setRate(next)
     if (videoRef.current) videoRef.current.playbackRate = next
   }
 
-  const onSeek = (val: number) => {
+  const seekByClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const v = videoRef.current
     if (!v || !duration) return
-    v.currentTime = (val / 100) * duration
-    setProgress(val)
+    const rect = e.currentTarget.getBoundingClientRect()
+    const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    v.currentTime = frac * duration
+    setProgress(frac * 100)
   }
 
   return (
     <figure className="post-film">
-      <div className="post-film__frame" style={{ aspectRatio: film.aspect ?? '16 / 9' }}>
-        <video
-          key={activeSrc}
-          ref={videoRef}
-          src={activeSrc}
-          muted
-          loop
-          playsInline
-          autoPlay
-          preload="metadata"
-          onLoadedMetadata={(e) => {
-            setDuration(e.currentTarget.duration || 0)
-            e.currentTarget.playbackRate = rate
-          }}
-          onTimeUpdate={(e) => {
-            const d = e.currentTarget.duration || 1
-            setProgress((e.currentTarget.currentTime / d) * 100)
-          }}
-          onClick={togglePlay}
-        />
+      <div className="post-film__stage">
+        <div className="post-film__frame" style={{ aspectRatio: film.aspect ?? '16 / 9' }}>
+          <video
+            key={activeSrc}
+            ref={videoRef}
+            src={activeSrc}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="auto"
+            onLoadedMetadata={(e) => {
+              setDuration(e.currentTarget.duration || 0)
+              e.currentTarget.playbackRate = rate
+            }}
+            onTimeUpdate={(e) => {
+              const d = e.currentTarget.duration || 1
+              setProgress((e.currentTarget.currentTime / d) * 100)
+            }}
+            onClick={togglePlay}
+          />
+        </div>
+
+        <div className="post-film__overlay" role="toolbar" aria-label={`${film.title} playback controls`}>
+          <button type="button" onClick={togglePlay} aria-label={playing ? 'Pause film' : 'Play film'} title={playing ? 'Pause' : 'Play'}>
+            {playing ? '❚❚' : '▶'}
+          </button>
+          <button type="button" onClick={replay} aria-label="Replay film" title="Replay">
+            ↻
+          </button>
+          <button type="button" onClick={cycleRate} aria-label="Change playback speed" title="Playback speed">
+            {rate}×
+          </button>
+        </div>
+
+        <div
+          className="post-film__scrubber"
+          role="slider"
+          aria-label="Film progress"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+          tabIndex={0}
+          onClick={seekByClick}
+        >
+          <div className="post-film__scrubber-fill" style={{ width: `${progress}%` }} />
+        </div>
       </div>
-      <div className="post-anim-bar">
-        <button type="button" onClick={togglePlay} aria-label={playing ? 'Pause animation' : 'Play animation'}>
-          {playing ? 'Pause' : 'Play'}
-        </button>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          step={0.5}
-          value={progress}
-          aria-label="Seek animation timeline"
-          onChange={(e) => onSeek(Number(e.target.value))}
-        />
-        <button type="button" onClick={cycleRate} aria-label="Change playback speed">
-          {rate}×
-        </button>
-        {film.scriptPath ? <span className="post-anim-src">{film.scriptPath}</span> : null}
-      </div>
-      <figcaption>
-        <RichText text={film.caption} />
+
+      <figcaption className="post-film__caption">
+        <span>
+          <RichText text={film.caption} />
+        </span>
+        {film.scriptPath ? <span className="post-film__src">{film.scriptPath}</span> : null}
       </figcaption>
     </figure>
   )

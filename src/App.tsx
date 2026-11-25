@@ -106,6 +106,20 @@ type ExperienceLink = {
   description: string
 }
 
+type ExperienceAmbient = {
+  src: string
+  poster: string
+  numColumns: number
+  blend: number
+  highlight: number
+  brightness: number
+  saturation: number
+  bloom: number
+  fitMode?: 'cover' | 'ambient'
+  focalY?: number
+  posterTime?: number
+}
+
 type ExperienceCard = {
   shortTab: string
   eyebrow: string
@@ -114,6 +128,7 @@ type ExperienceCard = {
   narrative: string
   shipped: string[]
   video?: ExperienceVideo
+  ambientVideo: ExperienceAmbient
   links?: ExperienceLink[]
   wikiIds: string[]
 }
@@ -527,6 +542,19 @@ const experienceCards: ExperienceCard[] = [
       caption: 'Halo light-client walkthrough',
       renderMode: 'video',
     },
+    ambientVideo: {
+      src: '/ascii/lorenz.mp4',
+      poster: '/ascii/lorenz-poster.webp',
+      numColumns: 132,
+      blend: 14,
+      highlight: 22,
+      brightness: 1.38,
+      saturation: 1.32,
+      bloom: 0.44,
+      fitMode: 'ambient',
+      focalY: 0.42,
+      posterTime: 4,
+    },
     links: [
       {
         href: 'https://docs.halo-labs.xyz/',
@@ -558,6 +586,19 @@ const experienceCards: ExperienceCard[] = [
       'Built cross-chain telemetry pipelines grounding allocation decisions in verifiable on-chain state.',
       'Evaluated real-yield validator economics directly with Hyperliquid operators, laying the groundwork for Statebook.',
     ],
+    ambientVideo: {
+      src: '/ascii/npc-skyline.mp4',
+      poster: '/ascii/npc-skyline-poster.webp',
+      numColumns: 138,
+      blend: 10,
+      highlight: 12,
+      brightness: 1.18,
+      saturation: 1.24,
+      bloom: 0.28,
+      fitMode: 'cover',
+      focalY: 0.46,
+      posterTime: 2,
+    },
     links: [
       {
         href: 'https://npcgroup.xyz/',
@@ -584,6 +625,19 @@ const experienceCards: ExperienceCard[] = [
       'Celo: shaped public-goods funding strategy around account abstraction and quadratic funding.',
       'Dream DAO & Eco DAO: co-stewarded builder cohorts, governance tooling, and ecological primitives.',
     ],
+    ambientVideo: {
+      src: '/ascii/public-goods-nature.mp4',
+      poster: '/ascii/public-goods-nature-poster.webp',
+      numColumns: 134,
+      blend: 8,
+      highlight: 14,
+      brightness: 1.14,
+      saturation: 1.26,
+      bloom: 0.26,
+      fitMode: 'cover',
+      focalY: 0.48,
+      posterTime: 2,
+    },
     wikiIds: ['commons', 'ostrom', 'mauss', 'playbox'],
   },
 ]
@@ -1288,14 +1342,14 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                Making autonomous AI, markets, and human archives answer to
-                verifiable evidence, not rhetoric.
+                I build verifiable instruments for living worlds, where
+                self-modifying intelligence, markets, and human memory meet.
               </h1>
 
               <p className="hero__sub">
-                Researcher and systems builder working across formal admission
-                kernels, cryptographic assurance, market coherence, and
-                computational humanities.
+                Independent research and open systems across formal kernels,
+                cryptographic assurance, market coherence, and computational
+                humanities, kept honest by their negative results.
               </p>
 
               <div className="hero__actions">
@@ -1358,7 +1412,7 @@ function App() {
         <section className="ed-section" id="about">
           <div className="ed-section__head">
             <p className="ed-eyebrow">01 · Foundations</p>
-            <h2>First-person notes before the archive.</h2>
+            <h2>Background.</h2>
           </div>
 
           <div className="about-layout">
@@ -1466,12 +1520,12 @@ function App() {
           </div>
         </section>
 
-        {/* 02 · SELECTED WORK (Quiet Editorial Chapters, Clean Legibility) */}
+        {/* 02 · SELECTED WORK (Living GPU ASCII Cinema Stage) */}
         <section className="ed-section" id="archive">
           <div className="ed-section__head ed-section__head--split">
             <div>
               <p className="ed-eyebrow">02 · Selected Work</p>
-              <h2>Systems built, institutions stewarded.</h2>
+              <h2>Selected work.</h2>
             </div>
 
             <div className="work-switcher" role="tablist" aria-label="Selected work chapters">
@@ -1495,6 +1549,33 @@ function App() {
           </div>
 
           <article className="work-chapter work-chapter--staged" key={activeWork.title}>
+            <div className="work-chapter__ambient" aria-hidden="true">
+              <Video2Ascii
+                key={`${activeWork.title}-${activeWork.ambientVideo.src}`}
+                src={activeWork.ambientVideo.src}
+                poster={activeWork.ambientVideo.poster}
+                numColumns={activeWork.ambientVideo.numColumns}
+                colored={true}
+                blend={activeWork.ambientVideo.blend}
+                highlight={activeWork.ambientVideo.highlight}
+                brightness={activeWork.ambientVideo.brightness}
+                saturation={activeWork.ambientVideo.saturation}
+                bloom={activeWork.ambientVideo.bloom}
+                edgeAware={true}
+                lensing={0.28}
+                fitMode={activeWork.ambientVideo.fitMode}
+                focalY={activeWork.ambientVideo.focalY}
+                posterTime={activeWork.ambientVideo.posterTime}
+                audioEffect={0}
+                enableMouse={false}
+                enableRipple={false}
+                charset="cinematic"
+                isPlaying={true}
+                autoPlay={true}
+              />
+              <div className="work-chapter__wash" />
+            </div>
+
             <div className={`work-chapter__inner${activeWorkHasWalkthrough ? ' has-media' : ''}`}>
               <div className="work-chapter__prose">
                 <div className="work-chapter__meta">
@@ -1533,30 +1614,6 @@ function App() {
                     {activeWork.wikiIds.map((wid) => (
                       <WikiChip key={wid} id={wid} onOpen={openWiki} />
                     ))}
-                  </div>
-
-                  <div className="work-chapter__step">
-                    <button
-                      type="button"
-                      className="work-step-btn"
-                      onClick={() =>
-                        setWorkIdx((i) => (i - 1 + experienceCards.length) % experienceCards.length)
-                      }
-                      aria-label="Previous work chapter"
-                    >
-                      ← Prev
-                    </button>
-                    <span>
-                      {workIdx + 1} / {experienceCards.length}
-                    </span>
-                    <button
-                      type="button"
-                      className="work-step-btn"
-                      onClick={() => setWorkIdx((i) => (i + 1) % experienceCards.length)}
-                      aria-label="Next work chapter"
-                    >
-                      Next →
-                    </button>
                   </div>
                 </div>
               </div>
@@ -1660,7 +1717,7 @@ function App() {
           <div className="ed-section__head ed-section__head--split">
             <div>
               <p className="ed-eyebrow">05 · Live Sandboxed Terminal</p>
-              <h2>Talk to the personal model &amp; step through the ether.</h2>
+              <h2>Interactive terminal.</h2>
             </div>
 
             <div className="ed-lead">
@@ -1729,7 +1786,7 @@ function App() {
           <div className="colophon__left">
             <span className="colophon__name">Shaan Patel</span>
             <a href="#/research" className="colophon__receipt">
-              14 monographs · 16 SHA-256 verified bundles · 20 ManimGX renders
+              14 monographs · 16 SHA-256 verified bundles · 22 ManimGX renders
             </a>
           </div>
 

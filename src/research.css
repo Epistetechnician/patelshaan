@@ -592,9 +592,16 @@ html.paper.light-mode .rp {
   background: var(--body-background);
 }
 
+.post-film {
+  margin: 0;
+}
+
+.post-film__stage {
+  position: relative;
+}
+
 .post-film__frame {
   width: 100%;
-  border-radius: 4px;
   overflow: hidden;
   background: var(--body-background);
 }
@@ -605,6 +612,85 @@ html.paper.light-mode .rp {
   height: 100%;
   object-fit: contain;
   cursor: pointer;
+}
+
+.post-film__overlay {
+  position: absolute;
+  bottom: 18px;
+  right: 10px;
+  display: flex;
+  gap: 0.28rem;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.post-film__stage:hover .post-film__overlay,
+.post-film__stage:focus-within .post-film__overlay {
+  opacity: 0.94;
+}
+
+.post-film__overlay button {
+  font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--color-link);
+  background: var(--body-background);
+  border: 1px solid var(--gray-200);
+  border-radius: 2px;
+  padding: 0.24rem 0.46rem;
+  cursor: pointer;
+  transition: color 0.14s ease, border-color 0.14s ease;
+}
+
+.post-film__overlay button:hover {
+  color: var(--body-font-color);
+  border-color: var(--color-link);
+}
+
+.post-film__scrubber {
+  position: relative;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.post-film__scrubber::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: var(--gray-200);
+}
+
+.post-film__scrubber-fill {
+  position: relative;
+  height: 1.5px;
+  background: var(--line, #5b8aa6);
+  transition: width 120ms linear;
+}
+
+.post-film__caption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.35rem 1.25rem;
+  margin-top: 0.5rem;
+  color: var(--color-link);
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.post-film__src {
+  font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+  font-style: normal;
+  font-size: 0.68rem;
+  color: var(--gray-500);
+  white-space: nowrap;
 }
 
 .post-anim-stage {

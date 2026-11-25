@@ -1001,7 +1001,7 @@ export function EtherTerminal() {
               type="button"
               className="ether-head-btn"
               onClick={() => runLine('verify')}
-              title={`${healthTitle} — click to run live receipt verification`}
+              title={`${healthTitle}: click to run live receipt verification`}
             >
               {healthSummary}
             </button>

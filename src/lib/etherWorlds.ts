@@ -449,7 +449,7 @@ export const KAILAS_STOPS: EpochStop[] = [
     shortLabel: '52 km',
     time: '52.0 km · 4,670 m',
     detail: 'circuit closed · φ = 2π rad',
-    note: 'Completing the 52 km circuit closes the spatial mandala — confirming the double dissociation against calendar-locked Hajj and Holy Land pilgrimages.',
+    note: 'Completing the 52 km circuit closes the spatial mandala: confirming the double dissociation against calendar-locked Hajj and Holy Land pilgrimages.',
   },
 ]
 
@@ -518,7 +518,7 @@ export const TESSERACT_STOPS: EpochStop[] = [
     shortLabel: 'w=+0.5',
     time: 'w = +0.50',
     detail: 'XW rotation +π/4 · dual cell emergence',
-    note: 'Passing into positive w-coordinates turns the inner cell outward — showing how lower-dimensional shadows hide higher-dimensional invariants.',
+    note: 'Passing into positive w-coordinates turns the inner cell outward: showing how lower-dimensional shadows hide higher-dimensional invariants.',
   },
   {
     label: 'UPPER 4D BOUNDARY',
@@ -556,7 +556,7 @@ export const RULIAD_STOPS: EpochStop[] = [
     shortLabel: 't=5×10³',
     time: 'STEP 4800',
     detail: 'coarse-grained equivalence classes',
-    note: 'Any computationally bounded observer must quotient equivalent branches — the same compression boundary formalised in our Lean 4 Kraft theorems.',
+    note: 'Any computationally bounded observer must quotient equivalent branches: the same compression boundary formalised in our Lean 4 Kraft theorems.',
   },
   {
     label: 'ASYMPTOTIC RULIAD',
@@ -632,7 +632,7 @@ export const NOOSPHERE_STOPS: EpochStop[] = [
     shortLabel: 'k=(5,8)',
     time: 'mode k=(5,8,13)',
     detail: 'standing epistemic arches · Ψ = 0.91',
-    note: 'Independent replications reinforce shared truth across disciplines — AI containment, market coherence, and cultural archives alike.',
+    note: 'Independent replications reinforce shared truth across disciplines: AI containment, market coherence, and cultural archives alike.',
   },
   {
     label: 'AKASHIC LATTICE',

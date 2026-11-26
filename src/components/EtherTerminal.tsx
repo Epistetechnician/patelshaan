@@ -227,6 +227,7 @@ export function EtherTerminal() {
   const nextIdRef = useRef(2)
   const streamBlockIdRef = useRef<number | null>(null)
   const interruptedRef = useRef(false)
+  const liveBannerShownRef = useRef(false)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const stickToBottomRef = useRef(true)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -464,6 +465,17 @@ export function EtherTerminal() {
             items?: SuggestionItem[]
           }
           if (msg.type === 'ansi' && typeof msg.data === 'string') {
+            if (msg.data.includes('SPATEL // VM ETHER HARNESS')) {
+              if (liveBannerShownRef.current) return
+              liveBannerShownRef.current = true
+              streamBlockIdRef.current = null
+              setBlocks((prev) =>
+                prev.length === 1 && prev[0].id === 1
+                  ? [{ id: 1, kind: 'output', text: msg.data as string }]
+                  : [...prev.slice(-90), { id: nextIdRef.current++, kind: 'output', text: msg.data as string }],
+              )
+              return
+            }
             if (!interruptedRef.current) {
               appendStreamChunk(msg.data)
             }

@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {
+      "path": "verification_kit/local_verification_report.json",
+      "sha256": "796ba9b8b648e20018aa3c9f5a37d02a4be6b7b8ef99b86e105276ec002535fc"
+    },
+    {
+      "path": "primitives/lean_superinfo/PROOF_MANIFEST.json",
+      "sha256": "c06f2ed11ec6b995724552fe0e0ac03d74a83b2c4a5200a29104ccb75ee225f3"
+    }
+  ],
+  "n_tasks": 150,
+  "n_episodes": 1800,
+  "spend_usd": 29.27,
+  "model": "Qwen3-Coder-30B-A3B-Instruct-FP8",
+  "baseline_solved": 46,
+  "null_01_raw_solved": 54,
+  "null_01_raw_delta_pp": 5.3,
+  "null_01_admitted_delta_pp": 0.0,
+  "tamper_blocked": 2,
+  "tamper_total": 2,
+  "null_false_promotions": 0,
+  "null_total": 2,
+  "exact_dedup_pct": 40.6,
+  "semantic_dedup_pct": 55.9,
+  "sequential_pruning_pct": 9.1,
+  "eb_halfwidth_narrowing_pct": 50.5,
+  "lean_theorems": 26,
+  "formasec_parity": 600,
+  "promoted_scaffolds": 0,
+  "total_scaffolds": 8
+}

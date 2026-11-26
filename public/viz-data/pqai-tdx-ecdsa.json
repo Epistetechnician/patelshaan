@@ -1,0 +1,38 @@
+{
+  "sources": [
+    {
+      "path": "site/src/ecdsafail-data.json",
+      "sha256": "724782192545ec11c7634df6ac553d7a771c2e6fc0af57833b7772e9a13af330"
+    },
+    {
+      "path": "verification_kit/local_verification_report.json",
+      "sha256": "796ba9b8b648e20018aa3c9f5a37d02a4be6b7b8ef99b86e105276ec002535fc"
+    }
+  ],
+  "ecdsa_fail": {
+    "reduction_pct": 86.1,
+    "verified_qx_t": 1823174786,
+    "bls12_381_qx_t": 6640000000,
+    "min_qubits": 669,
+    "min_toffoli": 746114,
+    "submissions": 1716,
+    "with_metrics": 1370
+  },
+  "pqai": {
+    "lean_sorry_count": 0,
+    "pqcl_theorems": 4,
+    "adversarial_caught": 28,
+    "adversarial_total": 28,
+    "baseline_caught": 2,
+    "diff_test_agreement_pct": 100.0,
+    "tdx_gates_enforced": 5,
+    "tdx_gates_total": 5,
+    "maverick_honest_ok": 60,
+    "maverick_cheat_lsb_caught": true,
+    "schemes": [
+      "Ed25519",
+      "ML-DSA-65 (FIPS 204)",
+      "SLH-DSA (FIPS 205)"
+    ]
+  }
+}

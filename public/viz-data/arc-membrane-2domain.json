@@ -1,0 +1,56 @@
+{
+  "sources": [
+    {
+      "path": "arc_membrane/track5_math500_n400_verified_report.json",
+      "sha256": "db752fad007789cdbce9483dd2334a41dffccc3add7c9ae87ade19a8c29a4dff"
+    },
+    {
+      "path": "arc_membrane/track5_general_retention_n200_manifest.json",
+      "sha256": "e01e14493cd5afce872144b7f80f3da047241cbd50be446d4e676db826624dbf"
+    },
+    {
+      "path": "arc_membrane/track5b_coding_qr_nullspace_manifest.json",
+      "sha256": "aeb9e715d6ef8a07b6a098caab734faf0581cc97b5b9a37cc968b044f180e668"
+    }
+  ],
+  "model_id": "Qwen/Qwen3-30B-A3B",
+  "math500": {
+    "n": 400,
+    "base_acc": 0.3975,
+    "arm_c_acc": 0.7625,
+    "delta_pp": 36.5,
+    "f2p": 152,
+    "p2f": 6,
+    "arm_b_replay_kl": 0.1334,
+    "arm_c_replay_kl": 0.00063,
+    "replay_kl_ratio": 212.2,
+    "arm_b_unseen_kl": 0.0967,
+    "arm_c_unseen_kl": 0.00184,
+    "unseen_kl_ratio": 52.5,
+    "mmlu_flips_c": 0,
+    "orth_err_c": 9.76e-09
+  },
+  "coding": {
+    "n": 264,
+    "base_acc": 0.4810606060606061,
+    "arm_b_acc": 0.8825757575757576,
+    "arm_c_acc": 0.8636363636363636,
+    "delta_pp": 38.3,
+    "humaneval_base": 0.38414634146341464,
+    "humaneval_c": 0.8719512195121951,
+    "humaneval_delta_pp": 48.8,
+    "mbpp_base": 0.64,
+    "mbpp_c": 0.85,
+    "f2p": 105,
+    "p2f": 4,
+    "arm_b_replay_kl": 0.3079,
+    "arm_c_replay_kl": 0.00058,
+    "replay_kl_ratio": 533.8,
+    "arm_b_unseen_kl": 0.3255,
+    "arm_c_unseen_kl": 0.00277,
+    "unseen_kl_ratio": 117.3,
+    "mmlu_flips_c": 0,
+    "orth_err_c": 1.26e-08
+  },
+  "qr_bases_count": 839
+}

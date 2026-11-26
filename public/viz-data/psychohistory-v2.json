@@ -1,0 +1,67 @@
+{
+  "sources": [
+    {
+      "path": "primitives/psychohistory/results/psychohistory_eval_v2.json",
+      "sha256": "4413b5d50ea47294e8e3666aea1111596fa653beaaa8b5fc47d3b145bec350f1"
+    }
+  ],
+  "total_events": 1673,
+  "polymarket_events": 1023,
+  "kalshi_events": 650,
+  "real_holdout_events": 669,
+  "lean_invariants_passed": 1673,
+  "certified_p1_cells": 4,
+  "total_p1_cells": 12,
+  "honest_null_cells": 8,
+  "cells": [
+    {
+      "label": "Pooled \u00b7 Mispricing",
+      "auroc": 0.981,
+      "delta_bits": 0.3822,
+      "e_val": 1000000000000.0,
+      "certified": true
+    },
+    {
+      "label": "Kalshi \u00b7 Mispricing",
+      "auroc": 0.975,
+      "delta_bits": 1.1023,
+      "e_val": 1000000000000.0,
+      "certified": true
+    },
+    {
+      "label": "Pooled \u00b7 Surprise",
+      "auroc": 0.769,
+      "delta_bits": 0.1721,
+      "e_val": 3431000.0,
+      "certified": true
+    },
+    {
+      "label": "Poly \u00b7 Mispricing",
+      "auroc": 0.812,
+      "delta_bits": 0.1091,
+      "e_val": 650400.0,
+      "certified": true
+    },
+    {
+      "label": "Kalshi \u00b7 Surprise",
+      "auroc": 0.945,
+      "delta_bits": 0.0917,
+      "e_val": 8.03,
+      "certified": false
+    },
+    {
+      "label": "Poly \u00b7 Surprise",
+      "auroc": 0.665,
+      "delta_bits": 0.0153,
+      "e_val": 1.22,
+      "certified": false
+    },
+    {
+      "label": "Pooled \u00b7 Settle Lag",
+      "auroc": 0.786,
+      "delta_bits": -0.0137,
+      "e_val": 0.02,
+      "certified": false
+    }
+  ]
+}

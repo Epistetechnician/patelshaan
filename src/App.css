@@ -5411,11 +5411,135 @@ button:focus-visible {
   color: var(--accent);
 }
 
+/* ---------- ECDSA.fail Live Pareto & PQC/PQAI Panel ---------- */
+
+.ecdsa-embed {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface, rgba(255, 255, 255, 0.02));
+}
+
+.ecdsa-embed__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.ecdsa-embed__eyebrow {
+  display: block;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.ecdsa-embed__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.ecdsa-embed__status-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+}
+
+.ecdsa-embed__pill {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--ink-muted);
+}
+
+.ecdsa-embed__pill.is-live {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ecdsa-embed__ext {
+  font-size: 0.84rem;
+}
+
+.ecdsa-embed__svg {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.5rem 0;
+}
+
+[data-theme='light'] .pareto__grid {
+  stroke: rgba(20, 20, 20, 0.1);
+}
+
+[data-theme='light'] .pareto__pt {
+  fill: rgba(20, 20, 20, 0.28);
+}
+
+[data-theme='light'] .pareto__fpt {
+  stroke: #ffffff;
+}
+
+.ecdsa-embed__pqc-bar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.ecdsa-embed__pqc-item {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.ecdsa-embed__pqc-k {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.ecdsa-embed__pqc-item p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.ecdsa-embed__pqc-item strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.ecdsa-embed__note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+
 /* ---------- Responsive ProofShowcase & Null Ledger ---------- */
 
 @media (max-width: 900px) {
   .proof-stage__stat {
     text-align: left;
+  }
+
+  .ecdsa-embed__pqc-bar {
+    grid-template-columns: 1fr;
   }
 
   .null-ledger__row {

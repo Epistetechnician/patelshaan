@@ -32,38 +32,64 @@ function themedSrc(src: string, dark: boolean): string {
 
 export function ManimFilm({ film }: { film: ManimFilmSpec }) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const endedRef = useRef(false)
+  const userPausedRef = useRef(false)
   const dark = useIsDarkTheme()
   const activeSrc = themedSrc(film.src, dark)
-  const [playing, setPlaying] = useState(true)
+  const [playing, setPlaying] = useState(false)
+  const [ended, setEnded] = useState(false)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [rate, setRate] = useState(1)
+  const [rate, setRate] = useState(0.5)
+
+  useEffect(() => {
+    endedRef.current = false
+    userPausedRef.current = false
+  }, [activeSrc])
+
+  useEffect(() => {
+    const v = videoRef.current
+    if (v) v.playbackRate = rate
+  }, [rate, activeSrc])
 
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
+    v.playbackRate = rate
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          if (endedRef.current || userPausedRef.current) return
+          v.playbackRate = rate
           v.play().then(() => setPlaying(true)).catch(() => setPlaying(false))
         } else {
-          v.pause()
-          setPlaying(false)
+          if (!v.paused) {
+            v.pause()
+            setPlaying(false)
+          }
         }
       },
       { threshold: 0.2 },
     )
     io.observe(v)
     return () => io.disconnect()
-  }, [activeSrc])
+  }, [activeSrc, rate])
 
   const togglePlay = () => {
     const v = videoRef.current
     if (!v) return
-    if (v.paused) {
-      void v.play()
-      setPlaying(true)
+    if (v.paused || endedRef.current || v.ended) {
+      if (endedRef.current || v.ended || (v.duration && v.currentTime >= v.duration - 0.05)) {
+        v.currentTime = 0
+        setProgress(0)
+        endedRef.current = false
+        setEnded(false)
+      }
+      userPausedRef.current = false
+      v.playbackRate = rate
+      v.play().then(() => setPlaying(true)).catch(() => setPlaying(false))
     } else {
+      userPausedRef.current = true
       v.pause()
       setPlaying(false)
     }
@@ -72,13 +98,17 @@ export function ManimFilm({ film }: { film: ManimFilmSpec }) {
   const replay = () => {
     const v = videoRef.current
     if (!v) return
+    endedRef.current = false
+    userPausedRef.current = false
+    setEnded(false)
     v.currentTime = 0
-    void v.play()
-    setPlaying(true)
+    setProgress(0)
+    v.playbackRate = rate
+    v.play().then(() => setPlaying(true)).catch(() => setPlaying(false))
   }
 
   const cycleRate = () => {
-    const next = rate === 1 ? 0.5 : rate === 0.5 ? 1.5 : 1
+    const next = rate === 0.5 ? 1 : rate === 1 ? 1.5 : 0.5
     setRate(next)
     if (videoRef.current) videoRef.current.playbackRate = next
   }
@@ -90,6 +120,10 @@ export function ManimFilm({ film }: { film: ManimFilmSpec }) {
     const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
     v.currentTime = frac * duration
     setProgress(frac * 100)
+    if (frac < 0.995) {
+      endedRef.current = false
+      setEnded(false)
+    }
   }
 
   return (
@@ -101,13 +135,24 @@ export function ManimFilm({ film }: { film: ManimFilmSpec }) {
             ref={videoRef}
             src={activeSrc}
             muted
-            loop
             playsInline
-            autoPlay
             preload="auto"
             onLoadedMetadata={(e) => {
               setDuration(e.currentTarget.duration || 0)
+              setEnded(false)
+              setProgress(0)
               e.currentTarget.playbackRate = rate
+            }}
+            onPlay={(e) => {
+              e.currentTarget.playbackRate = rate
+              setPlaying(true)
+            }}
+            onPause={() => setPlaying(false)}
+            onEnded={() => {
+              endedRef.current = true
+              setEnded(true)
+              setPlaying(false)
+              setProgress(100)
             }}
             onTimeUpdate={(e) => {
               const d = e.currentTarget.duration || 1
@@ -118,7 +163,12 @@ export function ManimFilm({ film }: { film: ManimFilmSpec }) {
         </div>
 
         <div className="post-film__overlay" role="toolbar" aria-label={`${film.title} playback controls`}>
-          <button type="button" onClick={togglePlay} aria-label={playing ? 'Pause film' : 'Play film'} title={playing ? 'Pause' : 'Play'}>
+          <button
+            type="button"
+            onClick={togglePlay}
+            aria-label={playing ? 'Pause film' : ended ? 'Replay film' : 'Play film'}
+            title={playing ? 'Pause' : ended ? 'Replay' : 'Play'}
+          >
             {playing ? '❚❚' : '▶'}
           </button>
           <button type="button" onClick={replay} aria-label="Replay film" title="Replay">

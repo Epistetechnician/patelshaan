@@ -436,6 +436,22 @@
         }
       ]
     },
+    "playbox-f3-autoresearch.json": {
+      "sha256": "163d5ea96c42e98308d104e7a1de2d6bff332852ea3d599f6828732e74d9c45f",
+      "bytes": 2907,
+      "sources": [
+        {
+          "path": "../playbox/docs/f3/pilot2/p2out.tgz",
+          "scope": "sibling",
+          "sha256": "979ed641d479c9f9ecb5041b831b569cccd380f60201c5823d1be1f875f6ca1e"
+        },
+        {
+          "path": "../playbox/docs/f3/pilot/receipts.jsonl",
+          "scope": "sibling",
+          "sha256": "72484d98839cbca6f0dc21206a376fbe3131c57895b43f554bd0c1be88396bbb"
+        }
+      ]
+    },
     "ahcl-real.json": {
       "sha256": "63b66220f2721292e550646567b25df0ef7b4cb34f7f2e5aed1037b6046e99cc",
       "bytes": 1175,

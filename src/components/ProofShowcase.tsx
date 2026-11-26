@@ -103,7 +103,7 @@ const PROOFS: ProofEntry[] = [
       title: 'PQC & PQAI: ECDSA.fail Quantum Compression Meets Playbox T3 Intel TDX',
       src: '/viz-media/pqai-tdx-ecdsa.mp4',
       caption:
-        'ManimGX render from `pqai-tdx-ecdsa.json`: Connects offensive quantum resource estimation on secp256k1 (−86.1% reversible point-addition cost to 1.82B Q×T, BLS12-381 6.64B analytical) with defensive Post-Quantum AI custody — GCP Intel TDX Confidential Space (5/5 gates, secboot=true, dbgstat=disabled), FIPS 204/205 tri-signed roots proved in Lean 4 (0 sorry), 28/28 adversarial EIP-8288/8479 mutations caught (vs 2/28 unsound baseline), and Maverick WAN 60/60 honest + 1-LSB cheat detection.',
+        'ManimGX render from `pqai-tdx-ecdsa.json`, `ecdsa-autoresearch.json`, and `playbox-f3-autoresearch.json`: Connects ECDSA.fail quantum resource compression on secp256k1 (−86.1% verified, 1.82B Q×T) with Playbox T3 Intel TDX + FIPS 204/205 PQAI custody (5/5 TDX gates, 0-sorry Lean 4, 28/28 adversarial mutations caught), then animates real autoresearch hill-climbing charts without reward hacking — ECDSA.fail live frontier (10.75B → 885.5M Q×T across 4,586 submissions, Epistetechnician 6/6 verified 5.18B → 2.51B on 9,024 shots) alongside Playbox F3 H100 climbmix receipts (245.5s → 83.5s, −66.0% / 2.94×, 2nd-node replayed, 2/2 injected reward hacks caught by sealed holdout).',
       scriptPath: 'viz/manimgx/pqai_tdx_ecdsa.py',
     },
     prose:

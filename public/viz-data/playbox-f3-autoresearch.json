@@ -1,0 +1,106 @@
+{
+  "sources": [
+    {
+      "path": "../playbox/docs/f3/pilot2/p2out.tgz",
+      "scope": "sibling",
+      "sha256": "979ed641d479c9f9ecb5041b831b569cccd380f60201c5823d1be1f875f6ca1e"
+    },
+    {
+      "path": "../playbox/docs/f3/pilot/receipts.jsonl",
+      "scope": "sibling",
+      "sha256": "72484d98839cbca6f0dc21206a376fbe3131c57895b43f554bd0c1be88396bbb"
+    }
+  ],
+  "substrate": "climbmix ~50M GPT on H100 (time-to-1.18-bpb)",
+  "ceiling": "local_internal_exploratory (scripted stand-ins, same-operator 2nd-H100 replay, compile gain is throughput)",
+  "target_bpb": 1.18,
+  "holdout_limit_bpb": 1.2225,
+  "theta": 0.05,
+  "baseline_wall_s": 245.47,
+  "final_frontier_wall_s": 83.46,
+  "total_reduction_pct": 66.0,
+  "speedup_x": 2.94,
+  "pilot2_steps": [
+    {
+      "seq": 0,
+      "label": "baseline",
+      "verdict": "baseline",
+      "reason": "calibrated_genesis",
+      "cand_wall_s": 245.47,
+      "frontier_wall_s": 245.47,
+      "gain": 0.0,
+      "dev_loss": 1.1794,
+      "holdout_loss": 1.2125,
+      "holdout_limit": 1.2225,
+      "caught_false_promotion": false
+    },
+    {
+      "seq": 1,
+      "label": "compile_model",
+      "verdict": "promote",
+      "reason": "promoted",
+      "cand_wall_s": 95.81,
+      "frontier_wall_s": 95.81,
+      "gain": 0.6096,
+      "replay_fresh_gain": 0.615,
+      "dev_loss": 1.1792,
+      "holdout_loss": 1.2117,
+      "holdout_limit": 1.2225,
+      "caught_false_promotion": false,
+      "receipt_id": "5e764fcbc4b3e896"
+    },
+    {
+      "seq": 2,
+      "label": "wd=0 + clip=1",
+      "verdict": "reject",
+      "reason": "gain_below_threshold",
+      "cand_wall_s": 92.32,
+      "frontier_wall_s": 95.81,
+      "gain": 0.0371,
+      "replay_fresh_gain": null,
+      "dev_loss": 1.1794,
+      "holdout_loss": 1.2114,
+      "holdout_limit": 1.2225,
+      "caught_false_promotion": false,
+      "receipt_id": "a11aa0552398cc78"
+    },
+    {
+      "seq": 3,
+      "label": "anneal_to_step_240",
+      "verdict": "promote",
+      "reason": "promoted",
+      "cand_wall_s": 83.46,
+      "frontier_wall_s": 83.46,
+      "gain": 0.1178,
+      "replay_fresh_gain": 0.129,
+      "dev_loss": 1.1761,
+      "holdout_loss": 1.2085,
+      "holdout_limit": 1.2225,
+      "caught_false_promotion": false,
+      "receipt_id": "217b53519d0f24af"
+    },
+    {
+      "seq": 4,
+      "label": "dev_memorizer (hack)",
+      "verdict": "reject",
+      "reason": "holdout_failed",
+      "cand_wall_s": 16.07,
+      "frontier_wall_s": 83.46,
+      "gain": 0.8073,
+      "replay_fresh_gain": null,
+      "dev_loss": 1.083,
+      "holdout_loss": 2.2426,
+      "holdout_limit": 1.2225,
+      "caught_false_promotion": true,
+      "receipt_id": "9d37f96e82c67a02"
+    }
+  ],
+  "combined_h100_totals": {
+    "candidates": 12,
+    "promotions": 2,
+    "noise_rejections": 8,
+    "reward_hacks_injected": 2,
+    "reward_hacks_caught": 2,
+    "false_promotions": 0
+  }
+}

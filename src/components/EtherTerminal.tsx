@@ -226,6 +226,7 @@ export function EtherTerminal() {
   const activeWorldRef = useRef<WorldId | null>(null)
   const nextIdRef = useRef(2)
   const streamBlockIdRef = useRef<number | null>(null)
+  const interruptedRef = useRef(false)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const stickToBottomRef = useRef(true)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -463,12 +464,20 @@ export function EtherTerminal() {
             items?: SuggestionItem[]
           }
           if (msg.type === 'ansi' && typeof msg.data === 'string') {
-            appendStreamChunk(msg.data)
+            if (!interruptedRef.current) {
+              appendStreamChunk(msg.data)
+            }
           } else if (msg.type === 'clear') {
             streamBlockIdRef.current = null
             setBlocks([])
           } else if (msg.type === 'busy') {
-            setBusyLabel(msg.active ? msg.label || 'streaming from vm…' : null)
+            if (msg.active) {
+              interruptedRef.current = false
+              setBusyLabel(msg.label || 'streaming from vm…')
+            } else {
+              setBusyLabel(null)
+              streamBlockIdRef.current = null
+            }
           } else if (msg.type === 'suggestions' && Array.isArray(msg.items)) {
             setSuggestions(msg.items.slice(0, 5))
           } else if (msg.type === 'telemetry' && msg.data && typeof msg.data === 'object') {
@@ -649,17 +658,21 @@ export function EtherTerminal() {
   }
 
   const handleInterrupt = useCallback(() => {
+    interruptedRef.current = true
+    streamBlockIdRef.current = null
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({ type: 'interrupt' }))
     }
     setBusyLabel(null)
-    appendBlock('output', '\x1b[38;2;138;134;126m^C interrupted\x1b[0m\n')
+    setNarration((prev) => ({ ...prev, streaming: false }))
+    appendBlock('output', '\x1b[38;2;217;148;96m^C\x1b[0m \x1b[38;2;138;134;126m(stopped)\x1b[0m\n')
   }, [appendBlock])
 
   const runLine = useCallback(
     (rawLine: string) => {
       const line = rawLine.trim()
       if (!line) return
+      interruptedRef.current = false
 
       setActiveWorld(null)
       setHistory((prev) => [line, ...prev.filter((item) => item !== line)].slice(0, 60))
@@ -962,6 +975,7 @@ export function EtherTerminal() {
   }
 
   const handleWheel = (e: WheelEvent<HTMLCanvasElement>) => {
+    if (!expanded && !e.ctrlKey && !e.metaKey) return
     e.preventDefault()
     const factor = e.deltaY > 0 ? 0.92 : 1.08
     camRef.current.zoom = Math.max(0.45, Math.min(2.8, camRef.current.zoom * factor))

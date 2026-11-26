@@ -495,7 +495,7 @@ export function ResearchIndex({ thread }: { thread?: string }) {
             </figure>
 
             <p className="home-intro">
-              Research monographs and systems by <a href="#/">Shaan Patel</a> across evaluation integrity,
+              Research notes and systems by <a href="#/">Shaan Patel</a> across evaluation integrity,
               self-compiling agents, mechanistic interpretability, verifiable compute, and computational humanities.
               Every post reports its positive findings alongside nulls, confounds, and reproducible receipts.
             </p>

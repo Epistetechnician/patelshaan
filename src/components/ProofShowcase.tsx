@@ -41,7 +41,7 @@ const PROOFS: ProofEntry[] = [
     ceiling:
       'Verified on Qwen3-30B-A3B MATH-500 (400 sealed problems) and single-host H100/A100 loops; open-ended continual agents across drifting domains remain ahead.',
     monographHref: '#/research/arc-membrane',
-    monographLabel: 'Read ARC Membrane monograph →',
+    monographLabel: 'Read ARC Membrane research →',
     secondaryHref: '/viz-data/arc-membrane.json',
     secondaryLabel: 'Verified dataset (JSON) ↗',
     wikiId: 'evidence-bounded',
@@ -67,7 +67,7 @@ const PROOFS: ProofEntry[] = [
     ceiling:
       'Empirical-Bernstein width gain narrows toward Hoeffding on high-variance binary SWE tasks, and the 238-trace trajectory lift is retrospective across 34 tasks pending prospective out-of-sample Track A.',
     monographHref: '#/research/holdout-ledger',
-    monographLabel: 'Read Holdout Ledger monograph →',
+    monographLabel: 'Read Holdout Ledger research →',
     secondaryHref: '#/research/formasec',
     secondaryLabel: 'FormaSec kernel →',
     wikiId: 'holdout-ledger',
@@ -93,7 +93,7 @@ const PROOFS: ProofEntry[] = [
     ceiling:
       'Passage coders to date are blind LLM raters (κ = 0.90 Tibetan overlaps, α = 0.86 episodes); blinded Sanskrit (233), Tibetan/Bon (243), and 40-episode review sheets await human philologist scoring.',
     monographHref: '#/research/sacred-geography-kailas',
-    monographLabel: 'Read Mount Kailash monograph →',
+    monographLabel: 'Read Mount Kailash study →',
     secondaryHref: '/viz-data/kailas-two-clock.json',
     secondaryLabel: 'Verified dataset (JSON) ↗',
     wikiId: 'sacred-geography-kailas',
@@ -265,7 +265,7 @@ export function ProofShowcase({
         <div className="null-ledger__head">
           <span className="null-ledger__eyebrow">Negative results kept in the permanent ledger</span>
           <a href="#/research" className="text-link">
-            All 14 monographs &amp; SHA-256 receipts →
+            All 14 research entries &amp; SHA-256 receipts →
           </a>
         </div>
 

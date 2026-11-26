@@ -487,7 +487,7 @@ export function ExplorerFeed({
             Unfold any thread for its live interactive embed, or jump straight to
             the{' '}
             <a href="#/research" className="text-link">
-              full monograph →
+              full research index →
             </a>
           </p>
         </div>
@@ -676,7 +676,7 @@ export function ExplorerFeed({
                   <div className="dispatch-card__quicklinks">
                     {item.monographHref ? (
                       <a href={item.monographHref} className="dispatch-link">
-                        Monograph →
+                        Research →
                       </a>
                     ) : null}
                     {item.repoHref && item.repoLabel ? (
@@ -741,7 +741,7 @@ export function ExplorerFeed({
                     <div className="dispatch-sheet__foot">
                       {item.monographHref ? (
                         <a href={item.monographHref} className="btn-quiet">
-                          Open full monograph &amp; figures →
+                          Open full research &amp; figures →
                         </a>
                       ) : null}
                       {item.essaySlug ? (

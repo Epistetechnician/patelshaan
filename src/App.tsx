@@ -1070,7 +1070,7 @@ function SiteHeader({
           <a href="#frontiers">Proofs</a>
           <a href="#writings">Writing</a>
           <a href="#install">Terminal</a>
-          <a href="#/research">Monograph</a>
+          <a href="#/research">Research</a>
         </nav>
 
         <div className="site-nav__right">
@@ -1093,7 +1093,7 @@ function SiteHeader({
             {lightMode ? '☾' : '☼'}
           </button>
           <a href="#/research" className="site-nav__mobile-link">
-            Monograph
+            Research
           </a>
           <button
             type="button"
@@ -1127,7 +1127,7 @@ function SiteHeader({
               <span>05</span> Live Terminal (spatel)
             </a>
             <a href="#/research" className="site-nav__drawer-research" onClick={closeMenu}>
-              <span>→</span> Full Research Monograph &amp; Receipts
+              <span>→</span> Full Research &amp; Receipts
             </a>
           </nav>
         </>
@@ -1354,7 +1354,7 @@ function App() {
 
               <div className="hero__actions">
                 <a href="#/research" className="btn-primary">
-                  Research monograph <span aria-hidden="true">→</span>
+                  Research <span aria-hidden="true">→</span>
                 </a>
                 <a href="#frontiers" className="btn-quiet">
                   Selected proofs ↓
@@ -1786,7 +1786,7 @@ function App() {
           <div className="colophon__left">
             <span className="colophon__name">Shaan Patel</span>
             <a href="#/research" className="colophon__receipt">
-              14 monographs · 16 SHA-256 verified bundles · 22 ManimGX renders
+              14 research entries · 16 SHA-256 verified bundles · 22 ManimGX renders
             </a>
           </div>
 
@@ -1795,7 +1795,7 @@ function App() {
             <a href="#archive">Work</a>
             <a href="#frontiers">Proofs</a>
             <a href="#writings">Writing</a>
-            <a href="#/research">Monograph</a>
+            <a href="#/research">Research</a>
           </nav>
 
           <div className="colophon__socials">

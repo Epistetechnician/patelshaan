@@ -763,7 +763,7 @@ export function executeLocalCommand(
       }
     }
     const list = [
-      boxHeader(`VERIFIED RESEARCH MONOGRAPH (${researchRepos.length} REPOS)`, 'click any `research <slug>`'),
+      boxHeader(`VERIFIED RESEARCH (${researchRepos.length} REPOS)`, 'click any `research <slug>`'),
       ...researchRepos.map(
         (r) =>
           `  ${CYAN}▸${R} \`${GOLD}research ${r.slug}${R}\`  ${BRIGHT}${r.name}${R}\n    ${MUTED}${r.results[0]?.value ?? ''}: ${r.results[0]?.label ?? r.tagline}${R}`,

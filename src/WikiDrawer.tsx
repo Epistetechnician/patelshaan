@@ -511,7 +511,7 @@ export function WikiDrawer({
                 className="btn-quiet"
                 onClick={onClose}
               >
-                Monograph page →
+                Research page →
               </a>
             ) : null}
 

@@ -1342,15 +1342,15 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                I build machines, proofs, and markets that cannot lie about
-                what they know.
+                As simulation becomes free, truth becomes the only scarce
+                currency. I build what earns it.
               </h1>
 
               <p className="hero__sub">
-                Self-modifying AI, formal Rust and Lean kernels, market
-                coherence, and computational humanities. Every claim ships with
-                raw runs, cryptographic receipts, and the hypotheses I
-                disproved along the way.
+                Self-modifying AI, formal Rust and Lean kernels, coherent
+                markets, and the long arc of human memory. Every line here
+                ships with raw runs, cryptographic receipts, and the ideas I
+                broke along the way.
               </p>
 
               <div className="hero__actions">

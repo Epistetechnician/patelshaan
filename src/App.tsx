@@ -1342,15 +1342,15 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                The universe never takes anyone’s word for it. Neither should
-                our intelligence, our economies, or our histories.
+                As simulation becomes free, verifiable truth becomes the only
+                sovereign currency. I build what earns it.
               </h1>
 
               <p className="hero__sub">
-                I engineer self-rewriting models, formal Rust and Lean kernels,
-                coherent markets, and open archives where proof is native to
-                the design, and every claim ships with the runs, hashes, and
-                broken theories that forged it.
+                Self-modifying AI, formal Rust and Lean kernels, coherent
+                markets, and the long arc of human memory. Built from first
+                principles and shipped with raw runs, cryptographic receipts,
+                and every theory I broke along the way.
               </p>
 
               <div className="hero__actions">

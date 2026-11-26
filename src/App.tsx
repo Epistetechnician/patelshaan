@@ -1361,7 +1361,7 @@ function App() {
                   Selected proofs ↓
                 </a>
                 <a href="#install" className="btn-quiet">
-                  Live RPi5 terminal ↓
+                  My terminal ↓
                 </a>
               </div>
             </div>

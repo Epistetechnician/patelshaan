@@ -188,8 +188,8 @@ const DISPATCHES: DispatchItem[] = [
     wikiIds: ['sacred-geography-kailas', 'sacred', 'geertz', 'eliadeSacred'],
     monographHref: '#/research/sacred-geography-kailas',
     essaySlug: 'approaching-breakthroughs-across-systems',
-    repoHref: 'https://github.com/Epistetechnician/kailas-corpus',
-    repoLabel: 'kailas-corpus ↗',
+    repoHref: '/viz-data/kailas-two-clock.json',
+    repoLabel: 'Verified dataset (JSON) ↗',
   },
   {
     id: 'playbox-caduceus',

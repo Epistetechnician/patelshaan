@@ -470,9 +470,9 @@ export const kailas: FieldStrand = {
   },
   sources: [
     {
-      label: 'Epistetechnician/kailas-corpus (GitHub)',
-      url: 'https://github.com/Epistetechnician/kailas-corpus',
-      why: 'Open-license manifests, Corpus v3 (`RESULTS_V3.md`), pilgrimage coding (`coding/RESULTS_CODING_V2.md`), cipher & pramāṇa MDL audits (`analysis/ciphers.py`, `pramana_colophons.py`), and scholar-handoff v2 packets.',
+      label: 'kailas-two-clock.json (SHA-256 verified coding & Two-Clock MDL bundle)',
+      url: '/viz-data/kailas-two-clock.json',
+      why: 'Published SHA-256 dataset containing all 126 coded kora episodes, Two-Clock Rissanen MDL receipts, and quarantine invariants (raw working repository remains private pending external philologist double-scoring).',
     },
     {
       label:

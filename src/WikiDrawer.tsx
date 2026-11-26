@@ -206,8 +206,8 @@ function resolveWikiNode(id: string): WikiResolvedNode | null {
       })),
       essaySlug: 'approaching-breakthroughs-across-systems',
       monographHref: `#/research/${kailas.slug}`,
-      externalHref: 'https://github.com/Epistetechnician/kailas-corpus',
-      externalLabel: 'kailas-corpus ↗',
+      externalHref: '/viz-data/kailas-two-clock.json',
+      externalLabel: 'Verified dataset (JSON) ↗',
       embedDispatchId: 'kailas-corpus',
     }
   }

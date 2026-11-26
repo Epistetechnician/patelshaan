@@ -577,8 +577,8 @@ function FieldPage({ field }: { field: FieldStrand }) {
           <div className="post-byline">
             <span>Shaan Patel</span>
             <span>Nov 2026</span>
-            <a href="https://github.com/Epistetechnician/kailas-corpus" target="_blank" rel="noreferrer">
-              kailas-corpus ↗
+            <a href="/viz-data/kailas-two-clock.json" target="_blank" rel="noreferrer">
+              Verified dataset (JSON) ↗
             </a>
           </div>
         </header>

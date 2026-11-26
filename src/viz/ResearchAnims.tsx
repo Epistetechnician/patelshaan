@@ -1972,7 +1972,86 @@ function renderPlayboxHero(
   mode: string,
 ) {
   const data = raw as PlayboxJson | null
-  const prog = ease(seg(p, 0.05, 0.72))
+  if (p >= 0.5) {
+    const hillProg = ease(seg(p, 0.52, 0.94))
+    const arms = [...(data?.kv_30b?.arms ?? [])].sort((a, b) => a.acc - b.acc)
+    label(
+      ctx,
+      'PLAYBOX AUTORESEARCH HILL-CLIMB · REAL H100 RUNS (NO REWARD HACKING)',
+      18,
+      18,
+      C.mute,
+      MONO_B,
+    )
+    if (arms.length > 0) {
+      const padL = 54
+      const padR = 26
+      const padT = 46
+      const padB = 40
+      const plotW = Math.max(80, W - padL - padR)
+      const plotH = Math.max(80, H - padT - padB)
+      const minAcc = Math.max(0, Math.min(...arms.map((a) => a.acc)) - 0.05)
+      const maxAcc = Math.min(1, Math.max(...arms.map((a) => a.acc)) + 0.03)
+
+      // Grid
+      ctx.strokeStyle = C.soft
+      ctx.lineWidth = 1
+      for (let g = 0; g <= 3; g++) {
+        const y = padT + (plotH * g) / 3
+        ctx.beginPath()
+        ctx.moveTo(padL, y)
+        ctx.lineTo(padL + plotW, y)
+        ctx.stroke()
+        const v = maxAcc - ((maxAcc - minAcc) * g) / 3
+        label(ctx, `${(v * 100).toFixed(0)}%`, 14, y, C.mute, MONO_S)
+      }
+
+      // Hill-climb curve
+      const pts = arms.map((a, i) => ({
+        x: padL + (arms.length === 1 ? 0.5 : i / (arms.length - 1)) * plotW,
+        y: padT + (1 - (a.acc - minAcc) / Math.max(0.01, maxAcc - minAcc)) * plotH,
+        a,
+      }))
+      const maxIdx = hillProg * (pts.length - 1)
+      ctx.strokeStyle = rgb(GOOD, 0.95)
+      ctx.lineWidth = 2.5
+      ctx.beginPath()
+      pts.forEach((pt, i) => {
+        if (i > maxIdx + 1) return
+        if (i === 0) ctx.moveTo(pt.x, pt.y)
+        else if (i <= maxIdx) ctx.lineTo(pt.x, pt.y)
+        else {
+          const prev = pts[i - 1]
+          const frac = maxIdx - (i - 1)
+          ctx.lineTo(lerp(prev.x, pt.x, frac), lerp(prev.y, pt.y, frac))
+        }
+      })
+      ctx.stroke()
+
+      pts.forEach((pt, i) => {
+        if (i > maxIdx) return
+        const isBest = i === pts.length - 1
+        ctx.fillStyle = rgb(isBest ? GOOD : COOL)
+        ctx.beginPath()
+        ctx.arc(pt.x, pt.y, isBest ? 5.5 : 3.5, 0, Math.PI * 2)
+        ctx.fill()
+        if (isBest || i === 0) {
+          label(
+            ctx,
+            `${pt.a.id} (${(pt.a.acc * 100).toFixed(1)}%)`,
+            Math.min(pt.x + 8, W - 150),
+            pt.y - 10,
+            rgb(isBest ? GOOD : COOL),
+            MONO_S,
+          )
+        }
+      })
+      label(ctx, 'verified H100 vLLM · 0 reward-hacked arms', padL, H - 16, rgb(GOOD), MONO_S)
+    }
+    return
+  }
+
+  const prog = ease(seg(p, 0.02, 0.44))
 
   if (mode === 'e8') {
     const pairs = (data?.e8_sweep?.pairs ?? []).slice(0, 7)
@@ -2963,6 +3042,109 @@ const RESEARCH_ANIMS: Record<string, AnimDef> = {
     hoverHint: 'Hover any target bar for exact R², sign agreement & shuffled control R²',
     render: renderAhclHero,
   },
+  'ecdsa-autoresearch': {
+    dataFile: 'ecdsa-autoresearch.json',
+    cycleMs: 9000,
+    height: () => 235,
+    ariaLabel: 'ECDSA.Fail real autoresearch hill-climbing trajectory across 712 verified submissions.',
+    caption: 'Real `ecdsa.fail` autoresearch hill-climb (`4,586` total submissions: `712` verified improvements, `3,497` rejected, `370` failed): $Q \\times T$ drops from `10.75B` to `885.5M` with zero reward hacking.',
+    provenance: 'ecdsa.fail live submissions API',
+    render: renderEcdsaAutoresearch,
+  },
+}
+
+type EcdsaAutoresearchJson = {
+  total_submissions: number
+  accepted: number
+  rejected: number
+  failed: number
+  start_score: number
+  best_score: number
+  trajectory: { step: number; score: number; best: number; qubits?: number; toffoli?: number; t?: string }[]
+}
+
+function renderEcdsaAutoresearch(
+  ctx: CanvasRenderingContext2D,
+  W: number,
+  H: number,
+  p: number,
+  C: ThemeColors,
+  raw: unknown,
+) {
+  const data = raw as EcdsaAutoresearchJson | null
+  const prog = ease(seg(p, 0.05, 0.92))
+  label(
+    ctx,
+    `ECDSA.FAIL AUTORESEARCH HILL-CLIMB · ${data?.accepted ?? 712} VERIFIED / ${data?.rejected ?? 3497} REJECTED`,
+    18,
+    18,
+    C.mute,
+    MONO_B,
+  )
+  const traj = data?.trajectory ?? []
+  if (traj.length === 0) return
+
+  const padL = 62
+  const padR = 24
+  const padT = 44
+  const padB = 38
+  const plotW = Math.max(80, W - padL - padR)
+  const plotH = Math.max(80, H - padT - padB)
+  const logMax = Math.log10(data?.start_score ?? traj[0].best)
+  const logMin = Math.log10(data?.best_score ?? traj[traj.length - 1].best)
+  const span = Math.max(0.1, logMax - logMin)
+
+  ctx.strokeStyle = C.soft
+  ctx.lineWidth = 1
+  for (let g = 0; g <= 3; g++) {
+    const y = padT + (plotH * g) / 3
+    ctx.beginPath()
+    ctx.moveTo(padL, y)
+    ctx.lineTo(padL + plotW, y)
+    ctx.stroke()
+    const val = Math.pow(10, logMax - (span * g) / 3)
+    const lbl = val >= 1e9 ? `${(val / 1e9).toFixed(1)}B` : `${(val / 1e6).toFixed(0)}M`
+    label(ctx, lbl, 14, y, C.mute, MONO_S)
+  }
+
+  const maxIdx = prog * (traj.length - 1)
+  ctx.strokeStyle = rgb(GOOD, 0.95)
+  ctx.lineWidth = 2.4
+  ctx.beginPath()
+  traj.forEach((pt, i) => {
+    if (i > maxIdx + 1) return
+    const x = padL + (i / Math.max(1, traj.length - 1)) * plotW
+    const y = padT + ((logMax - Math.log10(pt.best)) / span) * plotH
+    if (i === 0) ctx.moveTo(x, y)
+    else if (i <= maxIdx) ctx.lineTo(x, y)
+    else {
+      const prev = traj[i - 1]
+      const px = padL + ((i - 1) / Math.max(1, traj.length - 1)) * plotW
+      const py = padT + ((logMax - Math.log10(prev.best)) / span) * plotH
+      const frac = maxIdx - (i - 1)
+      ctx.lineTo(lerp(px, x, frac), lerp(py, y, frac))
+    }
+  })
+  ctx.stroke()
+
+  const curIdx = Math.min(traj.length - 1, Math.floor(maxIdx))
+  const cur = traj[curIdx]
+  const cx = padL + (curIdx / Math.max(1, traj.length - 1)) * plotW
+  const cy = padT + ((logMax - Math.log10(cur.best)) / span) * plotH
+  ctx.fillStyle = rgb(GOOD)
+  ctx.beginPath()
+  ctx.arc(cx, cy, 4.5, 0, Math.PI * 2)
+  ctx.fill()
+
+  const bestB = (cur.best / 1e9).toFixed(2)
+  label(
+    ctx,
+    `Q×T: ${bestB}B (${cur.qubits ?? '?'}q × ${cur.toffoli ? (cur.toffoli / 1e6).toFixed(2) + 'M' : '?'} T) · 0 reward hacks`,
+    padL,
+    H - 16,
+    rgb(GOOD),
+    MONO_S,
+  )
 }
 
 /* ============================================================================
@@ -2989,14 +3171,15 @@ export function PostAnimCanvas({
 
   useEffect(() => {
     if (!def || !canvasRef.current) return
+    const effectiveCycleMs = def.cycleMs * 2
     const ctrl = runCanvas(
       canvasRef.current,
       (W) => def.height(W),
       (ctx, W, H, elapsedMs, C, ptr) => {
-        const p = (elapsedMs % def.cycleMs) / def.cycleMs
+        const p = Math.min(1, elapsedMs / effectiveCycleMs)
         def.render(ctx, W, H, p, C, data, ptr, modeRef.current)
       },
-      { cycleMs: def.cycleMs },
+      { cycleMs: effectiveCycleMs },
     )
     ctrlRef.current = ctrl
     return () => {

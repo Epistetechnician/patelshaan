@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import ParetoChart from './ParetoChart'
+import { PostAnimCanvas } from './viz/ResearchAnims'
 import { WikiChip } from './WikiDrawer'
 import { RichText } from './components/RichText'
 import { frontierPillars } from './frontiers'
@@ -718,7 +719,10 @@ export function ExplorerFeed({
                         </div>
                         <div className="dark-embed__stage">
                           {item.demoId === 'pareto' ? (
-                            <ParetoChart />
+                            <>
+                              <ParetoChart />
+                              <PostAnimCanvas id="ecdsa-autoresearch" variant="inline" />
+                            </>
                           ) : (
                             <Suspense
                               fallback={

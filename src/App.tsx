@@ -1674,7 +1674,7 @@ function App() {
 
             <div className="ed-lead">
               <p>
-                A read-only terminal bridged from my Raspberry Pi 5 running{' '}
+                A read-only terminal bridged from my sandboxed VM running{' '}
                 <code>shaanpatel-cv-pico</code>, with an instant in-browser
                 fallback. Query any paper or confound live, run interactive
                 tools, or open eight Braille/ASCII worlds from human
@@ -1717,7 +1717,7 @@ function App() {
 
               <dl className="terminal-specs">
                 <div>
-                  <dt>RPi5 Sandbox</dt>
+                  <dt>VM Sandbox</dt>
                   <dd>
                     Zero-shell container (<code>--read-only</code>, <code>--cap-drop=ALL</code>) streaming{' '}
                     <code>shaanpatel-cv-pico</code> over WSS.

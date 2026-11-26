@@ -417,7 +417,7 @@ export function EtherTerminal() {
         if (!silent) {
           appendBlock(
             'output',
-            `\x1b[38;2;138;134;126mRPi5 endpoint unreachable (${targetUrl}); instant local sandbox active.\x1b[0m\n`,
+            `\x1b[38;2;138;134;126mVM endpoint unreachable (${targetUrl}); instant local sandbox active.\x1b[0m\n`,
           )
         }
       }
@@ -466,7 +466,7 @@ export function EtherTerminal() {
             streamBlockIdRef.current = null
             setBlocks([])
           } else if (msg.type === 'busy') {
-            setBusyLabel(msg.active ? msg.label || 'streaming from raspberrypi-5…' : null)
+            setBusyLabel(msg.active ? msg.label || 'streaming from vm…' : null)
           } else if (msg.type === 'suggestions' && Array.isArray(msg.items)) {
             setSuggestions(msg.items.slice(0, 5))
           } else if (msg.type === 'telemetry' && msg.data && typeof msg.data === 'object') {
@@ -663,7 +663,7 @@ export function EtherTerminal() {
       setHistory((prev) => [line, ...prev.filter((item) => item !== line)].slice(0, 60))
       setHistoryIdx(-1)
 
-      const promptHost = connState === 'live' ? telemetry?.node || 'rpi5' : 'ether'
+      const promptHost = connState === 'live' ? 'vm' : 'ether'
       appendBlock('command', line, promptHost)
       streamBlockIdRef.current = null
 
@@ -672,7 +672,7 @@ export function EtherTerminal() {
         const target = line.slice(7).trim() || wsUrl
         appendBlock(
           'output',
-          `\x1b[38;2;132;204;224mDialing RPi5 sandbox -> \x1b[38;2;223;208;178m${target}\x1b[0m ...\n`,
+          `\x1b[38;2;132;204;224mDialing VM sandbox -> \x1b[38;2;223;208;178m${target}\x1b[0m ...\n`,
         )
         connectToEndpoint(target, false)
         return
@@ -682,7 +682,7 @@ export function EtherTerminal() {
         disconnectSocket()
         appendBlock(
           'output',
-          '\x1b[38;2;138;134;126mDisconnected from RPi5 socket. Local grounded sandbox active.\x1b[0m\n',
+          '\x1b[38;2;138;134;126mDisconnected from VM socket. Local grounded sandbox active.\x1b[0m\n',
         )
         return
       }
@@ -964,13 +964,13 @@ export function EtherTerminal() {
 
   const activeWorldMeta = activeWorld ? WORLD_BY_ID[activeWorld] : null
   const promptPrefix =
-    connState === 'live' ? `traveler@${telemetry?.node || 'rpi5'} ~$` : 'traveler@ether ~$'
+    connState === 'live' ? 'traveler@vm ~$' : 'traveler@ether ~$'
 
   const statusBadge =
     connState === 'live'
-      ? `● live · ${telemetry?.node || 'rpi5'}${telemetry?.cpu_temp_c != null ? ` · ${telemetry.cpu_temp_c}°C` : ''}`
+      ? `● live · vm${telemetry?.cpu_temp_c != null ? ` · ${telemetry.cpu_temp_c}°C` : ''}`
       : connState === 'connecting'
-        ? '◐ dialing rpi5…'
+        ? '◐ dialing vm…'
         : '○ local sandbox · click to dial'
 
   const healthSummary = useMemo(() => {
@@ -984,7 +984,7 @@ export function EtherTerminal() {
   }, [telemetry])
 
   const healthTitle = useMemo(() => {
-    if (!telemetry) return 'Live Raspberry Pi 5 telemetry'
+    if (!telemetry) return 'Live VM telemetry'
     const upMin = typeof telemetry.uptime_s === 'number' ? Math.floor(telemetry.uptime_s / 60) : null
     const sess =
       typeof telemetry.active_sessions === 'number' && typeof telemetry.max_sessions === 'number'
@@ -1002,7 +1002,7 @@ export function EtherTerminal() {
   return (
     <div
       className={`ether-terminal${expanded ? ' is-expanded' : ''}`}
-      aria-label="Live sandboxed RPi5 personal model terminal and multidimensional ASCII worlds"
+      aria-label="Live sandboxed VM personal model terminal and multidimensional ASCII worlds"
     >
       {/* Top Bar */}
       <div className="ether-terminal__head">
@@ -1012,7 +1012,7 @@ export function EtherTerminal() {
             type="button"
             className={`ether-status-pill is-${connState}`}
             onClick={() => setShowEndpointBar((v) => !v)}
-            title="Configure or reconnect Raspberry Pi 5 WebSocket tunnel"
+            title="Configure or reconnect VM WebSocket tunnel"
           >
             {statusBadge}
           </button>
@@ -1071,7 +1071,7 @@ export function EtherTerminal() {
             setShowEndpointBar(false)
           }}
         >
-          <label htmlFor="ether-ws-input">rpi5 ws</label>
+          <label htmlFor="ether-ws-input">vm ws</label>
           <input
             id="ether-ws-input"
             type="text"

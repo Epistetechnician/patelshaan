@@ -373,7 +373,7 @@ const TOUR_STOPS = [
   {
     step: 1,
     title: 'Formal Containment & Hardware Attestation',
-    body: 'Start at the security boundary: FormaSec pairs untrusted LLM proposers with a tiny deterministic kernel verified across Python, Kani Rust, and Lean 4 (600/600 structural agreements, 0/552 hostile admissions) before Linux Landlock runs. Even this RPi5 terminal obeys the same philosophy: zero bash/sh, read-only rootfs, cap-drop=ALL.',
+    body: 'Start at the security boundary: FormaSec pairs untrusted LLM proposers with a tiny deterministic kernel verified across Python, Kani Rust, and Lean 4 (600/600 structural agreements, 0/552 hostile admissions) before Linux Landlock runs. Even this VM terminal obeys the same philosophy: zero bash/sh, read-only rootfs, cap-drop=ALL.',
     next: 'tour 2',
     extra: [
       { label: 'Inspect sandbox policy', command: 'cat /etc/sandbox.policy' },
@@ -498,7 +498,7 @@ const VIRTUAL_FS: Record<string, string> = {
   '/README.md':
     'SPATEL // ETHER SANDBOX\nInteract with Shaan Patel’s personal model, run `tour` for a 5-stop walkthrough, inspect verified research & honest nulls, run live `eprocess compare` / `qrproj` tools, or enter 8 high-resolution multidimensional ASCII worlds (`worlds`).',
   '/etc/sandbox.policy':
-    'SANDBOX CONTAINMENT POLICY\nshell_exec     : DISABLED (zero bash/sh/subprocess)\nfilesystem     : READ-ONLY VIRTUAL TREE\ncontainer_rpi5 : --read-only --cap-drop=ALL --security-opt=no-new-privileges\nresource_caps  : --pids-limit=64 --memory=256m --cpus=1.0 uid=10001\nrate_limit     : 48 cmds/min · 12 LLM queries/min per IP · 512B max line',
+    'SANDBOX CONTAINMENT POLICY\nshell_exec     : DISABLED (zero bash/sh/subprocess)\nfilesystem     : READ-ONLY VIRTUAL TREE\ncontainer_vm   : --read-only --cap-drop=ALL --security-opt=no-new-privileges\nresource_caps  : --pids-limit=64 --memory=256m --cpus=1.0 uid=10001\nrate_limit     : 48 cmds/min · 12 LLM queries/min per IP · 512B max line',
   '/corpus/psychohistory.v2':
     'PSYCHOHISTORY & HISTORICAL STATEBOOK v2 (Pure D_real_hold)\nEvents         : 1,673 real (1,004 train / 669 hold · 0 overlap)\nLean 4 checks  : 1,673 / 1,673 (100.0%) Pinsker + weak-duality + causal macro\nP1 Certified   : pooled high_resolution_surprise (+0.1721b, E_t=3.43e6)\n                 pooled extreme_mispricing_correction (+0.3822b, E_t=1e12, AUROC 0.9810)\n                 polymarket_only extreme_mispricing (+0.1091b, E_t=6.50e5)\n                 kalshi_only extreme_mispricing (+1.1023b, E_t=1e12)\nP2 Certified   : pooled delayed_settlement_median (+0.0152b, E_t=36.79)\nHonest Nulls   : 8/12 P1 cells & 11/12 P2 cells reported verbatim',
   '/corpus/kailas.mandala':
@@ -575,14 +575,14 @@ export function executeLocalCommand(
     const target = args[0]?.trim() || wsUrl
     return {
       connectUrl: target,
-      ansi: `${CYAN}Dialing RPi5 sandboxed terminal -> ${GOLD}${target}${R} ...\n`,
+      ansi: `${CYAN}Dialing VM sandboxed terminal -> ${GOLD}${target}${R} ...\n`,
     }
   }
 
   if (cmd === 'disconnect') {
     return {
       disconnect: true,
-      ansi: `${MUTED}Disconnected from remote RPi5 socket. Local grounded sandbox active.${R}\n`,
+      ansi: `${MUTED}Disconnected from remote VM socket. Local grounded sandbox active.${R}\n`,
     }
   }
 
@@ -590,7 +590,7 @@ export function executeLocalCommand(
     return {
       ansi: [
         boxHeader('COMMAND INDEX', 'click any highlighted `command` or type naturally'),
-        `  ${GOLD}<any question>${R}        Talk to Shaan's personal model (live RPi5 or grounded RAG)`,
+        `  ${GOLD}<any question>${R}        Talk to Shaan's personal model (live VM or grounded RAG)`,
         `  \`${GOLD}verify${R}\`               Live SHA-256 / Ed25519 receipt check (\`arc-membrane\`, \`psychohistory\`, \`holdout-ledger\`)`,
         `  ${GOLD}search <query>${R}        Full-text search across essays, research & Kailas (\`--essays|--research|--kailas\`)`,
         `  \`${GOLD}tour${R}\`                 Guided 5-stop walkthrough of work, nulls, math & worlds`,
@@ -614,7 +614,7 @@ export function executeLocalCommand(
   if (cmd === 'verify') {
     const repo = (args[0] || 'all').toLowerCase()
     const rows = [
-      boxHeader('PINNED CRYPTOGRAPHIC RECEIPTS (LOCAL FALLBACK)', 'connect to RPi5 for live Ed25519+SHA256 replay'),
+      boxHeader('PINNED CRYPTOGRAPHIC RECEIPTS (LOCAL FALLBACK)', 'connect to VM for live Ed25519+SHA256 replay'),
       `  ${EMERALD}✓${R} ${GOLD}arc-membrane${R}     Ed25519+SHA256  ${CYAN}20cd04d3362929a9${R}  ${MUTED}Track 5 MATH-500 (305/400 = 76.25%, KL=0.000605)${R}`,
       `  ${EMERALD}✓${R} ${GOLD}psychohistory${R}    SHA256-canon    ${CYAN}46cf0c111c0e4769${R}  ${MUTED}1,673 real events · frozen split 529523bc4dd6 · 0 overlap${R}`,
       `  ${EMERALD}✓${R} ${GOLD}holdout-ledger${R}   SHA256-file     ${CYAN}8aef95dbe960abe7${R}  ${MUTED}59,200 confirmatory runs · 0/59,200 false certs · H1–H9 PASS${R}`,
@@ -622,12 +622,12 @@ export function executeLocalCommand(
       `  ${EMERALD}✓${R} ${GOLD}formasec${R}         zkLean+SHA256   ${CYAN}51c5c7cd1323e83a${R}  ${MUTED}SAO Landlock/broker contracts + zkLean/1 certificate${R}`,
       `  ${EMERALD}✓${R} ${GOLD}kailas-corpus${R}    SHA256-canon    ${CYAN}1e1a6fc1217d6713${R}  ${MUTED}v3 coding receipt · 54-episode blind pack · 0 quarantine leaks${R}`,
       '',
-      `  ${MUTED}Target \`${repo}\` · Run \`${GOLD}connect ${wsUrl}${MUTED}\` to execute live byte-level verification on Raspberry Pi 5.${R}`,
+      `  ${MUTED}Target \`${repo}\` · Run \`${GOLD}connect ${wsUrl}${MUTED}\` to execute live byte-level verification on VM.${R}`,
     ]
     return {
       ansi: rows.join('\n') + '\n',
       suggestions: [
-        { label: 'Reconnect RPi5', command: `connect ${wsUrl}` },
+        { label: 'Reconnect VM', command: `connect ${wsUrl}` },
         { label: 'Search corpus', command: 'search QR nullspace replay KL' },
         { label: '✦ Universal History', command: 'travel universal' },
       ],
@@ -639,8 +639,8 @@ export function executeLocalCommand(
     if (!q) {
       return {
         ansi:
-          boxHeader('CORPUS SEARCH (LOCAL FALLBACK)', 'live SQLite FTS5 runs on RPi5 /data mount') +
-          `\n  ${INK}Usage: \`${GOLD}search <query>${INK}\` (on Pi 5, searches 4,327 indexed chunks across essays, research & Kailas).${R}\n`,
+          boxHeader('CORPUS SEARCH (LOCAL FALLBACK)', 'live SQLite FTS5 runs on VM /data mount') +
+          `\n  ${INK}Usage: \`${GOLD}search <query>${INK}\` (on VM, searches 4,327 indexed chunks across essays, research & Kailas).${R}\n`,
         suggestions: [
           { label: 'Search: QR nullspace', command: 'search QR nullspace' },
           { label: 'Search: Kailas mandala', command: 'search Kailas mandala' },
@@ -650,7 +650,7 @@ export function executeLocalCommand(
     }
     const docs = retrieveLocal(q)
     const lines = [
-      boxHeader(`SEARCH (LOCAL): ${q}`, 'connect to RPi5 for full 4,327-chunk SQLite FTS5 index'),
+      boxHeader(`SEARCH (LOCAL): ${q}`, 'connect to VM for full 4,327-chunk SQLite FTS5 index'),
       ...docs.map(
         (d) =>
           `  ${CYAN}[LOCAL]${R} ${BRIGHT}${d.title}${R}\n    ${MUTED}locator :${R} ${GOLD}corpus:${d.id}${R}\n    ${INK}${d.body}${R}`,
@@ -659,7 +659,7 @@ export function executeLocalCommand(
     return {
       ansi: lines.join('\n') + '\n',
       suggestions: [
-        { label: 'Reconnect RPi5 for FTS5', command: `connect ${wsUrl}` },
+        { label: 'Reconnect VM for FTS5', command: `connect ${wsUrl}` },
         { label: 'Verify receipts', command: 'verify' },
       ],
     }
@@ -721,14 +721,14 @@ export function executeLocalCommand(
   if (cmd === 'status' || cmd === 'pi' || cmd === 'telemetry') {
     return {
       ansi: [
-        boxHeader('SANDBOX TELEMETRY (LOCAL FALLBACK)', 'click status pill to dial RPi5'),
-        `  ${MUTED}rpi5 endpoint :${R} ${CYAN}${wsUrl}${R}`,
+        boxHeader('SANDBOX TELEMETRY (LOCAL FALLBACK)', 'click status pill to dial VM'),
+        `  ${MUTED}vm endpoint   :${R} ${CYAN}${wsUrl}${R}`,
         `  ${MUTED}connection    :${R} ${AMBER}offline fallback (run \`connect ${wsUrl}\` to retry)${R}`,
-        `  ${MUTED}model         :${R} ${GOLD}grounded corpus RAG (switches to live shaanpatel-cv-pico on Pi)${R}`,
+        `  ${MUTED}model         :${R} ${GOLD}grounded corpus RAG (switches to live shaanpatel-cv-pico on VM)${R}`,
         `  ${MUTED}containment   :${R} ${EMERALD}zero-shell · read-only · browser-isolated${R}`,
       ].join('\n') + '\n',
       suggestions: [
-        { label: 'Reconnect RPi5', command: `connect ${wsUrl}` },
+        { label: 'Reconnect VM', command: `connect ${wsUrl}` },
         { label: 'Inspect sandbox policy', command: 'cat /etc/sandbox.policy' },
         { label: 'Start guided tour', command: 'tour' },
       ],
@@ -992,7 +992,7 @@ export function executeLocalCommand(
   }
 
   if (cmd === 'uname') {
-    return { ansi: `${INK}FormaSec-Sandbox/0.4 (zero-shell · browser-fallback · rpi5-ready)${R}\n` }
+    return { ansi: `${INK}FormaSec-Sandbox/0.4 (zero-shell · browser-fallback · vm-ready)${R}\n` }
   }
 
   if (args.length === 0) {

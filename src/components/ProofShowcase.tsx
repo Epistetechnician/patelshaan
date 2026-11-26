@@ -287,7 +287,7 @@ export function ProofShowcase({
                   launchPi5Verify(active.verifyTarget!)
                 }}
               >
-                Verify live on Pi 5 ↗
+                Verify live on VM ↗
               </a>
             ) : null}
             <button

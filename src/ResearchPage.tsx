@@ -413,13 +413,13 @@ function WritingBlock({ title, items }: { title: string; items: IndexEntry[] }) 
                   <a
                     href="#install"
                     className="block-verify-link"
-                    title={`Run verify ${verifyTarget} live on Raspberry Pi 5`}
+                    title={`Run verify ${verifyTarget} live on VM`}
                     onClick={(e) => {
                       e.preventDefault()
                       launchPi5Verify(verifyTarget)
                     }}
                   >
-                    Verify live on Pi 5 ↗
+                    Verify live on VM ↗
                   </a>
                 ) : null}
               </span>
@@ -660,7 +660,7 @@ function FieldPage({ field }: { field: FieldStrand }) {
                     launchPi5Verify(PI5_VERIFY_TARGET[field.slug])
                   }}
                 >
-                  Verify live on Pi 5 (<code>verify {PI5_VERIFY_TARGET[field.slug]}</code>) ↗
+                  Verify live on VM (<code>verify {PI5_VERIFY_TARGET[field.slug]}</code>) ↗
                 </a>
               </p>
             ) : null}
@@ -794,7 +794,7 @@ function RepoPage({ repo }: { repo: ResearchRepo }) {
                     launchPi5Verify(PI5_VERIFY_TARGET[repo.slug])
                   }}
                 >
-                  Verify live on Pi 5 (<code>verify {PI5_VERIFY_TARGET[repo.slug]}</code>) ↗
+                  Verify live on VM (<code>verify {PI5_VERIFY_TARGET[repo.slug]}</code>) ↗
                 </a>
               </p>
             ) : null}

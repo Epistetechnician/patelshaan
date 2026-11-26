@@ -128,8 +128,10 @@ const ASK_CHIPS: SuggestionItem[] = [
 const WELCOME_BANNER =
   '\x1b[1m\x1b[38;2;223;208;178m╭─ SPATEL // ETHER HARNESS\x1b[0m  ' +
   '\x1b[38;2;138;134;126m(personal model · verified research · multidimensional ASCII worlds)\x1b[0m\n' +
+  '\x1b[38;2;138;134;126m│\x1b[0m \x1b[38;2;220;216;206mCustom \x1b[38;2;223;208;178mQwen2.5-1.5B LoRA\x1b[38;2;220;216;206m (\x1b[38;2;132;204;224mshaanpatel-cv-pico\x1b[38;2;220;216;206m) post-trained on Shaan Patel\'s research, honest nulls,\x1b[0m\n' +
+  '\x1b[38;2;138;134;126m│\x1b[0m \x1b[38;2;220;216;206mand cryptographic receipts — running live in a zero-shell read-only VM sandbox.\x1b[0m\n' +
   '\x1b[38;2;138;134;126m╰─\x1b[0m \x1b[38;2;220;216;206mAsk anything directly, click `\x1b[38;2;223;208;178mtour\x1b[38;2;220;216;206m` for a 5-stop walkthrough, ' +
-  'run `\x1b[38;2;223;208;178meprocess compare\x1b[38;2;220;216;206m` or `\x1b[38;2;132;204;224mworlds\x1b[38;2;220;216;206m`.\x1b[0m\n'
+  'run `\x1b[38;2;223;208;178mverify\x1b[38;2;220;216;206m` or `\x1b[38;2;132;204;224mworlds\x1b[38;2;220;216;206m`.\x1b[0m\n'
 
 function stripAnsi(text: string): string {
   const esc = String.fromCharCode(27)
@@ -609,8 +611,8 @@ export function EtherTerminal() {
     }
     if (!activeWorld) return
     const epoch = hudText.epoch
-    const coords = hudText.coords
-    const delayMs = lastNarratedKeyRef.current === '' ? 160 : 480
+    const coords = getWorldHud(activeWorld, camRef.current).coords
+    const delayMs = lastNarratedKeyRef.current === '' ? 140 : 420
     narrateTimerRef.current = window.setTimeout(() => {
       requestNarration(activeWorld, epoch, coords)
     }, delayMs)
@@ -620,7 +622,7 @@ export function EtherTerminal() {
         narrateTimerRef.current = null
       }
     }
-  }, [activeWorld, hudText.epoch, hudText.coords, connState, requestNarration])
+  }, [activeWorld, hudText.epoch, connState, requestNarration])
 
   // Smart autoscroll: only scroll when pinned near bottom
   useEffect(() => {
@@ -668,6 +670,9 @@ export function EtherTerminal() {
       streamBlockIdRef.current = null
 
       const lower = line.toLowerCase()
+      if (activeWorldRef.current && !lower.startsWith('travel ') && lower !== 'worlds') {
+        setActiveWorld(null)
+      }
       if (lower === 'connect' || lower.startsWith('connect ')) {
         const target = line.slice(7).trim() || wsUrl
         appendBlock(
@@ -715,7 +720,6 @@ export function EtherTerminal() {
       connectToEndpoint,
       disconnectSocket,
       openWorld,
-      telemetry?.node,
       wsUrl,
     ],
   )
@@ -832,6 +836,7 @@ export function EtherTerminal() {
         setExpanded((v) => !v)
       } else if (e.key === 'i' || e.key === 'I') {
         const meta = WORLD_BY_ID[activeWorld]
+        setActiveWorld(null)
         runLine(`Explain the science and philosophy behind ${meta.name} (${meta.span}).`)
       } else if (e.key === 'n' || e.key === 'N') {
         e.preventDefault()
@@ -1283,11 +1288,12 @@ export function EtherTerminal() {
                     <button
                       type="button"
                       className="ether-hud-btn is-ask"
-                      onClick={() =>
+                      onClick={() => {
+                        setActiveWorld(null)
                         runLine(
                           `Explain the science and meaning behind ${activeWorldMeta.name} (${activeWorldMeta.span}).`,
                         )
-                      }
+                      }}
                       title="Ask shaanpatel-cv-pico about this world"
                     >
                       [i] ask

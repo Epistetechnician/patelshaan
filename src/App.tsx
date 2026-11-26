@@ -1335,15 +1335,14 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                As simulation becomes free, verifiable truth becomes the only
-                sovereign currency. I build what earns it.
+                Innovation is abundant; truth is scarce. I build the proof.
               </h1>
 
               <p className="hero__sub">
-                Self-modifying AI, formal Rust and Lean kernels, coherent
-                markets, and the long arc of human memory. Built from first
-                principles and shipped with raw runs, cryptographic receipts,
-                and every theory I broke along the way.
+                Self-aligning AI, formal kernels, coherent markets, and the long
+                arc of consciousness. From first principles to cryptographic
+                soundness, powered by raw holistic data and the wreckage of
+                every theory broken along the way.
               </p>
 
               <div className="hero__actions">

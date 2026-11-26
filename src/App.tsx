@@ -1144,23 +1144,16 @@ function readInitialLightMode(): boolean {
   }
 }
 
-const HERO_LENSES: { key: CharsetKey; label: string }[] = [
-  { key: 'cinematic', label: 'cinematic' },
-  { key: 'braille', label: 'braille' },
-  { key: 'detailed', label: 'detailed' },
-  { key: 'blocks', label: 'blocks' },
-]
-
 function App() {
   const heroVideoSrc = '/ascii/hero-blackhole.mp4'
   const heroPosterSrc = '/ascii/hero-blackhole-poster.webp'
   const aboutVideoSrc = '/ascii/about-flower.mp4'
   const aboutPosterSrc = '/ascii/about-flower-poster.webp'
 
-  const [heroCharset, setHeroCharset] = useState<CharsetKey>('cinematic')
-  const [heroEdges, setHeroEdges] = useState(true)
-  const [heroBloom, setHeroBloom] = useState(true)
-  const [heroPlaying, setHeroPlaying] = useState(true)
+  const heroCharset: CharsetKey = 'cinematic'
+  const heroEdges = true
+  const heroBloom = true
+  const heroPlaying = true
   const [aboutCharset, setAboutCharset] = useState<CharsetKey>('cinematic')
 
   const [lightMode, setLightMode] = useState<boolean>(readInitialLightMode)
@@ -1363,47 +1356,6 @@ function App() {
                 <a href="#install" className="btn-quiet">
                   My terminal ↓
                 </a>
-              </div>
-            </div>
-
-            <div className="hero__cinema-bar" role="toolbar" aria-label="Hero GPU ASCII shader controls">
-              <span className="hero__cinema-kicker">kerr horizon · webgl2 · move or tap</span>
-              <div className="hero__cinema-group">
-                {HERO_LENSES.map((lens) => (
-                  <button
-                    key={lens.key}
-                    type="button"
-                    className={`hero__cinema-btn${heroCharset === lens.key ? ' is-active' : ''}`}
-                    onClick={() => setHeroCharset(lens.key)}
-                  >
-                    {lens.label}
-                  </button>
-                ))}
-                <span className="hero__cinema-sep" aria-hidden="true" />
-                <button
-                  type="button"
-                  className={`hero__cinema-btn${heroEdges ? ' is-active' : ''}`}
-                  onClick={() => setHeroEdges((v) => !v)}
-                  title="Toggle Sobel directional edge sculpting"
-                >
-                  edges
-                </button>
-                <button
-                  type="button"
-                  className={`hero__cinema-btn${heroBloom ? ' is-active' : ''}`}
-                  onClick={() => setHeroBloom((v) => !v)}
-                  title="Toggle phosphor bloom"
-                >
-                  bloom
-                </button>
-                <button
-                  type="button"
-                  className="hero__cinema-btn"
-                  onClick={() => setHeroPlaying((v) => !v)}
-                  aria-label={heroPlaying ? 'Pause hero ASCII cinema' : 'Play hero ASCII cinema'}
-                >
-                  {heroPlaying ? 'pause' : 'play'}
-                </button>
               </div>
             </div>
           </div>

@@ -403,10 +403,26 @@ function WritingBlock({ title, items }: { title: string; items: IndexEntry[] }) 
       <ul className="block-list">
         {items.map((item, i) => {
           const showYear = i === 0 || items[i - 1].year !== item.year
+          const verifyTarget = PI5_VERIFY_TARGET[item.slug]
           return (
             <li key={`${title}-${item.slug}`}>
               <span className="block-year">{showYear ? item.year : ''}</span>
-              <a href={`#/research/${item.slug}`}>{item.title}</a>
+              <span className="block-entry">
+                <a href={`#/research/${item.slug}`}>{item.title}</a>
+                {verifyTarget ? (
+                  <a
+                    href="#install"
+                    className="block-verify-link"
+                    title={`Run verify ${verifyTarget} live on Raspberry Pi 5`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      launchPi5Verify(verifyTarget)
+                    }}
+                  >
+                    Verify live on Pi 5 ↗
+                  </a>
+                ) : null}
+              </span>
             </li>
           )
         })}
@@ -635,6 +651,19 @@ function FieldPage({ field }: { field: FieldStrand }) {
           <section className="post-section post-appendix">
             <h2>Sources &amp; verification</h2>
             <ReceiptVerifier key={field.slug} slug={field.slug} />
+            {PI5_VERIFY_TARGET[field.slug] ? (
+              <p className="rp-links">
+                <a
+                  href="#install"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    launchPi5Verify(PI5_VERIFY_TARGET[field.slug])
+                  }}
+                >
+                  Verify live on Pi 5 (<code>verify {PI5_VERIFY_TARGET[field.slug]}</code>) ↗
+                </a>
+              </p>
+            ) : null}
             <Sources sources={field.sources} />
             <CitationBlock slug={field.slug} title={field.name} />
             <p className="post-back-link">
@@ -653,6 +682,7 @@ const PI5_VERIFY_TARGET: Record<string, string> = {
   formasec: 'formasec',
   'security-alignment-os': 'formasec',
   psychohistory: 'psychohistory',
+  'sacred-geography-kailas': 'kailas-corpus',
   'kailas-corpus': 'kailas-corpus',
   'track-b': 'track-b',
 }

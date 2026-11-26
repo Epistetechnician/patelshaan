@@ -20,6 +20,21 @@ interface ProofEntry {
   wikiLabel: string
   dispatchAliases: string[]
   includeEcdsaGraph?: boolean
+  verifyTarget?: string
+}
+
+function launchPi5Verify(target: string) {
+  const cmd = `verify ${target}`
+  try {
+    sessionStorage.setItem('spatel_pending_cmd', cmd)
+  } catch {
+    /* ignore storage errors */
+  }
+  window.dispatchEvent(new CustomEvent('spatel:run-cmd', { detail: cmd }))
+  window.location.hash = '#install'
+  window.setTimeout(() => {
+    document.getElementById('install')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, 60)
 }
 
 const PROOFS: ProofEntry[] = [
@@ -48,6 +63,7 @@ const PROOFS: ProofEntry[] = [
     wikiId: 'arc-membrane',
     wikiLabel: 'ARC Membrane',
     dispatchAliases: ['subspace-null-projection', 'subspace-null-projection-3d'],
+    verifyTarget: 'arc-membrane',
   },
   {
     id: 'track-b-superinfo',
@@ -74,6 +90,7 @@ const PROOFS: ProofEntry[] = [
     wikiId: 'holdout',
     wikiLabel: 'Holdout',
     dispatchAliases: ['eprocess-martingale', 'formasec-kernel-gate', 'hsi-receipt-forest', 'holdout-formasec'],
+    verifyTarget: 'track-b',
   },
   {
     id: 'pqc-pqai-ecdsa',
@@ -127,6 +144,7 @@ const PROOFS: ProofEntry[] = [
     wikiId: 'statebook',
     wikiLabel: 'Psychohistory & Statebook',
     dispatchAliases: ['mech-interp-audit', 'statebook-coherence', 'honest-nulls', 'kailas-corpus', 'kailas-mandala-3d'],
+    verifyTarget: 'psychohistory',
   },
 ]
 
@@ -258,6 +276,18 @@ export function ProofShowcase({
                 className="text-link text-link--muted"
               >
                 {active.secondaryLabel}
+              </a>
+            ) : null}
+            {active.verifyTarget ? (
+              <a
+                href="#install"
+                className="text-link"
+                onClick={(e) => {
+                  e.preventDefault()
+                  launchPi5Verify(active.verifyTarget!)
+                }}
+              >
+                Verify live on Pi 5 ↗
               </a>
             ) : null}
             <button

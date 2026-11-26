@@ -721,6 +721,26 @@ export function EtherTerminal() {
   )
 
   useEffect(() => {
+    const onRunCmd = (ev: Event) => {
+      const cmd = (ev as CustomEvent<string>).detail?.trim()
+      if (!cmd) return
+      try {
+        window.sessionStorage.removeItem(PENDING_CMD_STORAGE_KEY)
+      } catch {
+        /* ignore */
+      }
+      if (connState === 'live' || connState === 'fallback') {
+        pendingCmdRef.current = null
+        runLine(cmd)
+      } else {
+        pendingCmdRef.current = cmd
+      }
+    }
+    window.addEventListener('spatel:run-cmd', onRunCmd)
+    return () => window.removeEventListener('spatel:run-cmd', onRunCmd)
+  }, [connState, runLine])
+
+  useEffect(() => {
     const pending = pendingCmdRef.current
     if (!pending) return
     if (connState === 'live') {

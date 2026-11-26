@@ -1342,14 +1342,15 @@ function App() {
           <div className="hero__content">
             <div className="hero__intro">
               <h1 className="hero__headline">
-                I build verifiable instruments for living worlds, where
-                self-modifying intelligence, markets, and human memory meet.
+                I build machines, proofs, and markets that cannot lie about
+                what they know.
               </h1>
 
               <p className="hero__sub">
-                Independent research and open systems across formal kernels,
-                cryptographic assurance, market coherence, and computational
-                humanities, kept honest by their negative results.
+                Self-modifying AI, formal Rust and Lean kernels, market
+                coherence, and computational humanities. Every claim ships with
+                raw runs, cryptographic receipts, and the hypotheses I
+                disproved along the way.
               </p>
 
               <div className="hero__actions">
